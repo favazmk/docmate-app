@@ -1,0 +1,168 @@
+import Image from "next/image";
+import Link from "next/link";
+import { BadgeCheck, Star, MapPin, Globe, GraduationCap, ShieldCheck } from "lucide-react";
+import BookingWidget from "@/components/BookingWidget";
+import { Badge } from "@/components/ui/badge";
+
+export default function DoctorProfilePage({ params }: { params: { slug: string } }) {
+  // In a real app, we would fetch doctor data using params.slug
+  const doctor = {
+    name: "Dr. Ahmed Al Mansouri",
+    specialty: "Cardiologist",
+    rating: 4.9,
+    reviews: 124,
+    city: "Dubai",
+    countryFlag: "🇦🇪",
+    languages: ["Arabic", "English", "French"],
+    fee: 450,
+    currency: "AED",
+    photoUrl: "https://ui-avatars.com/api/?name=Ahmed+Al+Mansouri&background=2200CC&color=fff&size=512",
+    isVerified: true,
+    experience: "15+ Years Experience",
+    bio: "Dr. Ahmed Al Mansouri is a highly respected Consultant Cardiologist with over 15 years of experience in diagnosing and treating complex cardiovascular conditions. He completed his fellowship at the Cleveland Clinic and has since been a pioneer in non-invasive cardiac imaging in the UAE.",
+    qualifications: [
+      "MD, Damascus University",
+      "Board Certified in Cardiovascular Disease (ABIM)",
+      "Fellowship in Interventional Cardiology, Cleveland Clinic",
+      "Member of the European Society of Cardiology"
+    ],
+    clinicName: "Mediclinic City Hospital",
+    insurances: ["Daman", "AXA", "Nextcare", "Oman Insurance", "MetLife"]
+  };
+
+  return (
+    <div className="bg-gray-bg min-h-screen py-8 px-4">
+      <div className="max-w-6xl mx-auto">
+        
+        {/* Breadcrumb */}
+        <div className="text-sm font-medium text-text-light mb-8 flex items-center gap-2">
+          <Link href="/" className="hover:text-blue-primary transition-colors">Home</Link>
+          <span>/</span>
+          <Link href="/ae" className="hover:text-blue-primary transition-colors">UAE</Link>
+          <span>/</span>
+          <Link href="/ae/dubai" className="hover:text-blue-primary transition-colors">Dubai</Link>
+          <span>/</span>
+          <Link href="/ae/dubai/cardiologist" className="hover:text-blue-primary transition-colors">Cardiologist</Link>
+          <span>/</span>
+          <span className="text-text-dark">{doctor.name}</span>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Main Content (Left) */}
+          <div className="lg:col-span-2 flex flex-col gap-6">
+            
+            {/* Header Card */}
+            <div className="bg-white border border-gray-border rounded-2xl p-6 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-start shadow-sm">
+              <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden shrink-0 border border-gray-border bg-gray-bg">
+                <Image src={doctor.photoUrl} alt={doctor.name} fill className="object-cover" />
+              </div>
+              
+              <div className="flex flex-col flex-1">
+                <div className="flex flex-wrap items-center gap-3 mb-2">
+                  <h1 className="text-2xl md:text-3xl font-bold text-text-dark">{doctor.name}</h1>
+                  {doctor.isVerified && (
+                    <div className="flex items-center gap-1 bg-green-badge-bg text-green-badge px-2 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                      <BadgeCheck className="w-3.5 h-3.5" /> Verified
+                    </div>
+                  )}
+                </div>
+                
+                <h2 className="text-lg md:text-xl font-medium text-blue-primary mb-4">{doctor.specialty}</h2>
+                
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-text-mid mb-6">
+                  <div className="flex items-center gap-1.5">
+                    <Star className="w-5 h-5 text-star-color fill-star-color" />
+                    <span className="font-bold text-text-dark text-base">{doctor.rating.toFixed(1)}</span>
+                    <span className="text-text-light underline cursor-pointer hover:text-blue-primary">({doctor.reviews} reviews)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span>{doctor.countryFlag}</span>
+                    <span className="font-semibold text-text-dark">{doctor.city}</span>
+                  </div>
+                  <div className="flex items-center gap-2 font-medium bg-blue-light text-blue-primary px-3 py-1 rounded-full">
+                    {doctor.experience}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 flex-wrap">
+                  {doctor.languages.map(lang => (
+                    <Badge key={lang} variant="secondary" className="bg-gray-bg text-text-mid font-semibold text-[11px] uppercase tracking-wider">
+                      {lang}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* About Section */}
+            <div className="bg-white border border-gray-border rounded-2xl p-6 md:p-8 shadow-sm">
+              <h3 className="text-xl font-bold text-text-dark mb-4">About the Doctor</h3>
+              <p className="text-text-mid leading-relaxed">{doctor.bio}</p>
+            </div>
+
+            {/* Qualifications */}
+            <div className="bg-white border border-gray-border rounded-2xl p-6 md:p-8 shadow-sm">
+              <h3 className="text-xl font-bold text-text-dark mb-6 flex items-center gap-2">
+                <GraduationCap className="w-6 h-6 text-blue-primary" />
+                Education & Qualifications
+              </h3>
+              <ul className="flex flex-col gap-4">
+                {doctor.qualifications.map((qual, i) => (
+                  <li key={i} className="flex items-start gap-3 text-text-mid">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-primary mt-2 shrink-0"></div>
+                    <span className="leading-relaxed">{qual}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Insurance */}
+            <div className="bg-white border border-gray-border rounded-2xl p-6 md:p-8 shadow-sm">
+              <h3 className="text-xl font-bold text-text-dark mb-6 flex items-center gap-2">
+                <ShieldCheck className="w-6 h-6 text-blue-primary" />
+                Accepted Insurance Plans
+              </h3>
+              <div className="flex flex-wrap gap-3">
+                {doctor.insurances.map((ins, i) => (
+                  <div key={i} className="px-4 py-2 border border-gray-border rounded-lg text-sm font-semibold text-text-dark bg-gray-50 flex items-center justify-center">
+                    {ins}
+                  </div>
+                ))}
+                <div className="px-4 py-2 text-sm font-semibold text-blue-primary flex items-center justify-center cursor-pointer hover:underline">
+                  + 12 more plans
+                </div>
+              </div>
+            </div>
+
+            {/* Clinic Location */}
+            <div className="bg-white border border-gray-border rounded-2xl p-6 md:p-8 shadow-sm mb-12">
+              <h3 className="text-xl font-bold text-text-dark mb-2 flex items-center gap-2">
+                <MapPin className="w-6 h-6 text-blue-primary" />
+                Clinic Location
+              </h3>
+              <p className="text-text-mid mb-6 font-medium">{doctor.clinicName}</p>
+              
+              <div className="w-full h-64 bg-gray-200 rounded-xl flex items-center justify-center border border-gray-border overflow-hidden relative">
+                {/* Placeholder for Google Maps iframe */}
+                <div className="absolute inset-0 bg-[#E5E3DF] flex items-center justify-center">
+                  <div className="flex flex-col items-center text-text-light gap-2">
+                    <MapPin className="w-8 h-8 text-blue-primary/50" />
+                    <span className="text-sm font-semibold">Map View Loading...</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Sticky Booking Widget (Right) */}
+          <div className="lg:col-span-1">
+            <BookingWidget fee={doctor.fee} currency={doctor.currency} slug={params.slug} />
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+}
