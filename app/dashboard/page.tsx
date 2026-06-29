@@ -1,0 +1,151 @@
+import Link from "next/link";
+import { User, CalendarCheck, Settings, LogOut, ChevronRight, CheckCircle2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+
+export default function DashboardPage() {
+  const upcomingAppointments = [
+    {
+      id: "APT-8472",
+      doctorName: "Dr. Ahmed Al Mansouri",
+      specialty: "Cardiologist",
+      date: "Mon, 12 Oct 2026",
+      time: "10:00 AM",
+      clinicName: "Mediclinic City Hospital",
+      city: "Dubai",
+      status: "Confirmed",
+      photoUrl: "https://ui-avatars.com/api/?name=Ahmed+Al+Mansouri&background=2200CC&color=fff",
+    }
+  ];
+
+  const pastAppointments = [
+    {
+      id: "APT-1029",
+      doctorName: "Dr. Sara Johnson",
+      specialty: "Dermatologist",
+      date: "Tue, 5 Sep 2026",
+      time: "02:30 PM",
+      clinicName: "King's College Hospital",
+      city: "Dubai",
+      status: "Completed",
+      photoUrl: "https://ui-avatars.com/api/?name=Sara+Johnson&background=059669&color=fff",
+    }
+  ];
+
+  return (
+    <div className="bg-gray-bg min-h-screen">
+      
+      {/* Dashboard Nav */}
+      <div className="bg-white border-b border-gray-border">
+        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center gap-8">
+          <h1 className="font-bold text-text-dark text-lg">My Dashboard</h1>
+          <nav className="hidden md:flex items-center gap-6">
+            <Link href="/dashboard" className="text-sm font-bold text-blue-primary border-b-2 border-blue-primary h-16 flex items-center">Appointments</Link>
+            <Link href="/dashboard/profile" className="text-sm font-medium text-text-mid hover:text-text-dark h-16 flex items-center">Profile Settings</Link>
+          </nav>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row gap-8">
+        
+        {/* Sidebar */}
+        <div className="w-full md:w-64 shrink-0">
+          <div className="bg-white border border-gray-border rounded-2xl p-4 shadow-sm flex flex-col gap-2">
+            <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-light text-blue-primary font-semibold text-sm">
+              <CalendarCheck className="w-5 h-5" /> My Appointments
+            </Link>
+            <Link href="/dashboard/profile" className="flex items-center gap-3 px-4 py-3 rounded-xl text-text-mid hover:bg-gray-50 hover:text-text-dark font-medium text-sm transition-colors">
+              <User className="w-5 h-5" /> Profile Settings
+            </Link>
+            <Link href="/dashboard/settings" className="flex items-center gap-3 px-4 py-3 rounded-xl text-text-mid hover:bg-gray-50 hover:text-text-dark font-medium text-sm transition-colors">
+              <Settings className="w-5 h-5" /> Preferences
+            </Link>
+            <div className="h-px bg-gray-border my-2"></div>
+            <button className="flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 font-medium text-sm transition-colors text-left">
+              <LogOut className="w-5 h-5" /> Sign Out
+            </button>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col gap-8">
+          
+          <section>
+            <h2 className="text-xl font-bold text-text-dark mb-4">Upcoming Appointments</h2>
+            {upcomingAppointments.length > 0 ? (
+              <div className="flex flex-col gap-4">
+                {upcomingAppointments.map(apt => (
+                  <div key={apt.id} className="bg-white border border-gray-border rounded-2xl p-5 md:p-6 shadow-sm flex flex-col md:flex-row justify-between gap-6">
+                    <div className="flex gap-4">
+                      <div className="relative w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-gray-border bg-gray-bg">
+                        <Image src={apt.photoUrl} alt={apt.doctorName} fill className="object-cover" />
+                      </div>
+                      <div className="flex flex-col">
+                        <h3 className="font-bold text-text-dark text-lg">{apt.doctorName}</h3>
+                        <span className="text-sm font-medium text-blue-primary">{apt.specialty}</span>
+                        <div className="text-sm text-text-mid mt-2 leading-relaxed">
+                          <p className="font-semibold text-text-dark">{apt.date} at {apt.time}</p>
+                          <p>{apt.clinicName}, {apt.city}</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-col items-start md:items-end gap-3 shrink-0">
+                      <div className="flex items-center gap-1.5 bg-green-badge-bg text-green-badge px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                        <CheckCircle2 className="w-4 h-4" /> {apt.status}
+                      </div>
+                      <div className="flex gap-2 w-full md:w-auto mt-auto">
+                        <Button variant="outline" className="flex-1 md:flex-none border-gray-border text-text-dark hover:bg-gray-bg h-10 px-4 rounded-xl text-xs font-bold">
+                          Reschedule
+                        </Button>
+                        <Button variant="outline" className="flex-1 md:flex-none border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 h-10 px-4 rounded-xl text-xs font-bold">
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white border border-gray-border rounded-2xl p-8 text-center shadow-sm">
+                <p className="text-text-mid font-medium mb-4">You have no upcoming appointments.</p>
+                <Button asChild className="bg-blue-primary hover:bg-blue-hover text-white rounded-xl h-11 px-6 font-semibold shadow-md shadow-blue-primary/20">
+                  <Link href="/search">Find a Doctor</Link>
+                </Button>
+              </div>
+            )}
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-text-dark mb-4">Past Appointments</h2>
+            <div className="flex flex-col gap-4">
+              {pastAppointments.map(apt => (
+                <div key={apt.id} className="bg-white border border-gray-border rounded-2xl p-5 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-gray-border bg-gray-bg grayscale opacity-80">
+                      <Image src={apt.photoUrl} alt={apt.doctorName} fill className="object-cover" />
+                    </div>
+                    <div className="flex flex-col">
+                      <h3 className="font-bold text-text-dark">{apt.doctorName}</h3>
+                      <p className="text-xs font-medium text-text-mid">{apt.date} • {apt.clinicName}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-3 w-full md:w-auto">
+                    <Button variant="outline" className="flex-1 md:flex-none border-gray-border text-text-dark hover:bg-gray-bg h-9 px-4 rounded-lg text-xs font-bold">
+                      Leave Review
+                    </Button>
+                    <Button variant="outline" className="flex-1 md:flex-none border-blue-primary text-blue-primary hover:bg-blue-light h-9 px-4 rounded-lg text-xs font-bold">
+                      Book Again
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  );
+}

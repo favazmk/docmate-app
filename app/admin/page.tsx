@@ -1,0 +1,147 @@
+import Link from "next/link";
+import { Users, Calendar, Activity, TrendingUp, Search, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+export default function AdminDashboardPage() {
+  const recentBookings = [
+    { id: "APT-8472", patient: "John Doe", doctor: "Dr. Ahmed Al Mansouri", date: "Oct 12", time: "10:00 AM", status: "Confirmed" },
+    { id: "APT-8473", patient: "Sarah Smith", doctor: "Dr. Sara Johnson", date: "Oct 12", time: "11:30 AM", status: "Pending" },
+    { id: "APT-8474", patient: "Ali Hassan", doctor: "Dr. Khalid Omar", date: "Oct 13", time: "09:00 AM", status: "Confirmed" },
+    { id: "APT-8475", patient: "Emma Watson", doctor: "Dr. Maria Garcia", date: "Oct 14", time: "02:00 PM", status: "Cancelled" },
+  ];
+
+  return (
+    <div className="bg-gray-bg min-h-screen flex">
+      
+      {/* Admin Sidebar */}
+      <aside className="w-64 bg-sidebar border-r border-sidebar-border hidden md:flex flex-col">
+        <div className="h-16 flex items-center px-6 border-b border-sidebar-border bg-white">
+          <Link href="/" className="font-extrabold text-xl tracking-tight text-text-dark flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-blue-primary text-white flex items-center justify-center text-sm">doc</div>
+            mate. <span className="text-xs font-semibold text-blue-primary uppercase tracking-wider ml-1">Admin</span>
+          </Link>
+        </div>
+        <nav className="flex-1 overflow-y-auto py-6 px-4 flex flex-col gap-2">
+          <Link href="/admin" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-primary text-white font-medium text-sm">
+            <Activity className="w-5 h-5" /> Dashboard
+          </Link>
+          <Link href="/admin/doctors" className="flex items-center gap-3 px-4 py-3 rounded-xl text-text-mid hover:bg-gray-100 font-medium text-sm transition-colors">
+            <Users className="w-5 h-5" /> Doctors
+          </Link>
+          <Link href="/admin/appointments" className="flex items-center gap-3 px-4 py-3 rounded-xl text-text-mid hover:bg-gray-100 font-medium text-sm transition-colors">
+            <Calendar className="w-5 h-5" /> Appointments
+          </Link>
+        </nav>
+      </aside>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col min-w-0">
+        <header className="h-16 bg-white border-b border-gray-border px-6 flex items-center justify-between">
+          <h1 className="font-bold text-text-dark text-lg">Admin Overview</h1>
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <Search className="w-4 h-4 absolute left-3 top-2.5 text-text-light" />
+              <input type="text" placeholder="Search..." className="bg-gray-bg border border-gray-border rounded-lg h-9 pl-9 pr-4 text-sm focus:outline-none focus:border-blue-primary" />
+            </div>
+            <div className="w-8 h-8 rounded-full bg-blue-light text-blue-primary flex items-center justify-center font-bold text-sm">A</div>
+          </div>
+        </header>
+
+        <main className="flex-1 p-6 overflow-y-auto">
+          
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+            <div className="bg-white border border-gray-border rounded-2xl p-6 shadow-sm">
+              <div className="flex justify-between items-start mb-4">
+                <div className="w-12 h-12 rounded-xl bg-blue-light text-blue-primary flex items-center justify-center">
+                  <Users className="w-6 h-6" />
+                </div>
+                <span className="flex items-center text-xs font-bold text-green-badge bg-green-badge-bg px-2 py-1 rounded-full"><TrendingUp className="w-3 h-3 mr-1" /> +12%</span>
+              </div>
+              <h3 className="text-text-light font-medium text-sm mb-1">Total Doctors</h3>
+              <p className="text-3xl font-bold text-text-dark">542</p>
+            </div>
+            
+            <div className="bg-white border border-gray-border rounded-2xl p-6 shadow-sm">
+              <div className="flex justify-between items-start mb-4">
+                <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                  <Calendar className="w-6 h-6" />
+                </div>
+                <span className="flex items-center text-xs font-bold text-green-badge bg-green-badge-bg px-2 py-1 rounded-full"><TrendingUp className="w-3 h-3 mr-1" /> +24%</span>
+              </div>
+              <h3 className="text-text-light font-medium text-sm mb-1">Bookings This Month</h3>
+              <p className="text-3xl font-bold text-text-dark">3,204</p>
+            </div>
+
+            <div className="bg-white border border-gray-border rounded-2xl p-6 shadow-sm">
+              <div className="flex justify-between items-start mb-4">
+                <div className="w-12 h-12 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center">
+                  <Activity className="w-6 h-6" />
+                </div>
+                <span className="flex items-center text-xs font-bold text-text-mid bg-gray-100 px-2 py-1 rounded-full">Active</span>
+              </div>
+              <h3 className="text-text-light font-medium text-sm mb-1">Live Countries</h3>
+              <p className="text-3xl font-bold text-text-dark">6</p>
+            </div>
+
+            <div className="bg-white border border-gray-border rounded-2xl p-6 shadow-sm">
+              <div className="flex justify-between items-start mb-4">
+                <div className="w-12 h-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center">
+                  <Users className="w-6 h-6" />
+                </div>
+                <span className="flex items-center text-xs font-bold text-green-badge bg-green-badge-bg px-2 py-1 rounded-full"><TrendingUp className="w-3 h-3 mr-1" /> +8%</span>
+              </div>
+              <h3 className="text-text-light font-medium text-sm mb-1">Registered Patients</h3>
+              <p className="text-3xl font-bold text-text-dark">18,590</p>
+            </div>
+          </div>
+
+          {/* Recent Bookings Table */}
+          <div className="bg-white border border-gray-border rounded-2xl shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-gray-border flex items-center justify-between">
+              <h2 className="text-xl font-bold text-text-dark">Recent Bookings</h2>
+              <Button variant="outline" size="sm" className="h-9">View All</Button>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left">
+                <thead className="bg-gray-50 text-text-light uppercase tracking-wider font-semibold text-xs border-b border-gray-border">
+                  <tr>
+                    <th className="px-6 py-4">Booking ID</th>
+                    <th className="px-6 py-4">Patient</th>
+                    <th className="px-6 py-4">Doctor</th>
+                    <th className="px-6 py-4">Date & Time</th>
+                    <th className="px-6 py-4">Status</th>
+                    <th className="px-6 py-4">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-border">
+                  {recentBookings.map((b) => (
+                    <tr key={b.id} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="px-6 py-4 font-medium text-text-dark">{b.id}</td>
+                      <td className="px-6 py-4 text-text-mid">{b.patient}</td>
+                      <td className="px-6 py-4 text-text-mid font-medium">{b.doctor}</td>
+                      <td className="px-6 py-4 text-text-mid">{b.date}, {b.time}</td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider ${
+                          b.status === 'Confirmed' ? 'bg-green-badge-bg text-green-badge' :
+                          b.status === 'Pending' ? 'bg-orange-50 text-orange-600' :
+                          'bg-red-50 text-red-600'
+                        }`}>
+                          {b.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <button className="text-blue-primary hover:underline font-medium">Manage</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </main>
+      </div>
+    </div>
+  );
+}
