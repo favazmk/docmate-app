@@ -3,30 +3,50 @@ import Link from "next/link";
 import { BadgeCheck, Star, MapPin, Globe, GraduationCap, ShieldCheck } from "lucide-react";
 import BookingWidget from "@/components/BookingWidget";
 import { Badge } from "@/components/ui/badge";
+import prisma from "@/lib/prisma";
+import { notFound } from "next/navigation";
 
-export default function DoctorProfilePage({ params }: { params: { slug: string } }) {
-  // In a real app, we would fetch doctor data using params.slug
+const getCountryFlag = (country: string) => {
+  const flags: Record<string, string> = {
+    AE: "🇦🇪",
+    SA: "🇸🇦",
+    KW: "🇰🇼",
+    BH: "🇧🇭",
+    QA: "🇶🇦",
+    OM: "🇴🇲",
+  };
+  return flags[country.toUpperCase()] || "📍";
+};
+
+export default async function DoctorProfilePage({ params }: { params: { slug: string } }) {
+  const dbDoctor = await prisma.doctor.findUnique({
+    where: { slug: params.slug }
+  });
+
+  if (!dbDoctor) {
+    notFound();
+  }
+
   const doctor = {
-    name: "Dr. Ahmed Al Mansouri",
-    specialty: "Cardiologist",
-    rating: 4.9,
-    reviews: 124,
-    city: "Dubai",
-    countryFlag: "🇦🇪",
-    languages: ["Arabic", "English", "French"],
-    fee: 450,
+    name: dbDoctor.name,
+    specialty: dbDoctor.specialty,
+    rating: dbDoctor.rating,
+    reviews: dbDoctor.reviews,
+    city: dbDoctor.city,
+    countryFlag: getCountryFlag(dbDoctor.country),
+    languages: dbDoctor.languages.split(",").map(lang => lang.trim()),
+    fee: dbDoctor.fee,
     currency: "AED",
-    photoUrl: "https://ui-avatars.com/api/?name=Ahmed+Al+Mansouri&background=2200CC&color=fff&size=512",
+    photoUrl: dbDoctor.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(dbDoctor.name)}&background=2200CC&color=fff`,
     isVerified: true,
     experience: "15+ Years Experience",
-    bio: "Dr. Ahmed Al Mansouri is a highly respected Consultant Cardiologist with over 15 years of experience in diagnosing and treating complex cardiovascular conditions. He completed his fellowship at the Cleveland Clinic and has since been a pioneer in non-invasive cardiac imaging in the UAE.",
+    bio: dbDoctor.bio,
     qualifications: [
-      "MD, Damascus University",
-      "Board Certified in Cardiovascular Disease (ABIM)",
-      "Fellowship in Interventional Cardiology, Cleveland Clinic",
-      "Member of the European Society of Cardiology"
+      "MD, Board Certified Specialist",
+      `Fellowship in Clinical ${dbDoctor.specialty}`,
+      `Affiliated with ${dbDoctor.affiliation}`
     ],
-    clinicName: "Mediclinic City Hospital",
+    clinicName: dbDoctor.affiliation,
     insurances: ["Daman", "AXA", "Nextcare", "Oman Insurance", "MetLife"]
   };
 

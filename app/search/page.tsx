@@ -3,88 +3,80 @@ import DoctorCard from "@/components/DoctorCard";
 import { SlidersHorizontal, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import prisma from "@/lib/prisma";
 
-export default function SearchResultsPage() {
-  const featuredDoctors = [
-    {
-      slug: "dr-ahmed-al-mansouri",
-      name: "Dr. Ahmed Al Mansouri",
-      specialty: "Cardiologist",
-      rating: 4.9,
-      reviews: 124,
-      city: "Dubai",
-      countryFlag: "🇦🇪",
-      languages: ["Arabic", "English"],
-      fee: 450,
-      currency: "AED",
-      photoUrl: "https://ui-avatars.com/api/?name=Ahmed+Al+Mansouri&background=2200CC&color=fff",
-      isVerified: true,
-    },
-    {
-      slug: "dr-sara-johnson",
-      name: "Dr. Sara Johnson",
-      specialty: "Dermatologist",
-      rating: 4.8,
-      reviews: 89,
-      city: "Dubai",
-      countryFlag: "🇦🇪",
-      languages: ["English", "French"],
-      fee: 300,
-      currency: "AED",
-      photoUrl: "https://ui-avatars.com/api/?name=Sara+Johnson&background=059669&color=fff",
-      isVerified: true,
-    },
-    {
-      slug: "dr-khalid-omar",
-      name: "Dr. Khalid Omar",
-      specialty: "Orthopedics",
-      rating: 4.7,
-      reviews: 210,
-      city: "Abu Dhabi",
-      countryFlag: "🇦🇪",
-      languages: ["Arabic", "English"],
-      fee: 400,
-      currency: "AED",
-      photoUrl: "https://ui-avatars.com/api/?name=Khalid+Omar&background=F59E0B&color=fff",
-      isVerified: true,
-    },
-    {
-      slug: "dr-maria-garcia",
-      name: "Dr. Maria Garcia",
-      specialty: "Pediatrician",
-      rating: 5.0,
-      reviews: 342,
-      city: "Dubai",
-      countryFlag: "🇦🇪",
-      languages: ["English", "Spanish", "Arabic"],
-      fee: 350,
-      currency: "AED",
-      photoUrl: "https://ui-avatars.com/api/?name=Maria+Garcia&background=EEF0FF&color=2200CC",
-      isVerified: true,
-    },
-    {
-      slug: "dr-fahad-al-otaibi",
-      name: "Dr. Fahad Al Otaibi",
-      specialty: "Cardiologist",
-      rating: 4.6,
-      reviews: 78,
-      city: "Dubai",
-      countryFlag: "🇦🇪",
-      languages: ["Arabic", "English", "Urdu"],
-      fee: 380,
-      currency: "AED",
-      photoUrl: "https://ui-avatars.com/api/?name=Fahad+Al+Otaibi&background=2200CC&color=fff",
-      isVerified: false,
-    },
-  ];
+const getCountryFlag = (country: string) => {
+  const flags: Record<string, string> = {
+    AE: "🇦🇪",
+    SA: "🇸🇦",
+    KW: "🇰🇼",
+    BH: "🇧🇭",
+    QA: "🇶🇦",
+    OM: "🇴🇲",
+  };
+  return flags[country.toUpperCase()] || "📍";
+};
+
+export default async function SearchResultsPage({
+  searchParams,
+}: {
+  searchParams: { specialty?: string; city?: string; insurance?: string };
+}) {
+  const { specialty, city } = searchParams;
+
+  // Build query where filter dynamically
+  const whereClause: any = {
+    status: "Active",
+  };
+
+  if (specialty && typeof specialty === "string" && specialty.trim() !== "") {
+    whereClause.specialty = {
+      contains: specialty.trim(),
+    };
+  }
+
+  if (city && typeof city === "string" && city.trim() !== "") {
+    whereClause.city = {
+      contains: city.trim(),
+    };
+  }
+
+  const dbDoctors = await prisma.doctor.findMany({
+    where: whereClause,
+  });
+
+  const doctors = dbDoctors.map(d => ({
+    slug: d.slug,
+    name: d.name,
+    specialty: d.specialty,
+    rating: d.rating,
+    reviews: d.reviews,
+    city: d.city,
+    countryFlag: getCountryFlag(d.country),
+    languages: d.languages.split(",").map(lang => lang.trim()),
+    fee: d.fee,
+    currency: "AED",
+    photoUrl: d.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(d.name)}&background=2200CC&color=fff`,
+    isVerified: true
+  }));
 
   return (
     <div className="bg-gray-bg min-h-screen py-8 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-text-dark mb-1">124 doctors found</h1>
-            <p className="text-sm text-text-mid">Showing results for <span className="font-semibold text-text-dark">All Specialties</span> in <span className="font-semibold text-text-dark">UAE</span></p>
+            <h1 className="text-2xl font-bold text-text-dark mb-1">{doctors.length} doctors found</h1>
+            <p className="text-sm text-text-mid">
+              Showing results for{" "}
+              <span className="font-semibold text-text-dark">
+                {specialty || "All Specialties"}
+              </span>{" "}
+              {city && (
+                <>
+                  in <span className="font-semibold text-text-dark">{city}</span>
+                </>
+              )}
+            </p>
           </div>
           
           <div className="flex items-center gap-3 w-full md:w-auto">
@@ -123,17 +115,27 @@ export default function SearchResultsPage() {
 
           {/* Results Grid */}
           <div className="flex-1 flex flex-col gap-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredDoctors.map((doc, i) => (
-                <DoctorCard key={i} {...doc} />
-              ))}
-            </div>
+            {doctors.length === 0 ? (
+              <div className="bg-white border border-gray-border rounded-xl p-12 text-center flex flex-col items-center gap-4">
+                <span className="text-4xl">🔍</span>
+                <h3 className="font-bold text-text-dark text-lg">No Doctors Found</h3>
+                <p className="text-text-mid max-w-sm text-sm">We couldn't find any active doctors matching your search query. Try broadening your criteria or search parameters!</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {doctors.map((doc, i) => (
+                  <DoctorCard key={i} {...doc} />
+                ))}
+              </div>
+            )}
 
-            <div className="flex justify-center mt-8">
-              <Button variant="outline" className="border-gray-border bg-white text-text-dark hover:bg-gray-bg hover:text-blue-primary font-semibold h-11 px-8 rounded-xl shadow-sm">
-                Load more doctors
-              </Button>
-            </div>
+            {doctors.length > 0 && (
+              <div className="flex justify-center mt-8">
+                <Button variant="outline" className="border-gray-border bg-white text-text-dark hover:bg-gray-bg hover:text-blue-primary font-semibold h-11 px-8 rounded-xl shadow-sm">
+                  Load more doctors
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>

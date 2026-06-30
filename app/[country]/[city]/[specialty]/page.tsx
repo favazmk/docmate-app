@@ -4,6 +4,19 @@ import DoctorCard from "@/components/DoctorCard";
 import { SlidersHorizontal } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Metadata } from "next";
+import prisma from "@/lib/prisma";
+
+const getCountryFlag = (country: string) => {
+  const flags: Record<string, string> = {
+    AE: "🇦🇪",
+    SA: "🇸🇦",
+    KW: "🇰🇼",
+    BH: "🇧🇭",
+    QA: "🇶🇦",
+    OM: "🇴🇲",
+  };
+  return flags[country.toUpperCase()] || "📍";
+};
 
 export async function generateMetadata({ params }: { params: { country: string, city: string, specialty: string } }): Promise<Metadata> {
   const city = params.city.charAt(0).toUpperCase() + params.city.slice(1);
@@ -15,41 +28,34 @@ export async function generateMetadata({ params }: { params: { country: string, 
   };
 }
 
-export default function SpecialtyCityPage({ params }: { params: { country: string, city: string, specialty: string } }) {
+export default async function SpecialtyCityPage({ params }: { params: { country: string, city: string, specialty: string } }) {
   const city = params.city.charAt(0).toUpperCase() + params.city.slice(1);
   const specialty = params.specialty.charAt(0).toUpperCase() + params.specialty.slice(1);
   const country = params.country.toUpperCase();
 
-  const featuredDoctors = [
-    {
-      slug: "dr-sara-johnson",
-      name: "Dr. Sara Johnson",
-      specialty: specialty,
-      rating: 4.8,
-      reviews: 89,
-      city: city,
-      countryFlag: "🇦🇪",
-      languages: ["English", "French"],
-      fee: 300,
-      currency: "AED",
-      photoUrl: "https://ui-avatars.com/api/?name=Sara+Johnson&background=059669&color=fff",
-      isVerified: true,
-    },
-    {
-      slug: "dr-ahmed-al-mansouri",
-      name: "Dr. Ahmed Al Mansouri",
-      specialty: specialty,
-      rating: 4.9,
-      reviews: 124,
-      city: city,
-      countryFlag: "🇦🇪",
-      languages: ["Arabic", "English"],
-      fee: 450,
-      currency: "AED",
-      photoUrl: "https://ui-avatars.com/api/?name=Ahmed+Al+Mansouri&background=2200CC&color=fff",
-      isVerified: true,
+  const dbDoctors = await prisma.doctor.findMany({
+    where: {
+      status: "Active",
+      country: country,
+      city: { contains: params.city },
+      specialty: { contains: params.specialty }
     }
-  ];
+  });
+
+  const featuredDoctors = dbDoctors.map(d => ({
+    slug: d.slug,
+    name: d.name,
+    specialty: d.specialty,
+    rating: d.rating,
+    reviews: d.reviews,
+    city: d.city,
+    countryFlag: getCountryFlag(d.country),
+    languages: d.languages.split(",").map(lang => lang.trim()),
+    fee: d.fee,
+    currency: "AED",
+    photoUrl: d.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(d.name)}&background=2200CC&color=fff`,
+    isVerified: true
+  }));
 
   return (
     <div className="bg-gray-bg min-h-screen py-8 px-4">
@@ -100,11 +106,19 @@ export default function SpecialtyCityPage({ params }: { params: { country: strin
           </div>
 
           <div className="flex-1 flex flex-col gap-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {featuredDoctors.map((doc, i) => (
-                <DoctorCard key={i} {...doc} />
-              ))}
-            </div>
+            {featuredDoctors.length === 0 ? (
+              <div className="bg-white border border-gray-border rounded-xl p-12 text-center flex flex-col items-center gap-4">
+                <span className="text-4xl">🔍</span>
+                <h3 className="font-bold text-text-dark text-lg">No Doctors Found</h3>
+                <p className="text-text-mid max-w-sm text-sm">We couldn't find any active {specialty.toLowerCase()} doctors in {city} right now. Try searching in other cities or specialties!</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {featuredDoctors.map((doc, i) => (
+                  <DoctorCard key={i} {...doc} />
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
