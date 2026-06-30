@@ -43,7 +43,7 @@ export default function Home() {
       countryFlag: "🇸🇦",
       languages: ["English", "French"],
       fee: 300,
-      currency: "SAR",
+      currency: "AED",
       photoUrl: "https://ui-avatars.com/api/?name=Sara+Johnson&background=059669&color=fff",
       isVerified: true,
     },
@@ -56,8 +56,8 @@ export default function Home() {
       city: "Kuwait City",
       countryFlag: "🇰🇼",
       languages: ["Arabic", "English"],
-      fee: 40,
-      currency: "KWD",
+      fee: 350,
+      currency: "AED",
       photoUrl: "https://ui-avatars.com/api/?name=Khalid+Omar&background=F59E0B&color=fff",
       isVerified: true,
     },
@@ -71,7 +71,7 @@ export default function Home() {
       countryFlag: "🇶🇦",
       languages: ["English", "Spanish", "Arabic"],
       fee: 350,
-      currency: "QAR",
+      currency: "AED",
       photoUrl: "https://ui-avatars.com/api/?name=Maria+Garcia&background=EEF0FF&color=2200CC",
       isVerified: true,
     },
@@ -89,7 +89,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <section className="bg-blue-primary pt-16 pb-32 px-4 relative">
+      <section className="bg-gradient-to-b from-blue-hover to-blue-primary pt-16 pb-32 px-4 relative">
         <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
           <span className="uppercase tracking-widest text-[11px] font-bold text-white/70 mb-4">
             GCC's #1 doctor booking platform
@@ -226,7 +226,7 @@ export default function Home() {
       {/* Clinic CTA */}
       <section className="py-20 px-4 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-blue-primary rounded-3xl p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl shadow-blue-primary/20">
+          <div className="bg-gradient-to-r from-blue-hover to-blue-primary rounded-3xl p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl shadow-blue-primary/10">
             <div className="flex flex-col max-w-xl text-center md:text-left">
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight">
                 Are you a doctor or clinic?

@@ -50,10 +50,10 @@
     --sidebar-ring: oklch(0.708 0 0);
 
     /* Brand Colors */
-    --blue-primary: #2200CC;
-    --blue-hover: #1A00AA;
-    --blue-light: #EEF0FF;
-    --blue-mid: #4422EE;
+    --blue-primary: #1d4ed8;
+    --blue-hover: #1e3a8a;
+    --blue-light: #f0f4ff;
+    --blue-mid: #3b82f6;
     --white: #FFFFFF;
     --gray-bg: #F5F6FA;
     --gray-border: #E2E4EE;
