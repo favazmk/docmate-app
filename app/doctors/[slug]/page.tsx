@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 const getCountryFlag = (country: string) => {
   const flags: Record<string, string> = {
     AE: "🇦🇪",

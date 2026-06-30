@@ -5,8 +5,23 @@ import DoctorCard from "@/components/DoctorCard";
 import CountryCard from "@/components/CountryCard";
 import { BadgeCheck, Globe, Zap, ShieldCheck, Star, Activity, Heart, Eye, Bone, Baby, Brain, Stethoscope } from "lucide-react";
 import Link from "next/link";
+import prisma from "@/lib/prisma";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+const getCountryFlag = (country: string) => {
+  const flags: Record<string, string> = {
+    AE: "🇦🇪",
+    SA: "🇸🇦",
+    KW: "🇰🇼",
+    BH: "🇧🇭",
+    QA: "🇶🇦",
+    OM: "🇴🇲",
+  };
+  return flags[country.toUpperCase()] || "📍";
+};
+
+export default async function Home() {
   const specialties = [
     { name: "Dentistry", count: 423, icon: Activity, href: "/search?specialty=dentistry" },
     { name: "Cardiology", count: 156, icon: Heart, href: "/search?specialty=cardiology" },
@@ -18,64 +33,25 @@ export default function Home() {
     { name: "View All", count: 22, icon: Activity, href: "/search", isViewAll: true },
   ];
 
-  const featuredDoctors = [
-    {
-      slug: "dr-ahmed-al-mansouri",
-      name: "Dr. Ahmed Al Mansouri",
-      specialty: "Cardiologist",
-      rating: 4.9,
-      reviews: 124,
-      city: "Dubai",
-      countryFlag: "🇦🇪",
-      languages: ["Arabic", "English"],
-      fee: 450,
-      currency: "AED",
-      photoUrl: "https://ui-avatars.com/api/?name=Ahmed+Al+Mansouri&background=2200CC&color=fff",
-      isVerified: true,
-    },
-    {
-      slug: "dr-sara-johnson",
-      name: "Dr. Sara Johnson",
-      specialty: "Dermatologist",
-      rating: 4.8,
-      reviews: 89,
-      city: "Riyadh",
-      countryFlag: "🇸🇦",
-      languages: ["English", "French"],
-      fee: 300,
-      currency: "AED",
-      photoUrl: "https://ui-avatars.com/api/?name=Sara+Johnson&background=059669&color=fff",
-      isVerified: true,
-    },
-    {
-      slug: "dr-khalid-omar",
-      name: "Dr. Khalid Omar",
-      specialty: "Orthopedics",
-      rating: 4.7,
-      reviews: 210,
-      city: "Kuwait City",
-      countryFlag: "🇰🇼",
-      languages: ["Arabic", "English"],
-      fee: 350,
-      currency: "AED",
-      photoUrl: "https://ui-avatars.com/api/?name=Khalid+Omar&background=F59E0B&color=fff",
-      isVerified: true,
-    },
-    {
-      slug: "dr-maria-garcia",
-      name: "Dr. Maria Garcia",
-      specialty: "Pediatrician",
-      rating: 5.0,
-      reviews: 342,
-      city: "Doha",
-      countryFlag: "🇶🇦",
-      languages: ["English", "Spanish", "Arabic"],
-      fee: 350,
-      currency: "AED",
-      photoUrl: "https://ui-avatars.com/api/?name=Maria+Garcia&background=EEF0FF&color=2200CC",
-      isVerified: true,
-    },
-  ];
+  const dbDoctors = await prisma.doctor.findMany({
+    take: 4,
+    where: { status: "Active" }
+  });
+
+  const featuredDoctors = dbDoctors.map(d => ({
+    slug: d.slug,
+    name: d.name,
+    specialty: d.specialty,
+    rating: d.rating,
+    reviews: d.reviews,
+    city: d.city,
+    countryFlag: getCountryFlag(d.country),
+    languages: d.languages.split(",").map(s => s.trim()),
+    fee: d.fee,
+    currency: "AED",
+    photoUrl: d.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(d.name)}&background=2200CC&color=fff`,
+    isVerified: true
+  }));
 
   const countries = [
     { flag: "🇦🇪", name: "United Arab Emirates", cities: "Dubai, Abu Dhabi, Sharjah...", href: "/ae" },

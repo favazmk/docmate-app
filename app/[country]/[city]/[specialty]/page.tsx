@@ -6,6 +6,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Metadata } from "next";
 import prisma from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 const getCountryFlag = (country: string) => {
   const flags: Record<string, string> = {
     AE: "🇦🇪",
