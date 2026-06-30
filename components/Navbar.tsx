@@ -46,7 +46,9 @@ export default function Navbar() {
           <Link href="/list-your-clinic" className="text-sm font-medium text-blue-primary hover:text-blue-hover transition-colors">
             List your clinic
           </Link>
-          <Button className="bg-blue-primary hover:bg-blue-hover text-white rounded-lg">Sign In</Button>
+          <Link href="/dashboard">
+            <Button className="bg-blue-primary hover:bg-blue-hover text-white rounded-lg">Sign In</Button>
+          </Link>
         </nav>
 
         {/* Mobile Nav */}
@@ -73,7 +75,9 @@ export default function Navbar() {
                 <Link href="/list-your-clinic" className="text-lg font-medium text-blue-primary">
                   List your clinic
                 </Link>
-                <Button className="bg-blue-primary hover:bg-blue-hover text-white rounded-lg w-full">Sign In</Button>
+                <Link href="/dashboard">
+                  <Button className="bg-blue-primary hover:bg-blue-hover text-white rounded-lg w-full">Sign In</Button>
+                </Link>
               </div>
             </SheetContent>
           </Sheet>
