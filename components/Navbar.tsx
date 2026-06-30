@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -13,6 +14,37 @@ import {
 
 export default function Navbar() {
   const pathname = usePathname();
+  const [activeHash, setActiveHash] = useState("");
+
+  useEffect(() => {
+    setActiveHash(window.location.hash);
+    const handleHashChange = () => {
+      setActiveHash(window.location.hash);
+    };
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+  const checkActive = (href: string) => {
+    if (href.startsWith("/#")) {
+      const hash = href.substring(1);
+      return pathname === "/" && activeHash === hash;
+    }
+    if (href === "/search") {
+      return (
+        pathname === "/search" ||
+        pathname.startsWith("/search/") ||
+        pathname.startsWith("/doctors/") ||
+        pathname.startsWith("/book/") ||
+        /^\/[a-zA-Z]{2}(\/|$)/.test(pathname)
+      );
+    }
+    if (href === "/blog") {
+      return pathname === "/blog" || pathname.startsWith("/blog/");
+    }
+    return pathname === href;
+  };
+
   const navLinks = [
     { label: "Find doctors", href: "/search" },
     { label: "Specialties", href: "/#specialties" },
@@ -31,19 +63,26 @@ export default function Navbar() {
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-6">
           {navLinks.map((link) => {
-            const isActive = pathname === link.href;
+            const isActive = checkActive(link.href);
             return (
               <Link 
                 key={link.label} 
                 href={link.href} 
-                className={`text-sm font-medium transition-colors ${isActive ? "text-blue-primary font-bold" : "text-text-mid hover:text-blue-primary"}`}
+                className={`text-sm font-medium transition-colors ${isActive ? "text-blue-primary font-bold border-b-2 border-blue-primary pb-1" : "text-text-mid hover:text-blue-primary"}`}
               >
                 {link.label}
               </Link>
             );
           })}
           <div className="w-px h-6 bg-gray-border mx-2"></div>
-          <Link href="/list-your-clinic" className="text-sm font-medium text-blue-primary hover:text-blue-hover transition-colors">
+          <Link 
+            href="/list-your-clinic" 
+            className={`text-sm font-medium transition-colors ${
+              pathname === "/list-your-clinic"
+                ? "text-blue-primary font-bold border-b-2 border-blue-primary pb-1"
+                : "text-blue-primary hover:text-blue-hover"
+            }`}
+          >
             List your clinic
           </Link>
           <Link href="/dashboard">
@@ -60,19 +99,24 @@ export default function Navbar() {
             <SheetContent side="left" className="w-[300px] sm:w-[400px]">
               <div className="flex flex-col gap-6 mt-6">
                 {navLinks.map((link) => {
-                  const isActive = pathname === link.href;
+                  const isActive = checkActive(link.href);
                   return (
                     <Link 
                       key={link.label} 
                       href={link.href} 
-                      className={`text-lg font-medium transition-colors ${isActive ? "text-blue-primary font-bold" : "text-text-dark"}`}
+                      className={`text-lg font-medium transition-colors ${isActive ? "text-blue-primary font-bold" : "text-text-dark hover:text-blue-primary"}`}
                     >
                       {link.label}
                     </Link>
                   );
                 })}
                 <div className="h-px bg-gray-border w-full"></div>
-                <Link href="/list-your-clinic" className="text-lg font-medium text-blue-primary">
+                <Link 
+                  href="/list-your-clinic" 
+                  className={`text-lg font-medium transition-colors ${
+                    pathname === "/list-your-clinic" ? "text-blue-primary font-bold" : "text-blue-primary"
+                  }`}
+                >
                   List your clinic
                 </Link>
                 <Link href="/dashboard">
