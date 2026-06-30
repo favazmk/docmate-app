@@ -1,0 +1,72 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  PATIENT
+  DOCTOR
+  ADMIN
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+model User {
+  id           String        @id @default(uuid())
+  name         String
+  email        String        @unique
+  password     String
+  phone        String?
+  role         Role          @default(PATIENT)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  appointments Appointment[]
+}
+
+model Doctor {
+  id           String        @id @default(uuid())
+  name         String
+  slug         String        @unique
+  specialty    String
+  photoUrl     String?       @db.VarChar(500)
+  rating       Float         @default(5.0)
+  reviews      Int           @default(0)
+  city         String
+  country      String
+  languages    String        @default("English")
+  fee          Int
+  affiliation  String
+  bio          String        @db.Text
+  status       String        @default("Active") // Active, Pending
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  appointments Appointment[]
+}
+
+model Appointment {
+  id           String            @id @default(uuid())
+  userId       String
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  doctorId     String
+  doctor       Doctor            @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  date         String            // Format: YYYY-MM-DD
+  timeSlot     String            // Format: HH:MM AM/PM
+  patientName  String
+  patientEmail String
+  patientPhone String
+  reason       String?           @db.Text
+  status       AppointmentStatus @default(CONFIRMED)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  @@index([userId])
+  @@index([doctorId])
+}
