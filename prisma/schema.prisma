@@ -51,6 +51,7 @@ model Doctor {
   appointments Appointment[]
 }
 
+
 model Appointment {
   id           String            @id @default(uuid())
   userId       String
