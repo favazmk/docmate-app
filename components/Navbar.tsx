@@ -22,8 +22,48 @@ export default function Navbar() {
       setActiveHash(window.location.hash);
     };
     window.addEventListener("hashchange", handleHashChange);
+
+    // Scroll spy for homepage sections
+    let observer: IntersectionObserver;
+    if (pathname === "/") {
+      const sections = ["specialties", "countries"];
+      const elements = sections.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+
+      const observerOptions = {
+        root: null,
+        rootMargin: "-30% 0px -50% 0px", // Trigger when the section takes up the middle of the screen
+        threshold: 0,
+      };
+
+      const observerCallback = (entries: IntersectionObserverEntry[]) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveHash(`#${entry.target.id}`);
+          }
+        });
+      };
+
+      observer = new IntersectionObserver(observerCallback, observerOptions);
+      elements.forEach((el) => observer.observe(el));
+
+      const handleScroll = () => {
+        if (window.scrollY < 100) {
+          setActiveHash("");
+        }
+      };
+      window.addEventListener("scroll", handleScroll);
+
+      return () => {
+        window.removeEventListener("hashchange", handleHashChange);
+        window.removeEventListener("scroll", handleScroll);
+        if (observer) {
+          elements.forEach((el) => observer.unobserve(el));
+        }
+      };
+    }
+
     return () => window.removeEventListener("hashchange", handleHashChange);
-  }, []);
+  }, [pathname]);
 
   const checkActive = (href: string) => {
     if (href.startsWith("/#")) {
