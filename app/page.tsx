@@ -6,6 +6,7 @@ import CountryCard from "@/components/CountryCard";
 import { BadgeCheck, Globe, Zap, ShieldCheck, Star, Activity, Heart, Eye, Bone, Baby, Brain, Stethoscope } from "lucide-react";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
+import { Doctor } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,7 @@ export default async function Home() {
     { name: "View All", count: 22, icon: Activity, href: "/search", isViewAll: true },
   ];
 
-  let dbDoctors: any[] = [];
+  let dbDoctors: Doctor[] = [];
   try {
     dbDoctors = await prisma.doctor.findMany({
       take: 4,
