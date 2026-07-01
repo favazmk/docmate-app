@@ -4,6 +4,8 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminAppointmentsPage() {
   const appointments = await prisma.appointment.findMany({
     orderBy: { createdAt: "desc" },
