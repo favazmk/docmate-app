@@ -21,7 +21,7 @@ export default async function Home() {
     { name: "View All", count: 22, icon: Activity, href: "/search", isViewAll: true },
   ];
 
-  let dbDoctors = [];
+  let dbDoctors: any[] = [];
   try {
     dbDoctors = await prisma.doctor.findMany({
       take: 4,
