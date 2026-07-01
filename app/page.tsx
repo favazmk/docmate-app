@@ -48,12 +48,12 @@ export default async function Home() {
   }));
 
   const emirates = [
-    { flag: "🏙️", name: "Dubai", cities: "Downtown, Marina, Jumeirah...", href: "/dubai" },
-    { flag: "🏛️", name: "Abu Dhabi", cities: "Corniche, Yas Island...", href: "/abu-dhabi" },
-    { flag: "🕌", name: "Sharjah", cities: "Al Majaz, Al Qasimia...", href: "/sharjah" },
-    { flag: "🏖️", name: "Ajman", cities: "Al Rashidiya, Al Nuaimia...", href: "/ajman" },
-    { flag: "⛰️", name: "Ras Al Khaimah", cities: "Al Nakheel, Al Hamra...", href: "/ras-al-khaimah" },
-    { flag: "🌊", name: "Fujairah", cities: "Al Faseel, Dibba...", href: "/fujairah" },
+    { flag: "🇦🇪", name: "Dubai", cities: "Downtown, Marina, Jumeirah...", href: "/dubai" },
+    { flag: "🇦🇪", name: "Abu Dhabi", cities: "Corniche, Yas Island...", href: "/abu-dhabi" },
+    { flag: "🇦🇪", name: "Sharjah", cities: "Al Majaz, Al Qasimia...", href: "/sharjah" },
+    { flag: "🇦🇪", name: "Ajman", cities: "Al Rashidiya, Al Nuaimia...", href: "/ajman" },
+    { flag: "🇦🇪", name: "Ras Al Khaimah", cities: "Al Nakheel, Al Hamra...", href: "/ras-al-khaimah" },
+    { flag: "🇦🇪", name: "Fujairah", cities: "Al Faseel, Dibba...", href: "/fujairah" },
   ];
 
   return (
