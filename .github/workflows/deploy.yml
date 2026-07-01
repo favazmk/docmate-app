@@ -18,7 +18,7 @@ jobs:
       with:
         host: ${{ secrets.HOSTINGER_SSH_IP }}
         username: ${{ secrets.HOSTINGER_SSH_USER }}
-        password: ${{ secrets.HOSTINGER_SSH_PASS }}
+        key: ${{ secrets.HOSTINGER_SSH_KEY }}
         port: ${{ secrets.HOSTINGER_SSH_PORT }}
         script: |
           # 1. Navigate to the project directory on Hostinger using the secret path
