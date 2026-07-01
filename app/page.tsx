@@ -21,10 +21,15 @@ export default async function Home() {
     { name: "View All", count: 22, icon: Activity, href: "/search", isViewAll: true },
   ];
 
-  const dbDoctors = await prisma.doctor.findMany({
-    take: 4,
-    where: { status: "Active" }
-  });
+  let dbDoctors = [];
+  try {
+    dbDoctors = await prisma.doctor.findMany({
+      take: 4,
+      where: { status: "Active" }
+    });
+  } catch (e) {
+    console.error("Error fetching doctors on homepage:", e);
+  }
 
   const featuredDoctors = dbDoctors.map(d => ({
     slug: d.slug,
