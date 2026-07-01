@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { CheckCircle2, ChevronLeft, CalendarDays, Clock, MapPin, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { createAppointment } from "@/app/actions/booking";
 
 interface BookingWizardProps {
@@ -345,9 +345,9 @@ export default function BookingWizard({ doctor }: BookingWizardProps) {
             <Button variant="outline" className="border-2 border-gray-border text-text-dark hover:bg-gray-bg h-12 px-8 rounded-xl font-bold">
               Add to Calendar
             </Button>
-            <Button asChild className="bg-blue-primary hover:bg-blue-hover text-white h-12 px-8 rounded-xl font-bold shadow-md shadow-blue-primary/20">
-              <Link href="/dashboard">View Appointments</Link>
-            </Button>
+            <Link href="/dashboard" className={`${buttonVariants()} bg-blue-primary hover:bg-blue-hover text-white h-12 px-8 rounded-xl font-bold shadow-md shadow-blue-primary/20`}>
+              View Appointments
+            </Link>
           </div>
         </div>
       )}

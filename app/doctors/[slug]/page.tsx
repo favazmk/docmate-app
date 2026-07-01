@@ -8,18 +8,6 @@ import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
-const getCountryFlag = (country: string) => {
-  const flags: Record<string, string> = {
-    AE: "🇦🇪",
-    SA: "🇸🇦",
-    KW: "🇰🇼",
-    BH: "🇧🇭",
-    QA: "🇶🇦",
-    OM: "🇴🇲",
-  };
-  return flags[country.toUpperCase()] || "📍";
-};
-
 export default async function DoctorProfilePage({ params }: { params: { slug: string } }) {
   const dbDoctor = await prisma.doctor.findUnique({
     where: { slug: params.slug }
@@ -35,7 +23,7 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
     rating: dbDoctor.rating,
     reviews: dbDoctor.reviews,
     city: dbDoctor.city,
-    countryFlag: getCountryFlag(dbDoctor.country),
+    countryFlag: "🇦🇪",
     languages: dbDoctor.languages.split(",").map(lang => lang.trim()),
     fee: dbDoctor.fee,
     currency: "AED",

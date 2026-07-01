@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { CheckCircle2, HeartPulse, ShieldCheck, Users } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 
 export default function AboutPage() {
@@ -92,12 +92,12 @@ export default function AboutPage() {
             Join thousands of patients who book their healthcare appointments seamlessly through Docmate.
           </p>
           <div className="flex gap-4 w-full md:w-auto">
-            <Button asChild className="flex-1 md:flex-none bg-blue-primary hover:bg-blue-hover text-white h-12 px-8 rounded-xl font-bold text-base shadow-lg shadow-blue-primary/20">
-              <Link href="/search">Find a Doctor</Link>
-            </Button>
-            <Button asChild variant="outline" className="flex-1 md:flex-none border-2 border-gray-border text-text-dark hover:bg-white h-12 px-8 rounded-xl font-bold text-base">
-              <Link href="/list-your-clinic">For Clinics</Link>
-            </Button>
+            <Link href="/search" className={`${buttonVariants()} flex-1 md:flex-none bg-blue-primary hover:bg-blue-hover text-white h-12 px-8 rounded-xl font-bold text-base shadow-lg shadow-blue-primary/20`}>
+              Find a Doctor
+            </Link>
+            <Link href="/list-your-clinic" className={`${buttonVariants({ variant: "outline" })} flex-1 md:flex-none border-2 border-gray-border text-text-dark hover:bg-white h-12 px-8 rounded-xl font-bold text-base`}>
+              For Clinics
+            </Link>
           </div>
         </div>
       </section>

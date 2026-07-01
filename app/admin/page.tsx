@@ -1,14 +1,37 @@
 import Link from "next/link";
 import { Users, Calendar, Activity, TrendingUp, Search, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { PrismaClient } from "@prisma/client";
 
-export default function AdminDashboardPage() {
-  const recentBookings = [
-    { id: "APT-8472", patient: "John Doe", doctor: "Dr. Ahmed Al Mansouri", date: "Oct 12", time: "10:00 AM", status: "Confirmed" },
-    { id: "APT-8473", patient: "Sarah Smith", doctor: "Dr. Sara Johnson", date: "Oct 12", time: "11:30 AM", status: "Pending" },
-    { id: "APT-8474", patient: "Ali Hassan", doctor: "Dr. Khalid Omar", date: "Oct 13", time: "09:00 AM", status: "Confirmed" },
-    { id: "APT-8475", patient: "Emma Watson", doctor: "Dr. Maria Garcia", date: "Oct 14", time: "02:00 PM", status: "Cancelled" },
-  ];
+const prisma = new PrismaClient();
+
+export default async function AdminDashboardPage() {
+  const totalDoctors = await prisma.doctor.count();
+  const totalBookings = await prisma.appointment.count();
+  const registeredPatients = await prisma.user.count({ where: { role: 'PATIENT' } });
+  
+  const uniqueEmirates = await prisma.doctor.groupBy({
+    by: ['city'],
+  });
+  const liveEmirates = uniqueEmirates.length;
+
+  const rawBookings = await prisma.appointment.findMany({
+    take: 5,
+    orderBy: { createdAt: "desc" },
+    include: {
+      doctor: true,
+      user: true,
+    }
+  });
+
+  const recentBookings = rawBookings.map(b => ({
+    id: b.id.substring(0, 8).toUpperCase(),
+    patient: b.user.name,
+    doctor: b.doctor.name,
+    date: b.date,
+    time: b.timeSlot,
+    status: b.status,
+  }));
 
   return (
     <div className="bg-gray-bg min-h-screen flex">
@@ -59,7 +82,7 @@ export default function AdminDashboardPage() {
                 <span className="flex items-center text-xs font-bold text-green-badge bg-green-badge-bg px-2 py-1 rounded-full"><TrendingUp className="w-3 h-3 mr-1" /> +12%</span>
               </div>
               <h3 className="text-text-light font-medium text-sm mb-1">Total Doctors</h3>
-              <p className="text-3xl font-bold text-text-dark">542</p>
+              <p className="text-3xl font-bold text-text-dark">{totalDoctors}</p>
             </div>
             
             <div className="bg-white border border-gray-border rounded-2xl p-6 shadow-sm">
@@ -69,8 +92,8 @@ export default function AdminDashboardPage() {
                 </div>
                 <span className="flex items-center text-xs font-bold text-green-badge bg-green-badge-bg px-2 py-1 rounded-full"><TrendingUp className="w-3 h-3 mr-1" /> +24%</span>
               </div>
-              <h3 className="text-text-light font-medium text-sm mb-1">Bookings This Month</h3>
-              <p className="text-3xl font-bold text-text-dark">3,204</p>
+              <h3 className="text-text-light font-medium text-sm mb-1">Total Bookings</h3>
+              <p className="text-3xl font-bold text-text-dark">{totalBookings}</p>
             </div>
 
             <div className="bg-white border border-gray-border rounded-2xl p-6 shadow-sm">
@@ -80,8 +103,8 @@ export default function AdminDashboardPage() {
                 </div>
                 <span className="flex items-center text-xs font-bold text-text-mid bg-gray-100 px-2 py-1 rounded-full">Active</span>
               </div>
-              <h3 className="text-text-light font-medium text-sm mb-1">Live Countries</h3>
-              <p className="text-3xl font-bold text-text-dark">6</p>
+              <h3 className="text-text-light font-medium text-sm mb-1">Live Emirates</h3>
+              <p className="text-3xl font-bold text-text-dark">{liveEmirates}</p>
             </div>
 
             <div className="bg-white border border-gray-border rounded-2xl p-6 shadow-sm">
@@ -92,7 +115,7 @@ export default function AdminDashboardPage() {
                 <span className="flex items-center text-xs font-bold text-green-badge bg-green-badge-bg px-2 py-1 rounded-full"><TrendingUp className="w-3 h-3 mr-1" /> +8%</span>
               </div>
               <h3 className="text-text-light font-medium text-sm mb-1">Registered Patients</h3>
-              <p className="text-3xl font-bold text-text-dark">18,590</p>
+              <p className="text-3xl font-bold text-text-dark">{registeredPatients}</p>
             </div>
           </div>
 
@@ -100,7 +123,7 @@ export default function AdminDashboardPage() {
           <div className="bg-white border border-gray-border rounded-2xl shadow-sm overflow-hidden">
             <div className="p-6 border-b border-gray-border flex items-center justify-between">
               <h2 className="text-xl font-bold text-text-dark">Recent Bookings</h2>
-              <Button variant="outline" size="sm" className="h-9">View All</Button>
+              <Link href="/admin/appointments" className={`${buttonVariants({ variant: "outline", size: "sm" })} h-9`}>View All</Link>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
@@ -123,8 +146,8 @@ export default function AdminDashboardPage() {
                       <td className="px-6 py-4 text-text-mid">{b.date}, {b.time}</td>
                       <td className="px-6 py-4">
                         <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider ${
-                          b.status === 'Confirmed' ? 'bg-green-badge-bg text-green-badge' :
-                          b.status === 'Pending' ? 'bg-orange-50 text-orange-600' :
+                          b.status === 'CONFIRMED' ? 'bg-green-badge-bg text-green-badge' :
+                          b.status === 'PENDING' ? 'bg-orange-50 text-orange-600' :
                           'bg-red-50 text-red-600'
                         }`}>
                           {b.status}

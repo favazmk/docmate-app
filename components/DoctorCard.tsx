@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { BadgeCheck, Star } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { Badge } from "./ui/badge";
 
 interface DoctorCardProps {
@@ -73,9 +73,9 @@ export default function DoctorCard({
           <span className="text-[10px] uppercase tracking-wider font-semibold text-text-light">Consultation</span>
           <span className="font-bold text-text-dark text-sm">{currency} {fee}</span>
         </div>
-        <Button asChild size="sm" className="bg-blue-primary hover:bg-blue-hover text-white rounded-lg h-9 px-4 text-xs">
-          <Link href={`/book/${slug}`}>Book Now</Link>
-        </Button>
+        <Link href={`/book/${slug}`} className={`${buttonVariants({ size: "sm" })} bg-blue-primary hover:bg-blue-hover text-white rounded-lg h-9 px-4 text-xs`}>
+          Book Now
+        </Link>
       </div>
     </div>
   );

@@ -1,6 +1,8 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { sendAppointmentEmails } from "@/lib/email";
+import bcrypt from "bcryptjs";
 
 export async function createAppointment(data: {
   doctorSlug: string;
@@ -30,11 +32,12 @@ export async function createAppointment(data: {
       // Create a guest patient user
       // We generate a placeholder password for them which they can reset later
       const placeholderPassword = Math.random().toString(36).slice(-10);
+      const hashedPassword = await bcrypt.hash(placeholderPassword, 10);
       user = await prisma.user.create({
         data: {
           name: data.patientName,
           email: data.patientEmail.toLowerCase(),
-          password: placeholderPassword, // In a real app we would bcrypt this
+          password: hashedPassword,
           phone: data.patientPhone,
           role: "PATIENT",
         },
@@ -55,6 +58,16 @@ export async function createAppointment(data: {
         status: "CONFIRMED",
       },
     });
+
+    // 4. Send Email Notifications
+    sendAppointmentEmails({
+      patientEmail: data.patientEmail.toLowerCase(),
+      patientName: data.patientName,
+      doctorEmail: doctor.email,
+      doctorName: doctor.name,
+      appointmentDate: data.date,
+      appointmentTime: data.timeSlot,
+    }).catch(console.error);
 
     return { success: true, appointmentId: appointment.id };
   } catch (error: any) {

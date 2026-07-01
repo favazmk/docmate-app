@@ -1,55 +1,57 @@
-# Doc Mate - Doctor Appointments Made Easy
+# Docmate - GCC Doctor Booking Platform 🏥
 
-![Doc Mate Logo](public/logo.png)
+Docmate is a premium, localized healthcare booking platform designed specifically for the UAE and GCC region. It allows patients to search for top-rated specialists, check real-time availability, and securely book appointments online.
 
-Doc Mate is a modern, high-performance web platform that connects patients with top-tier healthcare providers across the GCC (UAE, Saudi Arabia, Kuwait, Bahrain, Qatar, Oman). Find verified specialists, compare reviews, and book appointments instantly.
+## 🚀 Key Features
 
-## Tech Stack
+* **Localized UAE SEO Routes**: Dynamic emirate-based routing (e.g., `/dubai/cardiologist`) optimized for search engines.
+* **Patient Dashboard**: Secure login for patients to view, manage, and review their past and upcoming appointments.
+* **Admin Dashboard**: Comprehensive management interface to view live metrics, add new doctors with full profiles, and monitor all platform bookings.
+* **Real-time Availability Search**: Powerful filtering by specialty, city, and date.
+* **Automated Email Notifications**: Instant confirmation emails sent to the Patient, Doctor, and Admin via Nodemailer upon booking.
+* **Secure Authentication**: Built with NextAuth.js and bcrypt for password hashing.
+* **Modern Tech Stack**: Next.js 14 (App Router), Tailwind CSS, Prisma ORM, and MySQL (hosted on Hostinger).
 
-- **Framework:** Next.js 14 (App Router)
-- **Styling:** Tailwind CSS
-- **UI Components:** Shadcn/ui & Radix Primitives
-- **Icons:** Lucide React
-- **Language:** TypeScript
+## 🛠️ Environment Setup
 
-## Features
+To run this project locally or deploy it to production, you need the following environment variables configured in a `.env` file at the root of your project:
 
-- **Instant Online Booking:** Interactive 3-step booking flow with real-time slot selection.
-- **Advanced Search & Filters:** Find doctors by specialty, city, insurance plan, and consultation fee.
-- **Doctor Profiles:** Detailed professional bios, verified patient reviews, and clinic locations.
-- **Patient Dashboard:** Manage upcoming appointments, view history, and update profile settings.
-- **Admin Dashboard:** Comprehensive dashboard for platform administrators to manage doctors and view booking statistics.
-- **Programmatic SEO:** Auto-generated landing pages for specific cities and medical specialties (e.g., Cardiologists in Dubai) to drive organic traffic.
-- **Responsive Design:** A fully fluid layout that looks stunning on mobile, tablet, and desktop devices.
-- **Clinic Onboarding:** Dedicated B2B lead generation page for clinics wanting to join the platform.
+```env
+# Database Configuration (MySQL)
+DATABASE_URL="mysql://username:password@host:port/database_name"
 
-## Local Setup / Run Instructions
+# NextAuth Security
+NEXTAUTH_URL="http://localhost:3000" # Update for production
+NEXTAUTH_SECRET="your-super-secret-key-for-jwt"
 
-To run this project locally, follow these steps:
+# Nodemailer SMTP Configuration
+SMTP_HOST="smtp.hostinger.com"
+SMTP_PORT="465"
+SMTP_USER="your-email@yourdomain.com"
+SMTP_PASS="your-email-password"
+ADMIN_EMAIL="admin@docmate.com" # Where system alerts are sent
+```
 
-1. **Clone the repository:**
-   ```bash
-   git clone <your-repo-url>
-   cd docmate-app
-   ```
+## 📦 Local Development
 
-2. **Install dependencies:**
-   Make sure you have Node.js installed, then run:
+1. **Install Dependencies**
    ```bash
    npm install
    ```
 
-3. **Start the development server:**
+2. **Initialize Database**
+   ```bash
+   npx prisma generate
+   npx prisma db push
+   node prisma/seed.js # Seeds initial doctors
+   node prisma/add-admin.js # Creates the demo admin user
+   ```
+
+3. **Start the Development Server**
    ```bash
    npm run dev
    ```
 
-4. **View the application:**
-   Open your browser and navigate to [http://localhost:3000](http://localhost:3000).
+## 🚀 Deployment (Hostinger)
 
-## Repository Structure
-
-- `app/`: Next.js App Router pages and layouts.
-- `components/`: Reusable React components (UI elements, Layout components).
-- `public/`: Static assets (images, icons).
-- `lib/`: Utility functions and shared helpers.
+This application is configured and ready for deployment on Hostinger VPS or shared hosting with Node.js support. Ensure your `DATABASE_URL` points to your Hostinger MySQL instance, and your build command runs `npx prisma generate && npm run build`.

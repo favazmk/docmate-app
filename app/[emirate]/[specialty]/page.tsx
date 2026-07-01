@@ -8,38 +8,26 @@ import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
-const getCountryFlag = (country: string) => {
-  const flags: Record<string, string> = {
-    AE: "🇦🇪",
-    SA: "🇸🇦",
-    KW: "🇰🇼",
-    BH: "🇧🇭",
-    QA: "🇶🇦",
-    OM: "🇴🇲",
-  };
-  return flags[country.toUpperCase()] || "📍";
-};
-
-export async function generateMetadata({ params }: { params: { country: string, city: string, specialty: string } }): Promise<Metadata> {
-  const city = params.city.charAt(0).toUpperCase() + params.city.slice(1);
-  const specialty = params.specialty.charAt(0).toUpperCase() + params.specialty.slice(1);
+export async function generateMetadata({ params }: { params: { emirate: string, specialty: string } }): Promise<Metadata> {
+  const emirate = params.emirate.replace("-", " ");
+  const emirateFormatted = emirate.charAt(0).toUpperCase() + emirate.slice(1);
+  const specialtyFormatted = params.specialty.charAt(0).toUpperCase() + params.specialty.slice(1);
   
   return {
-    title: `Top ${specialty} Doctors in ${city} | Book Online`,
-    description: `Find and book verified ${specialty} specialists in ${city}. View profiles, check insurance, and book appointments instantly.`
+    title: `Top ${specialtyFormatted} Doctors in ${emirateFormatted} | Book Online`,
+    description: `Find and book verified ${specialtyFormatted} specialists in ${emirateFormatted}. View profiles, check insurance, and book appointments instantly.`
   };
 }
 
-export default async function SpecialtyCityPage({ params }: { params: { country: string, city: string, specialty: string } }) {
-  const city = params.city.charAt(0).toUpperCase() + params.city.slice(1);
-  const specialty = params.specialty.charAt(0).toUpperCase() + params.specialty.slice(1);
-  const country = params.country.toUpperCase();
+export default async function SpecialtyCityPage({ params }: { params: { emirate: string, specialty: string } }) {
+  const emirate = params.emirate.replace("-", " ");
+  const emirateFormatted = emirate.charAt(0).toUpperCase() + emirate.slice(1);
+  const specialtyFormatted = params.specialty.charAt(0).toUpperCase() + params.specialty.slice(1);
 
   const dbDoctors = await prisma.doctor.findMany({
     where: {
       status: "Active",
-      country: country,
-      city: { contains: params.city },
+      city: { contains: emirateFormatted },
       specialty: { contains: params.specialty }
     }
   });
@@ -51,7 +39,7 @@ export default async function SpecialtyCityPage({ params }: { params: { country:
     rating: d.rating,
     reviews: d.reviews,
     city: d.city,
-    countryFlag: getCountryFlag(d.country),
+    countryFlag: "🇦🇪",
     languages: d.languages.split(",").map(lang => lang.trim()),
     fee: d.fee,
     currency: "AED",
@@ -67,20 +55,18 @@ export default async function SpecialtyCityPage({ params }: { params: { country:
         <div className="text-sm font-medium text-text-light mb-8 flex items-center gap-2 capitalize">
           <Link href="/" className="hover:text-blue-primary transition-colors">Home</Link>
           <span>/</span>
-          <Link href={`/${params.country}`} className="hover:text-blue-primary transition-colors uppercase">{country}</Link>
+          <Link href={`/${params.emirate}`} className="hover:text-blue-primary transition-colors">{emirateFormatted}</Link>
           <span>/</span>
-          <Link href={`/${params.country}/${params.city}`} className="hover:text-blue-primary transition-colors">{city}</Link>
-          <span>/</span>
-          <span className="text-text-dark">{specialty}</span>
+          <span className="text-text-dark">{specialtyFormatted}</span>
         </div>
 
         {/* SEO Header */}
         <div className="mb-10 max-w-3xl">
-          <h1 className="text-3xl md:text-4xl font-bold text-text-dark mb-4">
-            Best {specialty} Doctors in {city}, {country}
+          <h1 className="text-3xl md:text-4xl font-bold text-text-dark mb-4 capitalize">
+            Best {specialtyFormatted} Doctors in {emirateFormatted}
           </h1>
           <p className="text-text-mid text-lg leading-relaxed">
-            Need to see a {specialty.toLowerCase()} in {city}? We've curated a list of the top-rated specialists near you. 
+            Need to see a {specialtyFormatted.toLowerCase()} in {emirateFormatted}? We've curated a list of the top-rated specialists near you. 
             Compare verified patient reviews, check accepted insurance plans, and book an appointment online instantly.
           </p>
         </div>
@@ -112,7 +98,7 @@ export default async function SpecialtyCityPage({ params }: { params: { country:
               <div className="bg-white border border-gray-border rounded-xl p-12 text-center flex flex-col items-center gap-4">
                 <span className="text-4xl">🔍</span>
                 <h3 className="font-bold text-text-dark text-lg">No Doctors Found</h3>
-                <p className="text-text-mid max-w-sm text-sm">We couldn't find any active {specialty.toLowerCase()} doctors in {city} right now. Try searching in other cities or specialties!</p>
+                <p className="text-text-mid max-w-sm text-sm">We couldn't find any active {specialtyFormatted.toLowerCase()} doctors in {emirateFormatted} right now. Try searching in other cities or specialties!</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -130,17 +116,17 @@ export default async function SpecialtyCityPage({ params }: { params: { country:
           
           <div className="flex flex-col gap-6">
             <div>
-              <h4 className="font-bold text-text-dark text-lg mb-2">How do I book a {specialty.toLowerCase()} in {city}?</h4>
-              <p className="text-text-mid">You can easily book a {specialty.toLowerCase()} in {city} by selecting an available time slot on any of the doctor profiles listed above. The booking is confirmed instantly.</p>
+              <h4 className="font-bold text-text-dark text-lg mb-2">How do I book a {specialtyFormatted.toLowerCase()} in {emirateFormatted}?</h4>
+              <p className="text-text-mid">You can easily book a {specialtyFormatted.toLowerCase()} in {emirateFormatted} by selecting an available time slot on any of the doctor profiles listed above. The booking is confirmed instantly.</p>
             </div>
             
             <div>
-              <h4 className="font-bold text-text-dark text-lg mb-2">What is the average consultation fee for a {specialty.toLowerCase()} in {city}?</h4>
-              <p className="text-text-mid">The average consultation fee for a {specialty.toLowerCase()} in {city} ranges from AED 250 to AED 600, depending on the doctor's experience and the clinic's location.</p>
+              <h4 className="font-bold text-text-dark text-lg mb-2">What is the average consultation fee for a {specialtyFormatted.toLowerCase()} in {emirateFormatted}?</h4>
+              <p className="text-text-mid">The average consultation fee for a {specialtyFormatted.toLowerCase()} in {emirateFormatted} ranges from AED 250 to AED 600, depending on the doctor's experience and the clinic's location.</p>
             </div>
             
             <div>
-              <h4 className="font-bold text-text-dark text-lg mb-2">Which insurance plans are accepted by {specialty.toLowerCase()} doctors in {city}?</h4>
+              <h4 className="font-bold text-text-dark text-lg mb-2">Which insurance plans are accepted by {specialtyFormatted.toLowerCase()} doctors in {emirateFormatted}?</h4>
               <p className="text-text-mid">Most clinics accept major insurance providers such as Daman, AXA, Nextcare, and MetLife. You can use our filter sidebar to find doctors who specifically accept your insurance plan.</p>
             </div>
           </div>

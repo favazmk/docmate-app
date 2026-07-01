@@ -1,5 +1,5 @@
 import { CalendarDays, MapPin, Clock } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import Link from "next/link";
 
 interface BookingWidgetProps {
@@ -74,9 +74,9 @@ export default function BookingWidget({ fee, currency, slug }: BookingWidgetProp
       </div>
 
       <div className="flex flex-col gap-3">
-        <Button asChild className="w-full bg-blue-primary hover:bg-blue-hover text-white h-12 rounded-xl font-bold text-base shadow-md shadow-blue-primary/20">
-          <Link href={`/book/${slug}`}>Book Appointment</Link>
-        </Button>
+        <Link href={`/book/${slug}`} className={`${buttonVariants()} w-full bg-blue-primary hover:bg-blue-hover text-white h-12 rounded-xl font-bold text-base shadow-md shadow-blue-primary/20`}>
+          Book Appointment
+        </Link>
         <p className="text-xs text-center text-text-light font-medium">Free cancellation up to 24 hours before</p>
       </div>
 

@@ -5,18 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import prisma from "@/lib/prisma";
 
-const getCountryFlag = (country: string) => {
-  const flags: Record<string, string> = {
-    AE: "🇦🇪",
-    SA: "🇸🇦",
-    KW: "🇰🇼",
-    BH: "🇧🇭",
-    QA: "🇶🇦",
-    OM: "🇴🇲",
-  };
-  return flags[country.toUpperCase()] || "📍";
-};
-
 export default async function SearchResultsPage({
   searchParams,
 }: {
@@ -52,7 +40,7 @@ export default async function SearchResultsPage({
     rating: d.rating,
     reviews: d.reviews,
     city: d.city,
-    countryFlag: getCountryFlag(d.country),
+    countryFlag: "🇦🇪",
     languages: d.languages.split(",").map(lang => lang.trim()),
     fee: d.fee,
     currency: "AED",

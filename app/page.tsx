@@ -9,18 +9,6 @@ import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
-const getCountryFlag = (country: string) => {
-  const flags: Record<string, string> = {
-    AE: "🇦🇪",
-    SA: "🇸🇦",
-    KW: "🇰🇼",
-    BH: "🇧🇭",
-    QA: "🇶🇦",
-    OM: "🇴🇲",
-  };
-  return flags[country.toUpperCase()] || "📍";
-};
-
 export default async function Home() {
   const specialties = [
     { name: "Dentistry", count: 423, icon: Activity, href: "/search?specialty=dentistry" },
@@ -45,7 +33,7 @@ export default async function Home() {
     rating: d.rating,
     reviews: d.reviews,
     city: d.city,
-    countryFlag: getCountryFlag(d.country),
+    countryFlag: "🇦🇪",
     languages: d.languages.split(",").map(s => s.trim()),
     fee: d.fee,
     currency: "AED",
@@ -53,13 +41,13 @@ export default async function Home() {
     isVerified: true
   }));
 
-  const countries = [
-    { flag: "🇦🇪", name: "United Arab Emirates", cities: "Dubai, Abu Dhabi, Sharjah...", href: "/ae" },
-    { flag: "🇸🇦", name: "Saudi Arabia", cities: "Riyadh, Jeddah, Dammam...", href: "/sa" },
-    { flag: "🇰🇼", name: "Kuwait", cities: "Kuwait City, Hawally...", href: "/kw" },
-    { flag: "🇧🇭", name: "Bahrain", cities: "Manama, Riffa, Muharraq...", href: "/bh" },
-    { flag: "🇶🇦", name: "Qatar", cities: "Doha, Al Rayyan...", href: "/qa" },
-    { flag: "🇴🇲", name: "Oman", cities: "Muscat, Salalah...", href: "/om" },
+  const emirates = [
+    { flag: "🏙️", name: "Dubai", cities: "Downtown, Marina, Jumeirah...", href: "/dubai" },
+    { flag: "🏛️", name: "Abu Dhabi", cities: "Corniche, Yas Island...", href: "/abu-dhabi" },
+    { flag: "🕌", name: "Sharjah", cities: "Al Majaz, Al Qasimia...", href: "/sharjah" },
+    { flag: "🏖️", name: "Ajman", cities: "Al Rashidiya, Al Nuaimia...", href: "/ajman" },
+    { flag: "⛰️", name: "Ras Al Khaimah", cities: "Al Nakheel, Al Hamra...", href: "/ras-al-khaimah" },
+    { flag: "🌊", name: "Fujairah", cities: "Al Faseel, Dibba...", href: "/fujairah" },
   ];
 
   return (
@@ -145,19 +133,19 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Browse by Country */}
-      <section id="countries" className="py-20 px-4 bg-white">
+      {/* Browse by Emirate */}
+      <section id="emirates" className="py-20 px-4 bg-white">
         <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
           <div className="bg-blue-light text-blue-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4 border border-blue-primary/10">
-            Available across
+            Available across the UAE
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-text-dark mb-12 tracking-tight">
-            Browse by country
+            Browse by Emirate
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full text-left">
-            {countries.map((c, i) => (
-              <CountryCard key={i} {...c} />
+            {emirates.map((e, i) => (
+              <CountryCard key={i} flag={e.flag} name={e.name} cities={e.cities} href={e.href} />
             ))}
           </div>
         </div>
