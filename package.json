@@ -7,7 +7,8 @@
     "prebuild": "node -e \"if (process.platform !== 'win32') require('child_process').execSync('chmod -R 755 app')\"",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "zip": "powershell -Command \"Remove-Item '../docmate-app.zip' -ErrorAction SilentlyContinue; Get-ChildItem -Path . -Exclude 'node_modules','.next','.git' | Compress-Archive -DestinationPath '../docmate-app.zip' -Force\""
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
