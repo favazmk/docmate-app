@@ -41,8 +41,6 @@ export default async function SpecialtyCityPage({ params }: { params: { emirate:
     city: d.city,
     countryFlag: "🇦🇪",
     languages: d.languages.split(",").map(lang => lang.trim()),
-    fee: d.fee,
-    currency: "AED",
     photoUrl: d.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(d.name)}&background=2200CC&color=fff`,
     isVerified: true
   }));
@@ -67,7 +65,7 @@ export default async function SpecialtyCityPage({ params }: { params: { emirate:
           </h1>
           <p className="text-text-mid text-lg leading-relaxed">
             Need to see a {specialtyFormatted.toLowerCase()} in {emirateFormatted}? We've curated a list of the top-rated specialists near you. 
-            Compare verified patient reviews, check accepted insurance plans, and book an appointment online instantly.
+            Compare verified patient reviews and book an appointment online instantly.
           </p>
         </div>
 
@@ -118,16 +116,6 @@ export default async function SpecialtyCityPage({ params }: { params: { emirate:
             <div>
               <h4 className="font-bold text-text-dark text-lg mb-2">How do I book a {specialtyFormatted.toLowerCase()} in {emirateFormatted}?</h4>
               <p className="text-text-mid">You can easily book a {specialtyFormatted.toLowerCase()} in {emirateFormatted} by selecting an available time slot on any of the doctor profiles listed above. The booking is confirmed instantly.</p>
-            </div>
-            
-            <div>
-              <h4 className="font-bold text-text-dark text-lg mb-2">What is the average consultation fee for a {specialtyFormatted.toLowerCase()} in {emirateFormatted}?</h4>
-              <p className="text-text-mid">The average consultation fee for a {specialtyFormatted.toLowerCase()} in {emirateFormatted} ranges from AED 250 to AED 600, depending on the doctor's experience and the clinic's location.</p>
-            </div>
-            
-            <div>
-              <h4 className="font-bold text-text-dark text-lg mb-2">Which insurance plans are accepted by {specialtyFormatted.toLowerCase()} doctors in {emirateFormatted}?</h4>
-              <p className="text-text-mid">Most clinics accept major insurance providers such as Daman, AXA, Nextcare, and MetLife. You can use our filter sidebar to find doctors who specifically accept your insurance plan.</p>
             </div>
           </div>
         </div>

@@ -85,22 +85,6 @@ export default function FilterSidebar() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-3">
-        <h4 className="font-semibold text-text-dark text-sm uppercase tracking-wider">Insurance</h4>
-        <div className="flex flex-col gap-2">
-          {insurances.map(ins => {
-            const isChecked = currentInsurances.includes(ins);
-            return (
-              <label key={ins} className="flex items-center gap-2 cursor-pointer group" onClick={(e) => { e.preventDefault(); updateParam("insurance", ins, true); }}>
-                <div className={`w-4 h-4 rounded border flex items-center justify-center ${isChecked ? "bg-blue-primary border-blue-primary" : "border-gray-border group-hover:border-blue-primary"}`}>
-                  {isChecked && <Check className="w-3 h-3 text-white" />}
-                </div>
-                <span className={`text-sm ${isChecked ? "text-text-dark font-medium" : "text-text-mid group-hover:text-text-dark"}`}>{ins}</span>
-              </label>
-            );
-          })}
-        </div>
-      </div>
 
       <div className="flex flex-col gap-3">
         <h4 className="font-semibold text-text-dark text-sm uppercase tracking-wider">Languages</h4>
@@ -119,14 +103,7 @@ export default function FilterSidebar() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-3">
-        <h4 className="font-semibold text-text-dark text-sm uppercase tracking-wider">Consultation Fee (AED)</h4>
-        <input type="range" className="w-full accent-blue-primary" min="0" max="1000" />
-        <div className="flex items-center justify-between text-xs font-medium text-text-light">
-          <span>0</span>
-          <span>1000+</span>
-        </div>
-      </div>
+
     </div>
   );
 }

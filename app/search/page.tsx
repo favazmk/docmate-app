@@ -15,7 +15,6 @@ export default async function SearchResultsPage({
   const city = typeof searchParams.city === "string" ? searchParams.city : undefined;
   const sort = typeof searchParams.sort === "string" ? searchParams.sort : "recommended";
   const gender = typeof searchParams.gender === "string" ? searchParams.gender : undefined;
-  const insurances = typeof searchParams.insurance === "string" ? [searchParams.insurance] : (searchParams.insurance || []);
   const languages = typeof searchParams.language === "string" ? [searchParams.language] : (searchParams.language || []);
 
   // Build query where filter dynamically
@@ -55,8 +54,6 @@ export default async function SearchResultsPage({
     orderByClause = { rating: "desc" };
   } else if (sort === "most-reviewed") {
     orderByClause = { reviews: "desc" };
-  } else if (sort === "fee-asc") {
-    orderByClause = { fee: "asc" };
   } else {
     orderByClause = { createdAt: "desc" }; // Recommended fallback
   }
@@ -75,8 +72,6 @@ export default async function SearchResultsPage({
     city: d.city,
     countryFlag: "🇦🇪",
     languages: d.languages.split(",").map(lang => lang.trim()),
-    fee: d.fee,
-    currency: "AED",
     photoUrl: d.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(d.name)}&background=2200CC&color=fff`,
     isVerified: true
   }));

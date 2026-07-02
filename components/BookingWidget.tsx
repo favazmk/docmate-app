@@ -2,13 +2,9 @@ import { CalendarDays, MapPin, Clock } from "lucide-react";
 import { Button, buttonVariants } from "./ui/button";
 import Link from "next/link";
 
-interface BookingWidgetProps {
-  fee: number;
-  currency: string;
-  slug: string;
-}
 
-export default function BookingWidget({ fee, currency, slug }: BookingWidgetProps) {
+
+export default function BookingWidget({ slug }: { slug: string }) {
   // Mock available dates
   const dates = [
     { day: "Mon", date: "12", available: true },
@@ -22,11 +18,6 @@ export default function BookingWidget({ fee, currency, slug }: BookingWidgetProp
 
   return (
     <div className="bg-white border border-gray-border rounded-2xl p-6 shadow-lg shadow-gray-border/30 sticky top-8">
-      <div className="flex items-center justify-between mb-6">
-        <span className="text-text-mid font-medium">Consultation Fee</span>
-        <span className="text-xl font-bold text-text-dark">{currency} {fee}</span>
-      </div>
-
       <div className="mb-6">
         <h4 className="font-semibold text-text-dark mb-3 flex items-center gap-2">
           <CalendarDays className="w-4 h-4 text-blue-primary" />

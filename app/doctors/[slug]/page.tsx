@@ -127,23 +127,6 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
               </ul>
             </div>
 
-            {/* Insurance */}
-            <div className="bg-white border border-gray-border rounded-2xl p-6 md:p-8 shadow-sm">
-              <h3 className="text-xl font-bold text-text-dark mb-6 flex items-center gap-2">
-                <ShieldCheck className="w-6 h-6 text-blue-primary" />
-                Accepted Insurance Plans
-              </h3>
-              <div className="flex flex-wrap gap-3">
-                {doctor.insurances.map((ins, i) => (
-                  <div key={i} className="px-4 py-2 border border-gray-border rounded-lg text-sm font-semibold text-text-dark bg-gray-50 flex items-center justify-center">
-                    {ins}
-                  </div>
-                ))}
-                <div className="px-4 py-2 text-sm font-semibold text-blue-primary flex items-center justify-center cursor-pointer hover:underline">
-                  + 12 more plans
-                </div>
-              </div>
-            </div>
 
             {/* Clinic Location */}
             <div className="bg-white border border-gray-border rounded-2xl p-6 md:p-8 shadow-sm mb-12">
@@ -168,7 +151,7 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
 
           {/* Sticky Booking Widget (Right) */}
           <div className="lg:col-span-1">
-            <BookingWidget fee={doctor.fee} currency={doctor.currency} slug={params.slug} />
+            <BookingWidget slug={params.slug} />
           </div>
 
         </div>

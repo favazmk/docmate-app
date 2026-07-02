@@ -90,9 +90,7 @@ export default async function Home() {
           <div className="flex items-center gap-2 text-blue-primary font-medium text-sm">
             <Zap className="w-5 h-5" /> Instant confirmation
           </div>
-          <div className="flex items-center gap-2 text-blue-primary font-medium text-sm">
-            <ShieldCheck className="w-5 h-5" /> 100+ insurance plans
-          </div>
+
           <div className="flex items-center gap-2 text-blue-primary font-medium text-sm">
             <Star className="w-5 h-5" /> 4.8/5 patient rating
           </div>

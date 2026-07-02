@@ -13,8 +13,6 @@ interface DoctorCardProps {
   city: string;
   countryFlag: string;
   languages: string[];
-  fee: number;
-  currency: string;
   photoUrl: string;
   isVerified: boolean;
 }
@@ -28,8 +26,6 @@ export default function DoctorCard({
   city,
   countryFlag,
   languages,
-  fee,
-  currency,
   photoUrl,
   isVerified
 }: DoctorCardProps) {
@@ -69,10 +65,7 @@ export default function DoctorCard({
       </div>
 
       <div className="mt-auto pt-4 border-t border-gray-border flex items-center justify-between">
-        <div className="flex flex-col">
-          <span className="text-[10px] uppercase tracking-wider font-semibold text-text-light">Consultation</span>
-          <span className="font-bold text-text-dark text-sm">{currency} {fee}</span>
-        </div>
+        <div></div>
         <Link href={`/book/${slug}`} className={`${buttonVariants({ size: "sm" })} bg-blue-primary hover:bg-blue-hover text-white rounded-lg h-9 px-4 text-xs`}>
           Book Now
         </Link>

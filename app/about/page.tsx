@@ -58,7 +58,7 @@ export default function AboutPage() {
               Built for patients, <br/>trusted by doctors.
             </h2>
             <p className="text-text-mid text-lg leading-relaxed">
-              Founded in 2026, Docmate started with a simple observation: booking a doctor's appointment in the GCC involved too many phone calls, long hold times, and uncertainty about insurance coverage.
+              Founded in 2026, Docmate started with a simple observation: booking a doctor's appointment in the GCC involved too many phone calls and long hold times. We set out to change that by building a platform that connects patients directly with the best healthcare providers.
             </p>
             <p className="text-text-mid text-lg leading-relaxed">
               Today, we are the fastest-growing health-tech platform in the region, connecting thousands of patients with top-tier healthcare providers in the UAE, Saudi Arabia, Kuwait, Bahrain, Qatar, and Oman.
@@ -69,9 +69,6 @@ export default function AboutPage() {
               </li>
               <li className="flex items-center gap-3 text-text-dark font-semibold">
                 <CheckCircle2 className="w-5 h-5 text-green-badge" /> Real-time availability sync
-              </li>
-              <li className="flex items-center gap-3 text-text-dark font-semibold">
-                <CheckCircle2 className="w-5 h-5 text-green-badge" /> Transparent consultation fees
               </li>
             </ul>
           </div>

@@ -45,7 +45,7 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
   const [phonePrefix, setPhonePrefix] = useState("+971");
   const [phone, setPhone] = useState("");
   const [reason, setReason] = useState("");
-  const [insurance, setInsurance] = useState("");
+
 
   const handleNextStep = () => {
     if (step < 3) setStep(step + 1);
@@ -266,20 +266,6 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
                   />
                 </div>
               </div>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-text-dark">Insurance Provider (Optional)</label>
-              <select 
-                value={insurance}
-                onChange={e => setInsurance(e.target.value)}
-                className="w-full appearance-none bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium text-text-dark focus:outline-none focus:border-blue-primary focus:ring-1 focus:ring-blue-primary"
-              >
-                <option value="">Select insurance</option>
-                <option value="daman">Daman</option>
-                <option value="axa">AXA</option>
-                <option value="bupa">Bupa</option>
-              </select>
             </div>
 
             <div className="flex flex-col gap-2 mb-4">

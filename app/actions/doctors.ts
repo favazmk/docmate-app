@@ -11,7 +11,7 @@ export async function createDoctor(formData: FormData) {
     const email = formData.get("email") as string;
     const specialty = formData.get("specialty") as string;
     const city = formData.get("city") as string;
-    const fee = parseInt(formData.get("fee") as string);
+    const fee = 0;
     const languages = formData.get("languages") as string;
     const affiliation = formData.get("affiliation") as string;
     const bio = formData.get("bio") as string;
@@ -59,7 +59,7 @@ export async function updateDoctor(id: string, formData: FormData) {
     const email = formData.get("email") as string;
     const specialty = formData.get("specialty") as string;
     const city = formData.get("city") as string;
-    const fee = parseInt(formData.get("fee") as string);
+    const fee = 0;
     const languages = formData.get("languages") as string;
     const affiliation = formData.get("affiliation") as string;
     const bio = formData.get("bio") as string;

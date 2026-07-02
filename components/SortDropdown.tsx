@@ -25,7 +25,6 @@ export default function SortDropdown() {
         <option value="recommended">Sort by: Recommended</option>
         <option value="highest-rated">Sort by: Highest Rated</option>
         <option value="most-reviewed">Sort by: Most Reviewed</option>
-        <option value="fee-asc">Sort by: Fee (Low to High)</option>
       </select>
       <ChevronDown className="w-4 h-4 absolute right-4 top-3.5 text-text-light pointer-events-none" />
     </div>
