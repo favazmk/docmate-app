@@ -1,13 +1,13 @@
-# Docmate - GCC Doctor Booking Platform 🏥
+# Docmate - Dubai Doctor Booking Platform 🏥
 
-Docmate is a premium, localized healthcare booking platform designed specifically for the UAE and GCC region. It allows patients to search for top-rated specialists, check real-time availability, and securely book appointments online.
+Docmate is a premium, localized healthcare booking platform designed specifically for Dubai. It allows patients to search for top-rated specialists, check real-time availability, and securely book appointments online.
 
 ## 🚀 Key Features
 
-* **Localized UAE SEO Routes**: Dynamic emirate-based routing (e.g., `/dubai/cardiologist`) optimized for search engines.
-* **Patient Dashboard**: Secure login for patients to view, manage, and review their past and upcoming appointments.
-* **Admin Dashboard**: Comprehensive management interface to view live metrics, add new doctors with full profiles, and monitor all platform bookings.
-* **Real-time Availability Search**: Powerful filtering by specialty, city, and date.
+* **Localized Dubai SEO Routes**: Dynamic area-based routing (e.g., `/dubai/cardiologist`) optimized for search engines.
+* **Patient Dashboard**: Secure login for patients to view and manage their past and upcoming appointments.
+* **Admin Dashboard**: Comprehensive management interface to view live metrics, add new doctors, and monitor all platform bookings.
+* **Cascading Search Filter**: Dynamic homepage search filtering by Specialty, Area/Location, and Available Doctor.
 * **Automated Email Notifications**: Instant confirmation emails sent to the Patient, Doctor, and Admin via Nodemailer upon booking.
 * **Secure Authentication**: Built with NextAuth.js and bcrypt for password hashing.
 * **Modern Tech Stack**: Next.js 14 (App Router), Tailwind CSS, Prisma ORM, and MySQL (hosted on Hostinger).
