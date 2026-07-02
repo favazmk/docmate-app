@@ -64,10 +64,10 @@ export default async function Home() {
           <span className="uppercase tracking-widest text-[11px] font-bold text-white/70 mb-4">
             GCC's #1 doctor booking platform
           </span>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-dark leading-tight mb-6 tracking-tight">
-            Find and Book the <span className="text-blue-primary">Best Doctors</span> Near You
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6 tracking-tight">
+            Find and Book the <span className="text-white/90">Best Doctors</span> Near You
           </h1>
-          <p className="text-lg md:text-xl text-text-mid mb-8 max-w-2xl mx-auto lg:mx-0 font-medium">
+          <p className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl mx-auto lg:mx-0 font-medium">
             Verified specialists in UAE. Book in under 2 minutes.
           </p>
         </div>
