@@ -54,7 +54,7 @@ export async function createAppointment(data: {
     });
 
     // 4. Send Email Notifications
-    sendAppointmentEmails({
+    await sendAppointmentEmails({
       patientEmail: data.patientEmail.toLowerCase(),
       patientName: data.patientName,
       doctorEmail: doctor.email,
