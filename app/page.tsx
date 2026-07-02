@@ -23,10 +23,20 @@ export default async function Home() {
   ];
 
   let dbDoctors: Doctor[] = [];
+  let searchBarDoctors: { slug: string; name: string; specialty: string; city: string }[] = [];
   try {
     dbDoctors = await prisma.doctor.findMany({
       take: 4,
       where: { status: "Active" }
+    });
+    searchBarDoctors = await prisma.doctor.findMany({
+      where: { status: "Active" },
+      select: {
+        slug: true,
+        name: true,
+        specialty: true,
+        city: true
+      }
     });
   } catch (e) {
     console.error("Error fetching doctors on homepage:", e);
@@ -79,7 +89,7 @@ export default async function Home() {
 
       {/* Search Bar Wrapper */}
       <div className="px-4">
-        <SearchBar />
+        <SearchBar doctors={searchBarDoctors} />
       </div>
 
       {/* Trust Strip */}
