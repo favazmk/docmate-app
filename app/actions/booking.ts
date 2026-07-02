@@ -2,7 +2,8 @@
 
 import prisma from "@/lib/prisma";
 import { sendAppointmentEmails } from "@/lib/email";
-import bcrypt from "bcryptjs";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export async function createAppointment(data: {
   doctorSlug: string;
@@ -23,25 +24,18 @@ export async function createAppointment(data: {
       return { success: false, error: "Doctor not found" };
     }
 
-    // 2. Check if a user with this email already exists, otherwise create a guest user
-    let user = await prisma.user.findUnique({
-      where: { email: data.patientEmail.toLowerCase() },
+    // 2. Authenticate the user
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user || !session.user.email) {
+      return { success: false, error: "You must be logged in to book an appointment" };
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
     });
 
     if (!user) {
-      // Create a guest patient user
-      // We generate a placeholder password for them which they can reset later
-      const placeholderPassword = Math.random().toString(36).slice(-10);
-      const hashedPassword = await bcrypt.hash(placeholderPassword, 10);
-      user = await prisma.user.create({
-        data: {
-          name: data.patientName,
-          email: data.patientEmail.toLowerCase(),
-          password: hashedPassword,
-          phone: data.patientPhone,
-          role: "PATIENT",
-        },
-      });
+      return { success: false, error: "User profile not found" };
     }
 
     // 3. Create the appointment

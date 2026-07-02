@@ -1,40 +1,31 @@
 "use client";
 
-import { useState, Suspense } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
-import { Lock, Mail } from "lucide-react";
+import { Lock, Mail, User } from "lucide-react";
+import { registerPatient } from "@/app/actions/auth";
 
-function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default function RegisterPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
-  const registered = searchParams.get("registered");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
-    const res = await signIn("credentials", {
-      redirect: false,
-      email,
-      password,
-    });
+    const formData = new FormData(e.currentTarget);
+    const res = await registerPatient(formData);
 
     setLoading(false);
 
     if (res?.error) {
-      setError("Invalid email or password");
+      setError(res.error);
     } else {
-      router.push(callbackUrl);
-      router.refresh();
+      router.push("/login?registered=true");
     }
   };
 
@@ -42,10 +33,10 @@ function LoginForm() {
     <div className="min-h-[80vh] bg-gray-bg flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-text-dark">
-          Sign in to your account
+          Create an account
         </h2>
         <p className="mt-2 text-center text-sm text-text-mid">
-          Secure access to your appointments
+          Sign up to easily book and manage your appointments
         </p>
       </div>
 
@@ -57,12 +48,25 @@ function LoginForm() {
                 {error}
               </div>
             )}
-            {registered && (
-              <div className="bg-green-50 text-green-700 p-3 rounded-lg text-sm border border-green-200">
-                Account created successfully! Please sign in.
-              </div>
-            )}
             
+            <div>
+              <label className="block text-sm font-medium text-text-dark mb-1">
+                Full Name
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <User className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  name="name"
+                  required
+                  className="appearance-none block w-full pl-10 px-3 py-2 border border-gray-border rounded-xl placeholder-gray-400 focus:outline-none focus:ring-blue-primary focus:border-blue-primary sm:text-sm"
+                  placeholder="John Doe"
+                />
+              </div>
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-text-dark mb-1">
                 Email address
@@ -73,9 +77,8 @@ function LoginForm() {
                 </div>
                 <input
                   type="email"
+                  name="email"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
                   className="appearance-none block w-full pl-10 px-3 py-2 border border-gray-border rounded-xl placeholder-gray-400 focus:outline-none focus:ring-blue-primary focus:border-blue-primary sm:text-sm"
                   placeholder="you@example.com"
                 />
@@ -92,9 +95,8 @@ function LoginForm() {
                 </div>
                 <input
                   type="password"
+                  name="password"
                   required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
                   className="appearance-none block w-full pl-10 px-3 py-2 border border-gray-border rounded-xl placeholder-gray-400 focus:outline-none focus:ring-blue-primary focus:border-blue-primary sm:text-sm"
                   placeholder="••••••••"
                 />
@@ -107,38 +109,31 @@ function LoginForm() {
                 disabled={loading}
                 className={`${buttonVariants()} w-full flex justify-center py-2.5 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-blue-primary hover:bg-blue-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-primary disabled:opacity-50`}
               >
-                {loading ? "Signing in..." : "Sign in"}
+                {loading ? "Creating account..." : "Sign up"}
               </button>
             </div>
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">
-                    New to Docmate?
-                  </span>
-                </div>
-              </div>
+          </form>
 
-              <div className="mt-6 text-center">
-                <Link href="/register" className="text-sm font-medium text-blue-primary hover:text-blue-hover">
-                  Create an account
-                </Link>
+          <div className="mt-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">
+                  Already have an account?
+                </span>
               </div>
             </div>
-          </form>
+
+            <div className="mt-6 text-center">
+              <Link href="/login" className="text-sm font-medium text-blue-primary hover:text-blue-hover">
+                Sign in to your account
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  );
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
-      <LoginForm />
-    </Suspense>
   );
 }

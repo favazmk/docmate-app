@@ -1,0 +1,32 @@
+[
+  {
+    "key": "SMTP_HOST",
+    "value": "smtp.gmail.com",
+    "target": ["production", "preview", "development"],
+    "type": "plain"
+  },
+  {
+    "key": "SMTP_PORT",
+    "value": "465",
+    "target": ["production", "preview", "development"],
+    "type": "plain"
+  },
+  {
+    "key": "SMTP_USER",
+    "value": "teamwebbranding@gmail.com",
+    "target": ["production", "preview", "development"],
+    "type": "plain"
+  },
+  {
+    "key": "SMTP_PASS",
+    "value": "sbfqcldlndvphkxu",
+    "target": ["production", "preview", "development"],
+    "type": "plain"
+  },
+  {
+    "key": "ADMIN_EMAIL",
+    "value": "teamwebbranding@gmail.com",
+    "target": ["production", "preview", "development"],
+    "type": "plain"
+  }
+]

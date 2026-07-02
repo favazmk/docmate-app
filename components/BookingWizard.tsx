@@ -16,9 +16,13 @@ interface BookingWizardProps {
     clinicName: string;
     city: string;
   };
+  user?: {
+    name: string;
+    email: string;
+  };
 }
 
-export default function BookingWizard({ doctor }: BookingWizardProps) {
+export default function BookingWizard({ doctor, user }: BookingWizardProps) {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -36,8 +40,8 @@ export default function BookingWizard({ doctor }: BookingWizardProps) {
   const [selectedTime, setSelectedTime] = useState<number | null>(null);
 
   // Form Fields
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [name, setName] = useState(user?.name || "");
+  const [email, setEmail] = useState(user?.email || "");
   const [phonePrefix, setPhonePrefix] = useState("+971");
   const [phone, setPhone] = useState("");
   const [reason, setReason] = useState("");
@@ -222,7 +226,8 @@ export default function BookingWizard({ doctor }: BookingWizardProps) {
                 placeholder="John Doe" 
                 value={name}
                 onChange={e => setName(e.target.value)}
-                className="w-full bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium text-text-dark focus:outline-none focus:border-blue-primary focus:ring-1 focus:ring-blue-primary" 
+                readOnly={!!user?.name}
+                className={`w-full border border-gray-border rounded-xl h-12 px-4 text-sm font-medium text-text-dark focus:outline-none focus:border-blue-primary focus:ring-1 focus:ring-blue-primary ${user?.name ? 'bg-gray-100 cursor-not-allowed' : 'bg-gray-bg'}`} 
               />
             </div>
             
@@ -235,7 +240,8 @@ export default function BookingWizard({ doctor }: BookingWizardProps) {
                   placeholder="john@example.com" 
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className="w-full bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium text-text-dark focus:outline-none focus:border-blue-primary focus:ring-1 focus:ring-blue-primary" 
+                  readOnly={!!user?.email}
+                  className={`w-full border border-gray-border rounded-xl h-12 px-4 text-sm font-medium text-text-dark focus:outline-none focus:border-blue-primary focus:ring-1 focus:ring-blue-primary ${user?.email ? 'bg-gray-100 cursor-not-allowed' : 'bg-gray-bg'}`} 
                 />
               </div>
               <div className="flex flex-col gap-2 flex-1">
