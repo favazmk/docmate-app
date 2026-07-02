@@ -6,6 +6,7 @@ import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { Lock, Mail, User } from "lucide-react";
 import { registerPatient } from "@/app/actions/auth";
+import { signIn } from "next-auth/react";
 
 export default function RegisterPage() {
   const [error, setError] = useState("");
@@ -18,14 +19,30 @@ export default function RegisterPage() {
     setError("");
 
     const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    
     const res = await registerPatient(formData);
-
-    setLoading(false);
 
     if (res?.error) {
       setError(res.error);
+      setLoading(false);
     } else {
-      router.push("/login?registered=true");
+      // Auto login after successful registration
+      const result = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      });
+
+      if (result?.error) {
+        setError("Registration successful, but auto-login failed. Please sign in manually.");
+        setLoading(false);
+        router.push("/login?registered=true");
+      } else {
+        router.push("/dashboard");
+        router.refresh();
+      }
     }
   };
 

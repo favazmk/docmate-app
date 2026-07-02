@@ -11,11 +11,12 @@ import {
   SheetContent,
   SheetTrigger,
 } from "./ui/sheet";
+import { useSession } from "next-auth/react";
 
 export default function Navbar() {
   const pathname = usePathname();
   const [activeHash, setActiveHash] = useState("");
-
+  const { data: session, status } = useSession();
   useEffect(() => {
     setActiveHash(window.location.hash);
     const handleHashChange = () => {
@@ -92,6 +93,8 @@ export default function Navbar() {
     { label: "Blog", href: "/blog" },
   ];
 
+  if (pathname?.startsWith("/admin")) return null;
+
   return (
     <header className="h-[56px] bg-white border-b border-gray-border sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 w-full h-full flex items-center justify-between">
@@ -125,9 +128,18 @@ export default function Navbar() {
           >
             List your clinic
           </Link>
-          <Link href="/dashboard">
-            <Button className="bg-blue-primary hover:bg-blue-hover text-white rounded-lg">Sign In</Button>
-          </Link>
+          
+          {status === "loading" ? (
+            <div className="h-10 w-24 bg-gray-100 animate-pulse rounded-lg"></div>
+          ) : session ? (
+            <Link href="/dashboard">
+              <Button className="bg-blue-primary hover:bg-blue-hover text-white rounded-lg">Profile</Button>
+            </Link>
+          ) : (
+            <Link href="/login">
+              <Button className="bg-blue-primary hover:bg-blue-hover text-white rounded-lg">Sign In</Button>
+            </Link>
+          )}
         </nav>
 
         {/* Mobile Nav */}
@@ -159,9 +171,18 @@ export default function Navbar() {
                 >
                   List your clinic
                 </Link>
-                <Link href="/dashboard">
-                  <Button className="bg-blue-primary hover:bg-blue-hover text-white rounded-lg w-full">Sign In</Button>
-                </Link>
+
+                {status === "loading" ? (
+                  <div className="h-10 w-full bg-gray-100 animate-pulse rounded-lg"></div>
+                ) : session ? (
+                  <Link href="/dashboard">
+                    <Button className="bg-blue-primary hover:bg-blue-hover text-white rounded-lg w-full">Profile</Button>
+                  </Link>
+                ) : (
+                  <Link href="/login">
+                    <Button className="bg-blue-primary hover:bg-blue-hover text-white rounded-lg w-full">Sign In</Button>
+                  </Link>
+                )}
               </div>
             </SheetContent>
           </Sheet>

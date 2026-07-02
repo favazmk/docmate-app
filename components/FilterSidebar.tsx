@@ -1,7 +1,33 @@
+"use client";
+
 import { Check, ChevronDown } from "lucide-react";
 import { Button } from "./ui/button";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 
 export default function FilterSidebar() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  
+  const currentSpecialty = searchParams.get("specialty") || "";
+
+  const handleSpecialtyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const params = new URLSearchParams(searchParams.toString());
+    const val = e.target.value;
+    
+    if (val && val !== "All Specialties") {
+      params.set("specialty", val);
+    } else {
+      params.delete("specialty");
+    }
+    
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
+  const handleReset = () => {
+    router.push(pathname);
+  };
+
   const specialties = ["Dermatology", "Cardiology", "Orthopedics", "Pediatrics", "Neurology", "Dentistry"];
   const insurances = ["Daman", "AXA", "Bupa", "Tawuniya", "MetLife"];
   const languages = ["English", "Arabic", "French", "Hindi", "Urdu"];
@@ -10,15 +36,19 @@ export default function FilterSidebar() {
     <div className="w-full bg-white border border-gray-border rounded-xl p-5 flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h3 className="font-bold text-text-dark text-lg">Filters</h3>
-        <button className="text-sm font-medium text-blue-primary hover:underline">Reset</button>
+        <button onClick={handleReset} className="text-sm font-medium text-blue-primary hover:underline">Reset</button>
       </div>
 
       <div className="flex flex-col gap-3">
         <h4 className="font-semibold text-text-dark text-sm uppercase tracking-wider">Specialty</h4>
         <div className="relative">
-          <select className="w-full appearance-none bg-gray-bg border border-gray-border rounded-lg h-10 px-3 text-sm font-medium text-text-dark focus:outline-none focus:border-blue-primary">
-            <option>All Specialties</option>
-            {specialties.map(s => <option key={s}>{s}</option>)}
+          <select 
+            value={currentSpecialty || "All Specialties"} 
+            onChange={handleSpecialtyChange}
+            className="w-full appearance-none bg-gray-bg border border-gray-border rounded-lg h-10 px-3 text-sm font-medium text-text-dark focus:outline-none focus:border-blue-primary"
+          >
+            <option value="All Specialties">All Specialties</option>
+            {specialties.map(s => <option key={s} value={s}>{s}</option>)}
           </select>
           <ChevronDown className="w-4 h-4 absolute right-3 top-3 text-text-light pointer-events-none" />
         </div>

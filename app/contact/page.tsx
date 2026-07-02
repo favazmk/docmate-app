@@ -1,7 +1,26 @@
+"use client";
+
 import { Mail, MapPin, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { submitContact } from "@/app/actions/contact";
 
 export default function ContactPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const formData = new FormData(e.currentTarget);
+    const result = await submitContact(formData);
+    if (result.success) {
+      setSuccess(true);
+      (e.target as HTMLFormElement).reset();
+    }
+    setIsSubmitting(false);
+  };
+
   return (
     <div className="bg-gray-bg min-h-screen py-12 px-4">
       <div className="max-w-6xl mx-auto">
@@ -64,26 +83,32 @@ export default function ContactPage() {
           <div className="w-full lg:w-2/3 p-10 md:p-12">
             <h3 className="text-2xl font-bold text-text-dark mb-8">Send us a message</h3>
             
-            <form className="flex flex-col gap-6">
+            {success && (
+              <div className="mb-6 bg-green-badge-bg border border-green-badge text-green-badge px-4 py-3 rounded-xl">
+                Thank you for reaching out! We have received your message and will get back to you shortly.
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="flex flex-col gap-2 flex-1">
                   <label className="text-sm font-semibold text-text-dark">First Name</label>
-                  <input type="text" placeholder="John" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors" />
+                  <input required name="firstName" type="text" placeholder="John" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors" />
                 </div>
                 <div className="flex flex-col gap-2 flex-1">
                   <label className="text-sm font-semibold text-text-dark">Last Name</label>
-                  <input type="text" placeholder="Doe" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors" />
+                  <input required name="lastName" type="text" placeholder="Doe" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors" />
                 </div>
               </div>
 
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="flex flex-col gap-2 flex-1">
                   <label className="text-sm font-semibold text-text-dark">Email Address</label>
-                  <input type="email" placeholder="john@example.com" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors" />
+                  <input required name="email" type="email" placeholder="john@example.com" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors" />
                 </div>
                 <div className="flex flex-col gap-2 flex-1">
                   <label className="text-sm font-semibold text-text-dark">Subject</label>
-                  <select className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors">
+                  <select name="subject" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors">
                     <option>General Inquiry</option>
                     <option>Support with Booking</option>
                     <option>Clinic Partnership</option>
@@ -94,12 +119,12 @@ export default function ContactPage() {
 
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-semibold text-text-dark">Message</label>
-                <textarea rows={5} placeholder="How can we help you?" className="bg-gray-bg border border-gray-border rounded-xl p-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors resize-none"></textarea>
+                <textarea required name="message" rows={5} placeholder="How can we help you?" className="bg-gray-bg border border-gray-border rounded-xl p-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors resize-none"></textarea>
               </div>
 
               <div className="pt-4">
-                <Button className="w-full md:w-auto bg-blue-primary hover:bg-blue-hover text-white h-12 px-10 rounded-xl font-bold shadow-lg shadow-blue-primary/20">
-                  Send Message
+                <Button disabled={isSubmitting} type="submit" className="w-full md:w-auto bg-blue-primary hover:bg-blue-hover text-white h-12 px-10 rounded-xl font-bold shadow-lg shadow-blue-primary/20">
+                  {isSubmitting ? "Sending..." : "Send Message"}
                 </Button>
               </div>
             </form>

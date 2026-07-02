@@ -118,3 +118,80 @@ export async function sendAppointmentEmails({
     console.error("Critical error in sendAppointmentEmails:", error);
   }
 }
+
+export async function sendContactEmail(formData: FormData) {
+  const adminEmail = process.env.ADMIN_EMAIL || "admin@docmate.com";
+  
+  if (!process.env.SMTP_USER) {
+    console.warn("SMTP credentials not set. Email will not be sent.");
+    return { success: false, error: "SMTP not configured" };
+  }
+
+  const firstName = formData.get("firstName") as string;
+  const lastName = formData.get("lastName") as string;
+  const email = formData.get("email") as string;
+  const subject = formData.get("subject") as string;
+  const message = formData.get("message") as string;
+
+  try {
+    await transporter.sendMail({
+      from: `"Docmate Contact Form" <${process.env.SMTP_USER}>`,
+      to: adminEmail,
+      subject: `Contact Request: ${subject}`,
+      html: `
+        <div style="font-family: sans-serif;">
+          <h3>New Contact Form Submission</h3>
+          <p><strong>Name:</strong> ${firstName} ${lastName}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Subject:</strong> ${subject}</p>
+          <p><strong>Message:</strong></p>
+          <p>${message}</p>
+        </div>
+      `,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Error sending contact email:", error);
+    return { success: false, error: "Failed to send email" };
+  }
+}
+
+export async function sendClinicRequestEmail(formData: FormData) {
+  const adminEmail = process.env.ADMIN_EMAIL || "admin@docmate.com";
+  
+  if (!process.env.SMTP_USER) {
+    console.warn("SMTP credentials not set. Email will not be sent.");
+    return { success: false, error: "SMTP not configured" };
+  }
+
+  const clinicName = formData.get("clinicName") as string;
+  const city = formData.get("city") as string;
+  const contactPerson = formData.get("contactPerson") as string;
+  const role = formData.get("role") as string;
+  const email = formData.get("email") as string;
+  const phone = formData.get("phone") as string;
+  const size = formData.get("size") as string;
+
+  try {
+    await transporter.sendMail({
+      from: `"Docmate Clinic Request" <${process.env.SMTP_USER}>`,
+      to: adminEmail,
+      subject: `New Clinic Registration Request: ${clinicName}`,
+      html: `
+        <div style="font-family: sans-serif;">
+          <h3>New Clinic Registration Request</h3>
+          <p><strong>Clinic Name:</strong> ${clinicName}</p>
+          <p><strong>City:</strong> ${city}</p>
+          <p><strong>Contact Person:</strong> ${contactPerson} (${role})</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Phone:</strong> ${phone}</p>
+          <p><strong>Number of Doctors:</strong> ${size}</p>
+        </div>
+      `,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Error sending clinic request email:", error);
+    return { success: false, error: "Failed to send email" };
+  }
+}

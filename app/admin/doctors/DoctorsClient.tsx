@@ -4,24 +4,52 @@ import { useState } from "react";
 import Link from "next/link";
 import { Users, Activity, Calendar, Search, Plus, X, Upload, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { createDoctor } from "@/app/actions/doctors";
+import { createDoctor, updateDoctor, deleteDoctor } from "@/app/actions/doctors";
 import { useRouter } from "next/navigation";
 
 export default function DoctorsClient({ doctors }: { doctors: any[] }) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [editingDoctor, setEditingDoctor] = useState<any>(null);
   const router = useRouter();
+
+  const handleEdit = (doc: any) => {
+    setEditingDoctor(doc);
+    setIsAddModalOpen(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this doctor?")) return;
+    const res = await deleteDoctor(id);
+    if (res.success) {
+      router.refresh();
+    } else {
+      alert("Error: " + res.error);
+    }
+  };
+
+  const openAddModal = () => {
+    setEditingDoctor(null);
+    setIsAddModalOpen(true);
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     const formData = new FormData(e.currentTarget);
     
-    const res = await createDoctor(formData);
+    let res;
+    if (editingDoctor) {
+      res = await updateDoctor(editingDoctor.id, formData);
+    } else {
+      res = await createDoctor(formData);
+    }
+
     setLoading(false);
     
     if (res.success) {
       setIsAddModalOpen(false);
+      setEditingDoctor(null);
       router.refresh();
     } else {
       alert("Error: " + res.error);
@@ -66,7 +94,7 @@ export default function DoctorsClient({ doctors }: { doctors: any[] }) {
               <h2 className="text-xl font-bold text-text-dark">Doctors Database</h2>
               <p className="text-sm text-text-mid mt-1">Add, update, or remove doctors from the platform.</p>
             </div>
-            <Button onClick={() => setIsAddModalOpen(true)} className="bg-blue-primary hover:bg-blue-hover text-white h-10 px-5 rounded-xl font-bold flex items-center gap-2">
+            <Button onClick={openAddModal} className="bg-blue-primary hover:bg-blue-hover text-white h-10 px-5 rounded-xl font-bold flex items-center gap-2">
               <Plus className="w-4 h-4" /> Add Doctor
             </Button>
           </div>
@@ -99,8 +127,9 @@ export default function DoctorsClient({ doctors }: { doctors: any[] }) {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-text-mid">{doc.email}</td>
-                      <td className="px-6 py-4">
-                        <button className="text-blue-primary hover:underline font-medium text-sm">Edit</button>
+                      <td className="px-6 py-4 flex items-center gap-3">
+                        <button onClick={() => handleEdit(doc)} className="text-blue-primary hover:underline font-medium text-sm">Edit</button>
+                        <button onClick={() => handleDelete(doc.id)} className="text-red-600 hover:underline font-medium text-sm">Delete</button>
                       </td>
                     </tr>
                   ))}
@@ -122,11 +151,11 @@ export default function DoctorsClient({ doctors }: { doctors: any[] }) {
                   <Plus className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-text-dark">Add New Doctor</h3>
-                  <p className="text-xs font-medium text-text-mid">Create a new provider profile for the platform</p>
+                  <h3 className="text-lg font-bold text-text-dark">{editingDoctor ? "Edit Doctor" : "Add New Doctor"}</h3>
+                  <p className="text-xs font-medium text-text-mid">{editingDoctor ? "Update provider profile" : "Create a new provider profile for the platform"}</p>
                 </div>
               </div>
-              <button onClick={() => setIsAddModalOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-text-mid transition-colors">
+              <button onClick={() => { setIsAddModalOpen(false); setEditingDoctor(null); }} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-text-mid transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -138,18 +167,18 @@ export default function DoctorsClient({ doctors }: { doctors: any[] }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-2">
                     <label className="text-sm font-semibold text-text-dark">Full Name *</label>
-                    <input required name="name" type="text" placeholder="Dr. First Last" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" />
+                    <input required name="name" defaultValue={editingDoctor?.name} type="text" placeholder="Dr. First Last" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" />
                   </div>
                   <div className="flex flex-col gap-2">
                     <label className="text-sm font-semibold text-text-dark">Email Address *</label>
-                    <input required name="email" type="email" placeholder="doctor@docmate.com" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" />
+                    <input required name="email" defaultValue={editingDoctor?.email} type="email" placeholder="doctor@docmate.com" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-2">
                     <label className="text-sm font-semibold text-text-dark">Specialty *</label>
-                    <select required name="specialty" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary">
+                    <select required name="specialty" defaultValue={editingDoctor?.specialty} className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary">
                       <option>Cardiologist</option>
                       <option>Dermatologist</option>
                       <option>Orthopedics</option>
@@ -159,7 +188,7 @@ export default function DoctorsClient({ doctors }: { doctors: any[] }) {
                   </div>
                   <div className="flex flex-col gap-2">
                     <label className="text-sm font-semibold text-text-dark">Emirate (City) *</label>
-                    <select required name="city" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary">
+                    <select required name="city" defaultValue={editingDoctor?.city} className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary">
                       <option>Dubai</option>
                       <option>Abu Dhabi</option>
                       <option>Sharjah</option>
@@ -174,22 +203,22 @@ export default function DoctorsClient({ doctors }: { doctors: any[] }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-2">
                     <label className="text-sm font-semibold text-text-dark">Consultation Fee (AED) *</label>
-                    <input required name="fee" type="number" placeholder="e.g. 350" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" />
+                    <input required name="fee" defaultValue={editingDoctor?.fee} type="number" placeholder="e.g. 350" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" />
                   </div>
                   <div className="flex flex-col gap-2">
                     <label className="text-sm font-semibold text-text-dark">Languages</label>
-                    <input name="languages" type="text" placeholder="English, Arabic" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" />
+                    <input name="languages" defaultValue={editingDoctor?.languages} type="text" placeholder="English, Arabic" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" />
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-semibold text-text-dark">Clinic / Hospital Affiliation *</label>
-                  <input required name="affiliation" type="text" placeholder="e.g. Mediclinic City Hospital" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" />
+                  <input required name="affiliation" defaultValue={editingDoctor?.affiliation} type="text" placeholder="e.g. Mediclinic City Hospital" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" />
                 </div>
 
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-semibold text-text-dark">Professional Bio</label>
-                  <textarea name="bio" rows={3} placeholder="Short biography..." className="bg-gray-bg border border-gray-border rounded-xl p-4 text-sm font-medium focus:outline-none focus:border-blue-primary resize-none"></textarea>
+                  <textarea name="bio" defaultValue={editingDoctor?.bio} rows={3} placeholder="Short biography..." className="bg-gray-bg border border-gray-border rounded-xl p-4 text-sm font-medium focus:outline-none focus:border-blue-primary resize-none"></textarea>
                 </div>
               </form>
             </div>

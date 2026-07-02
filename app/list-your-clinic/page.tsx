@@ -1,13 +1,32 @@
+"use client";
+
 import { CheckCircle2, TrendingUp, Users, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useState } from "react";
+import { submitClinicRequest } from "@/app/actions/contact";
 
 export default function ListYourClinicPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const formData = new FormData(e.currentTarget);
+    const result = await submitClinicRequest(formData);
+    if (result.success) {
+      setSuccess(true);
+      (e.target as HTMLFormElement).reset();
+    }
+    setIsSubmitting(false);
+  };
+
   return (
     <div className="bg-white min-h-screen">
       
       {/* Hero */}
-      <section className="bg-blue-primary pt-20 pb-32 px-4 relative overflow-hidden">
+      <section className="bg-gradient-to-b from-blue-hover to-blue-primary pt-20 pb-32 px-4 relative overflow-hidden">
         {/* Background elements */}
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
         
@@ -20,10 +39,10 @@ export default function ListYourClinicPage() {
               Join thousands of healthcare providers in the GCC who are reaching more patients, reducing no-shows, and streamlining their bookings.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Button className="bg-white hover:bg-gray-bg text-blue-primary h-14 px-8 rounded-xl font-bold text-base">
+              <Button onClick={() => document.getElementById('clinic-form')?.scrollIntoView({ behavior: 'smooth' })} className="bg-white hover:bg-gray-bg text-blue-primary h-14 px-8 rounded-xl font-bold text-base">
                 Register Your Clinic
               </Button>
-              <Button variant="outline" className="bg-transparent border-white/30 text-white hover:bg-white/10 hover:text-white h-14 px-8 rounded-xl font-bold text-base">
+              <Button onClick={() => document.getElementById('clinic-form')?.scrollIntoView({ behavior: 'smooth' })} variant="outline" className="bg-transparent border-white/30 text-white hover:bg-white/10 hover:text-white h-14 px-8 rounded-xl font-bold text-base">
                 Talk to Sales
               </Button>
             </div>
@@ -97,7 +116,7 @@ export default function ListYourClinicPage() {
       </section>
 
       {/* Registration Form */}
-      <section className="py-20 px-4 bg-gray-bg border-t border-gray-border">
+      <section id="clinic-form" className="py-20 px-4 bg-gray-bg border-t border-gray-border">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-text-dark mb-4">Request an Invitation</h2>
@@ -107,16 +126,24 @@ export default function ListYourClinicPage() {
           </div>
 
           <div className="bg-white border border-gray-border rounded-3xl p-8 md:p-12 shadow-sm">
-            <form className="flex flex-col gap-6">
+            {success && (
+              <div className="mb-8 bg-green-badge-bg border border-green-badge text-green-badge px-6 py-4 rounded-xl flex flex-col items-center text-center gap-2">
+                <CheckCircle2 className="w-8 h-8 text-green-badge mb-2" />
+                <h3 className="font-bold text-lg">Request Submitted Successfully!</h3>
+                <p>Thank you for your interest in Docmate. Our partnership team will be in touch with you shortly.</p>
+              </div>
+            )}
+            
+            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
               
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="flex flex-col gap-2 flex-1">
                   <label className="text-sm font-semibold text-text-dark">Clinic/Hospital Name <span className="text-red-500">*</span></label>
-                  <input type="text" placeholder="e.g. Mediclinic" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors" />
+                  <input required name="clinicName" type="text" placeholder="e.g. Mediclinic" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors" />
                 </div>
                 <div className="flex flex-col gap-2 flex-1">
                   <label className="text-sm font-semibold text-text-dark">City <span className="text-red-500">*</span></label>
-                  <select className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors">
+                  <select name="city" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors">
                     <option>Dubai</option>
                     <option>Abu Dhabi</option>
                     <option>Riyadh</option>
@@ -132,11 +159,11 @@ export default function ListYourClinicPage() {
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="flex flex-col gap-2 flex-1">
                   <label className="text-sm font-semibold text-text-dark">Contact Person <span className="text-red-500">*</span></label>
-                  <input type="text" placeholder="Full Name" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors" />
+                  <input required name="contactPerson" type="text" placeholder="Full Name" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors" />
                 </div>
                 <div className="flex flex-col gap-2 flex-1">
                   <label className="text-sm font-semibold text-text-dark">Role <span className="text-red-500">*</span></label>
-                  <select className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors">
+                  <select name="role" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors">
                     <option>Doctor</option>
                     <option>Clinic Manager</option>
                     <option>Owner</option>
@@ -148,11 +175,11 @@ export default function ListYourClinicPage() {
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="flex flex-col gap-2 flex-1">
                   <label className="text-sm font-semibold text-text-dark">Email Address <span className="text-red-500">*</span></label>
-                  <input type="email" placeholder="work@clinic.com" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors" />
+                  <input required name="email" type="email" placeholder="work@clinic.com" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors" />
                 </div>
                 <div className="flex flex-col gap-2 flex-1">
                   <label className="text-sm font-semibold text-text-dark">Phone Number <span className="text-red-500">*</span></label>
-                  <input type="tel" placeholder="+971 50 123 4567" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors" />
+                  <input required name="phone" type="tel" placeholder="+971 50 123 4567" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors" />
                 </div>
               </div>
 
@@ -161,7 +188,7 @@ export default function ListYourClinicPage() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-1">
                   {["1 - 5", "6 - 15", "16 - 50", "50+"].map(size => (
                     <label key={size} className="flex items-center justify-center border border-gray-border rounded-xl h-12 cursor-pointer hover:border-blue-primary hover:bg-blue-light/50 transition-colors bg-white">
-                      <input type="radio" name="size" className="hidden" />
+                      <input required type="radio" name="size" value={size} className="hidden" />
                       <span className="text-sm font-medium text-text-dark">{size}</span>
                     </label>
                   ))}
@@ -169,8 +196,8 @@ export default function ListYourClinicPage() {
               </div>
 
               <div className="pt-6 border-t border-gray-border mt-2">
-                <Button className="w-full bg-blue-primary hover:bg-blue-hover text-white h-14 rounded-xl font-bold text-base shadow-lg shadow-blue-primary/20">
-                  Submit Request
+                <Button disabled={isSubmitting} type="submit" className="w-full bg-blue-primary hover:bg-blue-hover text-white h-14 rounded-xl font-bold text-base shadow-lg shadow-blue-primary/20">
+                  {isSubmitting ? "Submitting..." : "Submit Request"}
                 </Button>
                 <p className="text-center text-xs text-text-light mt-4">
                   By submitting this form, you agree to our Terms of Service and Privacy Policy.

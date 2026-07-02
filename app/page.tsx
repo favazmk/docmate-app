@@ -48,12 +48,12 @@ export default async function Home() {
   }));
 
   const emirates = [
-    { flag: "🇦🇪", name: "Dubai", cities: "Downtown, Marina, Jumeirah...", href: "/dubai" },
-    { flag: "🇦🇪", name: "Abu Dhabi", cities: "Corniche, Yas Island...", href: "/abu-dhabi" },
-    { flag: "🇦🇪", name: "Sharjah", cities: "Al Majaz, Al Qasimia...", href: "/sharjah" },
-    { flag: "🇦🇪", name: "Ajman", cities: "Al Rashidiya, Al Nuaimia...", href: "/ajman" },
-    { flag: "🇦🇪", name: "Ras Al Khaimah", cities: "Al Nakheel, Al Hamra...", href: "/ras-al-khaimah" },
-    { flag: "🇦🇪", name: "Fujairah", cities: "Al Faseel, Dibba...", href: "/fujairah" },
+    { flag: "DXB", name: "Dubai", cities: "Downtown, Marina, Jumeirah...", href: "/search?city=Dubai" },
+    { flag: "AUH", name: "Abu Dhabi", cities: "Corniche, Yas Island...", href: "/search?city=Abu Dhabi" },
+    { flag: "SHJ", name: "Sharjah", cities: "Al Majaz, Al Qasimia...", href: "/search?city=Sharjah" },
+    { flag: "AJM", name: "Ajman", cities: "Al Rashidiya, Al Nuaimia...", href: "/search?city=Ajman" },
+    { flag: "RAK", name: "Ras Al Khaimah", cities: "Al Nakheel, Al Hamra...", href: "/search?city=Ras Al Khaimah" },
+    { flag: "FUJ", name: "Fujairah", cities: "Al Faseel, Dibba...", href: "/search?city=Fujairah" },
   ];
 
   return (
@@ -206,12 +206,16 @@ export default async function Home() {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto shrink-0">
-              <Button className="bg-white hover:bg-gray-bg text-blue-primary h-12 px-8 rounded-xl font-bold">
-                List your clinic
-              </Button>
-              <Button variant="outline" className="bg-transparent border-white/30 text-white hover:bg-white/10 hover:text-white h-12 px-8 rounded-xl font-semibold">
-                Learn more
-              </Button>
+              <Link href="/list-your-clinic">
+                <Button className="w-full sm:w-auto bg-white hover:bg-gray-bg text-blue-primary h-12 px-8 rounded-xl font-bold">
+                  List your clinic
+                </Button>
+              </Link>
+              <Link href="/contact">
+                <Button variant="outline" className="w-full sm:w-auto bg-transparent border-white/30 text-white hover:bg-white/10 hover:text-white h-12 px-8 rounded-xl font-semibold">
+                  Learn more
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
