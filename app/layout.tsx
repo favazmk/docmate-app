@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: "Doc Mate | Doctor appointments made easy",
-  description: "Find and book trusted doctors across the GCC - instantly. Verified specialists in UAE, Saudi Arabia, Kuwait, Bahrain, Qatar and Oman.",
+  description: "Find and book trusted doctors in Dubai - instantly. Verified specialists in Dubai Healthcare City, Jumeirah, Al Barsha, and more.",
 };
 
 export default function RootLayout({

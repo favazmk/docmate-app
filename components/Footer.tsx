@@ -19,7 +19,7 @@ export default function Footer() {
               <span className="font-bold text-lg tracking-tight">Docmate.</span>
             </Link>
             <p className="text-white/50 text-sm max-w-xs">
-              Doctor appointments made easy. Find and book trusted doctors across the GCC instantly.
+              Doctor appointments made easy. Find and book trusted doctors in Dubai instantly.
             </p>
           </div>
 
@@ -47,7 +47,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-white/30 text-xs">
           <p>© {new Date().getFullYear()} Docmate. All rights reserved.</p>
-          <p className="font-medium">UAE · KSA · KW · BH · QA · OM</p>
+          <p className="font-medium">Dubai Healthcare City · Jumeirah · Al Barsha · Deira</p>
         </div>
       </div>
     </footer>

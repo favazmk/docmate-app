@@ -36,7 +36,7 @@ export default function ListYourClinicPage() {
               Grow your practice with Docmate
             </h1>
             <p className="text-white/80 text-lg md:text-xl leading-relaxed mb-8 max-w-lg mx-auto lg:mx-0">
-              Join thousands of healthcare providers in the GCC who are reaching more patients, reducing no-shows, and streamlining their bookings.
+              Join thousands of healthcare providers in Dubai who are reaching more patients, reducing no-shows, and streamlining their bookings.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Button onClick={() => document.getElementById('clinic-form')?.scrollIntoView({ behavior: 'smooth' })} className="bg-white hover:bg-gray-bg text-blue-primary h-14 px-8 rounded-xl font-bold text-base">

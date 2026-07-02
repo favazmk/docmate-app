@@ -14,7 +14,7 @@ export default function AboutPage() {
             Our Mission
           </span>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-            Transforming Healthcare Access in the GCC
+            Transforming Healthcare Access in Dubai
           </h1>
           <p className="text-white/80 text-lg md:text-xl leading-relaxed">
             We built Docmate because finding the right doctor shouldn't be harder than the illness itself. 
@@ -58,10 +58,10 @@ export default function AboutPage() {
               Built for patients, <br/>trusted by doctors.
             </h2>
             <p className="text-text-mid text-lg leading-relaxed">
-              Founded in 2026, Docmate started with a simple observation: booking a doctor's appointment in the GCC involved too many phone calls and long hold times. We set out to change that by building a platform that connects patients directly with the best healthcare providers.
+              Founded in 2026, Docmate started with a simple observation: booking a doctor's appointment in Dubai involved too many phone calls and long hold times. We set out to change that by building a platform that connects patients directly with the best healthcare providers.
             </p>
             <p className="text-text-mid text-lg leading-relaxed">
-              Today, we are the fastest-growing health-tech platform in the region, connecting thousands of patients with top-tier healthcare providers in the UAE, Saudi Arabia, Kuwait, Bahrain, Qatar, and Oman.
+              Today, we are the fastest-growing health-tech platform in the region, connecting thousands of patients with top-tier healthcare providers across Dubai.
             </p>
             <ul className="flex flex-col gap-3 mt-4">
               <li className="flex items-center gap-3 text-text-dark font-semibold">

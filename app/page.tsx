@@ -47,13 +47,17 @@ export default async function Home() {
     isVerified: true
   }));
 
-  const emirates = [
-    { flag: "DXB", name: "Dubai", cities: "Downtown, Marina, Jumeirah...", href: "/search?city=Dubai" },
-    { flag: "AUH", name: "Abu Dhabi", cities: "Corniche, Yas Island...", href: "/search?city=Abu Dhabi" },
-    { flag: "SHJ", name: "Sharjah", cities: "Al Majaz, Al Qasimia...", href: "/search?city=Sharjah" },
-    { flag: "AJM", name: "Ajman", cities: "Al Rashidiya, Al Nuaimia...", href: "/search?city=Ajman" },
-    { flag: "RAK", name: "Ras Al Khaimah", cities: "Al Nakheel, Al Hamra...", href: "/search?city=Ras Al Khaimah" },
-    { flag: "FUJ", name: "Fujairah", cities: "Al Faseel, Dibba...", href: "/search?city=Fujairah" },
+  const topDubaiAreas = [
+    { flag: "DHC", name: "Dubai Healthcare City", cities: "Major hospitals & specialized clinics", href: "/search?city=Dubai Healthcare City" },
+    { flag: "JUM", name: "Jumeirah", cities: "Premium clinics & aesthetic centers", href: "/search?city=Jumeirah" },
+    { flag: "ALB", name: "Al Barsha", cities: "Family medicine & general hospitals", href: "/search?city=Al Barsha" },
+    { flag: "MAR", name: "Dubai Marina", cities: "Specialized care & dental clinics", href: "/search?city=Dubai Marina" },
+    { flag: "BUR", name: "Bur Dubai", cities: "Established general hospitals", href: "/search?city=Bur Dubai" },
+    { flag: "DEI", name: "Deira", cities: "Accessible healthcare & polyclinics", href: "/search?city=Deira" },
+    { flag: "BAY", name: "Business Bay", cities: "Corporate clinics & wellness centers", href: "/search?city=Business Bay" },
+    { flag: "QUS", name: "Al Qusais", cities: "Large scale general hospitals", href: "/search?city=Al Qusais" },
+    { flag: "MIR", name: "Mirdif", cities: "Community clinics & pediatrics", href: "/search?city=Mirdif" },
+    { flag: "NAS", name: "Nad Al Sheba", cities: "Modern healthcare facilities", href: "/search?city=Nad Al Sheba" },
   ];
 
   return (
@@ -62,13 +66,13 @@ export default async function Home() {
       <section className="bg-gradient-to-b from-blue-hover to-blue-primary pt-16 pb-32 px-4 relative">
         <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
           <span className="uppercase tracking-widest text-[11px] font-bold text-white/70 mb-4">
-            GCC's #1 doctor booking platform
+            Dubai's #1 doctor booking platform
           </span>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6 tracking-tight">
             Find and Book the <span className="text-white/90">Best Doctors</span> Near You
           </h1>
           <p className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl mx-auto lg:mx-0 font-medium">
-            Verified specialists in UAE. Book in under 2 minutes.
+            Verified specialists in Dubai. Book in under 2 minutes.
           </p>
         </div>
       </section>
@@ -85,7 +89,7 @@ export default async function Home() {
             <BadgeCheck className="w-5 h-5" /> 500+ verified doctors
           </div>
           <div className="flex items-center gap-2 text-blue-primary font-medium text-sm">
-            <Globe className="w-5 h-5" /> 6 GCC countries
+            <Globe className="w-5 h-5" /> Focused on Dubai
           </div>
           <div className="flex items-center gap-2 text-blue-primary font-medium text-sm">
             <Zap className="w-5 h-5" /> Instant confirmation
@@ -137,19 +141,19 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Browse by Emirate */}
-      <section id="emirates" className="py-20 px-4 bg-white">
+      {/* Browse by Area */}
+      <section id="areas" className="py-20 px-4 bg-white">
         <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
           <div className="bg-blue-light text-blue-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4 border border-blue-primary/10">
-            Available across the UAE
+            Available across Dubai
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-text-dark mb-12 tracking-tight">
-            Browse by Emirate
+            Top Areas in Dubai
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full text-left">
-            {emirates.map((e, i) => (
-              <CountryCard key={i} flag={e.flag} name={e.name} cities={e.cities} href={e.href} />
+            {topDubaiAreas.map((area, i) => (
+              <CountryCard key={i} flag={area.flag} name={area.name} cities={area.cities} href={area.href} />
             ))}
           </div>
         </div>
@@ -200,7 +204,7 @@ export default async function Home() {
                 Are you a doctor or clinic?
               </h2>
               <p className="text-white/75 text-lg">
-                Join Docmate and get discovered by thousands of patients across the GCC. Manage appointments easily.
+                Join Docmate and get discovered by thousands of patients across Dubai. Manage appointments easily.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto shrink-0">
