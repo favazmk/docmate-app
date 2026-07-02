@@ -28,8 +28,7 @@ export default function Footer() {
             <h4 className="text-white/80 font-semibold mb-2">Platform</h4>
             <Link href="/search" className="text-white/50 hover:text-white transition-colors text-sm">Find a doctor</Link>
             <Link href="/#specialties" className="text-white/50 hover:text-white transition-colors text-sm">Specialties</Link>
-            <Link href="/#emirates" className="text-white/50 hover:text-white transition-colors text-sm">Browse by city</Link>
-            <Link href="/#insurance" className="text-white/50 hover:text-white transition-colors text-sm">Insurance guide</Link>
+            <Link href="/#areas" className="text-white/50 hover:text-white transition-colors text-sm">Top areas in Dubai</Link>
             <Link href="/blog" className="text-white/50 hover:text-white transition-colors text-sm">Health blog</Link>
           </div>
 
