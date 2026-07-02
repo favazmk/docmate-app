@@ -19,6 +19,14 @@ export async function createDoctor(formData: FormData) {
     // Generate slug from name
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Math.floor(Math.random() * 1000);
 
+    const existingDoctor = await prisma.doctor.findUnique({
+      where: { email }
+    });
+
+    if (existingDoctor) {
+      return { success: false, error: "A doctor with this email address already exists. Please use a different email." };
+    }
+
     const doctor = await prisma.doctor.create({
       data: {
         name,

@@ -21,13 +21,13 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!user || !user.password) {
-          throw new Error("Invalid credentials");
+          throw new Error("No account found with this email. Please sign up first.");
         }
 
         const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
 
         if (!isPasswordValid) {
-          throw new Error("Invalid credentials");
+          throw new Error("Incorrect password.");
         }
 
         return {

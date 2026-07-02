@@ -10,15 +10,29 @@ export default function FilterSidebar() {
   const pathname = usePathname();
   
   const currentSpecialty = searchParams.get("specialty") || "";
+  const currentGender = searchParams.get("gender") || "Any";
+  const currentInsurances = searchParams.getAll("insurance");
+  const currentLanguages = searchParams.getAll("language");
 
-  const handleSpecialtyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const updateParam = (key: string, value: string | null, isArray: boolean = false) => {
     const params = new URLSearchParams(searchParams.toString());
-    const val = e.target.value;
     
-    if (val && val !== "All Specialties") {
-      params.set("specialty", val);
+    if (isArray) {
+      if (value) {
+        const values = params.getAll(key);
+        if (values.includes(value)) {
+          params.delete(key);
+          values.filter(v => v !== value).forEach(v => params.append(key, v));
+        } else {
+          params.append(key, value);
+        }
+      }
     } else {
-      params.delete("specialty");
+      if (value && value !== "All Specialties" && value !== "Any") {
+        params.set(key, value);
+      } else {
+        params.delete(key);
+      }
     }
     
     router.push(`${pathname}?${params.toString()}`);
@@ -28,7 +42,7 @@ export default function FilterSidebar() {
     router.push(pathname);
   };
 
-  const specialties = ["Dermatology", "Cardiology", "Orthopedics", "Pediatrics", "Neurology", "Dentistry"];
+  const specialties = ["Dermatologist", "Cardiologist", "Orthopedist", "Pediatrician", "Neurologist", "Dentist", "General Practitioner"];
   const insurances = ["Daman", "AXA", "Bupa", "Tawuniya", "MetLife"];
   const languages = ["English", "Arabic", "French", "Hindi", "Urdu"];
 
@@ -44,7 +58,7 @@ export default function FilterSidebar() {
         <div className="relative">
           <select 
             value={currentSpecialty || "All Specialties"} 
-            onChange={handleSpecialtyChange}
+            onChange={(e) => updateParam("specialty", e.target.value)}
             className="w-full appearance-none bg-gray-bg border border-gray-border rounded-lg h-10 px-3 text-sm font-medium text-text-dark focus:outline-none focus:border-blue-primary"
           >
             <option value="All Specialties">All Specialties</option>
@@ -57,35 +71,51 @@ export default function FilterSidebar() {
       <div className="flex flex-col gap-3">
         <h4 className="font-semibold text-text-dark text-sm uppercase tracking-wider">Gender</h4>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="flex-1 bg-blue-light border-blue-primary text-blue-primary">Any</Button>
-          <Button variant="outline" size="sm" className="flex-1 text-text-mid border-gray-border">Male</Button>
-          <Button variant="outline" size="sm" className="flex-1 text-text-mid border-gray-border">Female</Button>
+          {["Any", "Male", "Female"].map(g => (
+            <Button 
+              key={g}
+              onClick={() => updateParam("gender", g)}
+              variant="outline" 
+              size="sm" 
+              className={`flex-1 ${currentGender === g ? "bg-blue-light border-blue-primary text-blue-primary" : "text-text-mid border-gray-border"}`}
+            >
+              {g}
+            </Button>
+          ))}
         </div>
       </div>
 
       <div className="flex flex-col gap-3">
         <h4 className="font-semibold text-text-dark text-sm uppercase tracking-wider">Insurance</h4>
         <div className="flex flex-col gap-2">
-          {insurances.map(ins => (
-            <label key={ins} className="flex items-center gap-2 cursor-pointer group">
-              <div className="w-4 h-4 rounded border border-gray-border flex items-center justify-center group-hover:border-blue-primary">
-                {/* Check icon would go here if checked */}
-              </div>
-              <span className="text-sm text-text-mid group-hover:text-text-dark">{ins}</span>
-            </label>
-          ))}
-          <button className="text-sm text-blue-primary text-left font-medium mt-1">+ View more</button>
+          {insurances.map(ins => {
+            const isChecked = currentInsurances.includes(ins);
+            return (
+              <label key={ins} className="flex items-center gap-2 cursor-pointer group" onClick={(e) => { e.preventDefault(); updateParam("insurance", ins, true); }}>
+                <div className={`w-4 h-4 rounded border flex items-center justify-center ${isChecked ? "bg-blue-primary border-blue-primary" : "border-gray-border group-hover:border-blue-primary"}`}>
+                  {isChecked && <Check className="w-3 h-3 text-white" />}
+                </div>
+                <span className={`text-sm ${isChecked ? "text-text-dark font-medium" : "text-text-mid group-hover:text-text-dark"}`}>{ins}</span>
+              </label>
+            );
+          })}
         </div>
       </div>
 
       <div className="flex flex-col gap-3">
         <h4 className="font-semibold text-text-dark text-sm uppercase tracking-wider">Languages</h4>
-        <div className="flex flex-wrap gap-2">
-          {languages.map(lang => (
-            <div key={lang} className="px-3 py-1.5 rounded-full border border-gray-border text-xs font-medium text-text-mid cursor-pointer hover:border-blue-primary hover:text-blue-primary">
-              {lang}
-            </div>
-          ))}
+        <div className="flex flex-col gap-2">
+          {languages.map(lang => {
+            const isChecked = currentLanguages.includes(lang);
+            return (
+              <label key={lang} className="flex items-center gap-2 cursor-pointer group" onClick={(e) => { e.preventDefault(); updateParam("language", lang, true); }}>
+                <div className={`w-4 h-4 rounded border flex items-center justify-center ${isChecked ? "bg-blue-primary border-blue-primary" : "border-gray-border group-hover:border-blue-primary"}`}>
+                  {isChecked && <Check className="w-3 h-3 text-white" />}
+                </div>
+                <span className={`text-sm ${isChecked ? "text-text-dark font-medium" : "text-text-mid group-hover:text-text-dark"}`}>{lang}</span>
+              </label>
+            );
+          })}
         </div>
       </div>
 

@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Users, Activity, Calendar, Search, Plus, X, Upload, CheckCircle2 } from "lucide-react";
+import Image from "next/image";
+import { Users, Activity, Calendar, Search, Plus, X, Upload, CheckCircle2, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createDoctor, updateDoctor, deleteDoctor } from "@/app/actions/doctors";
 import { useRouter } from "next/navigation";
@@ -11,10 +12,12 @@ export default function DoctorsClient({ doctors }: { doctors: any[] }) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editingDoctor, setEditingDoctor] = useState<any>(null);
+  const [errorMsg, setErrorMsg] = useState("");
   const router = useRouter();
 
   const handleEdit = (doc: any) => {
     setEditingDoctor(doc);
+    setErrorMsg("");
     setIsAddModalOpen(true);
   };
 
@@ -30,12 +33,14 @@ export default function DoctorsClient({ doctors }: { doctors: any[] }) {
 
   const openAddModal = () => {
     setEditingDoctor(null);
+    setErrorMsg("");
     setIsAddModalOpen(true);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+    setErrorMsg("");
     const formData = new FormData(e.currentTarget);
     
     let res;
@@ -52,18 +57,19 @@ export default function DoctorsClient({ doctors }: { doctors: any[] }) {
       setEditingDoctor(null);
       router.refresh();
     } else {
-      alert("Error: " + res.error);
+      setErrorMsg(res.error || "An error occurred");
     }
   };
+
+  const newAppointmentsCount = 3;
 
   return (
     <div className="bg-gray-bg min-h-screen flex">
       {/* Admin Sidebar */}
       <aside className="w-64 bg-sidebar border-r border-sidebar-border hidden md:flex flex-col">
         <div className="h-16 flex items-center px-6 border-b border-sidebar-border bg-white">
-          <Link href="/" className="font-extrabold text-xl tracking-tight text-text-dark flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-blue-primary text-white flex items-center justify-center text-sm">doc</div>
-            mate. <span className="text-xs font-semibold text-blue-primary uppercase tracking-wider ml-1">Admin</span>
+          <Link href="/" className="flex items-center">
+            <Image src="/logo.png" alt="Doc Mate Logo" width={110} height={32} className="object-contain" priority />
           </Link>
         </div>
         <nav className="flex-1 overflow-y-auto py-6 px-4 flex flex-col gap-2">
@@ -73,8 +79,13 @@ export default function DoctorsClient({ doctors }: { doctors: any[] }) {
           <Link href="/admin/doctors" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-primary text-white font-medium text-sm">
             <Users className="w-5 h-5" /> Doctors
           </Link>
-          <Link href="/admin/appointments" className="flex items-center gap-3 px-4 py-3 rounded-xl text-text-mid hover:bg-gray-100 font-medium text-sm transition-colors">
-            <Calendar className="w-5 h-5" /> Appointments
+          <Link href="/admin/appointments" className="flex items-center justify-between px-4 py-3 rounded-xl text-text-mid hover:bg-gray-100 font-medium text-sm transition-colors">
+            <div className="flex items-center gap-3">
+              <Calendar className="w-5 h-5" /> Appointments
+            </div>
+            {newAppointmentsCount > 0 && (
+              <span className="bg-blue-primary text-white text-xs font-bold px-2 py-0.5 rounded-full">{newAppointmentsCount}</span>
+            )}
           </Link>
         </nav>
       </aside>
@@ -84,6 +95,19 @@ export default function DoctorsClient({ doctors }: { doctors: any[] }) {
         <header className="h-16 bg-white border-b border-gray-border px-6 flex items-center justify-between shrink-0">
           <h1 className="font-bold text-text-dark text-lg">Manage Doctors</h1>
           <div className="flex items-center gap-4">
+            <div className="relative">
+              <Search className="w-4 h-4 absolute left-3 top-2.5 text-text-light" />
+              <input type="text" placeholder="Search..." className="bg-gray-bg border border-gray-border rounded-lg h-9 pl-9 pr-4 text-sm focus:outline-none focus:border-blue-primary" />
+            </div>
+
+            {/* Notification Bell */}
+            <Link href="/admin/appointments" className="relative p-2 text-text-mid hover:text-blue-primary transition-colors">
+              <Bell className="w-5 h-5" />
+              {newAppointmentsCount > 0 && (
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+              )}
+            </Link>
+
             <div className="w-8 h-8 rounded-full bg-blue-light text-blue-primary flex items-center justify-center font-bold text-sm">A</div>
           </div>
         </header>
@@ -163,6 +187,12 @@ export default function DoctorsClient({ doctors }: { doctors: any[] }) {
             {/* Modal Body */}
             <div className="flex-1 overflow-y-auto p-6">
               <form id="add-doctor-form" onSubmit={handleSubmit} className="flex flex-col gap-6">
+                
+                {errorMsg && (
+                  <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm border border-red-200">
+                    {errorMsg}
+                  </div>
+                )}
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-2">

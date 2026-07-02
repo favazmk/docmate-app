@@ -46,7 +46,7 @@ export default function DoctorCard({
           </Link>
           <span className="text-sm font-medium text-blue-primary">{specialty}</span>
           
-          <div className="flex items-center gap-1.5 mt-1">
+          <div className="flex items-center gap-1.5 mt-1" title="Ratings are read-only placeholder">
             <Star className="w-3.5 h-3.5 text-star-color fill-star-color" />
             <span className="text-xs font-semibold text-text-dark">{rating.toFixed(1)}</span>
             <span className="text-xs text-text-light">({reviews})</span>

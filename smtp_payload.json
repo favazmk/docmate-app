@@ -1,0 +1,8 @@
+[
+  {
+    "key": "SMTP_PASS",
+    "value": "fxzp areu jhni soss",
+    "target": ["production", "preview", "development"],
+    "type": "plain"
+  }
+]

@@ -64,11 +64,11 @@ export default async function Home() {
           <span className="uppercase tracking-widest text-[11px] font-bold text-white/70 mb-4">
             GCC's #1 doctor booking platform
           </span>
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight tracking-tight">
-            Find & book trusted doctors across the GCC — instantly
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-dark leading-tight mb-6 tracking-tight">
+            Find and Book the <span className="text-blue-primary">Best Doctors</span> Near You
           </h1>
-          <p className="text-white/75 text-lg max-w-2xl mx-auto mb-8">
-            Verified specialists in UAE, Saudi Arabia, Kuwait, Bahrain, Qatar and Oman. Book in under 2 minutes.
+          <p className="text-lg md:text-xl text-text-mid mb-8 max-w-2xl mx-auto lg:mx-0 font-medium">
+            Verified specialists in UAE. Book in under 2 minutes.
           </p>
         </div>
       </section>

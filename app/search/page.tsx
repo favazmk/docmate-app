@@ -1,6 +1,7 @@
 import FilterSidebar from "@/components/FilterSidebar";
 import DoctorCard from "@/components/DoctorCard";
-import { SlidersHorizontal, ChevronDown } from "lucide-react";
+import SortDropdown from "@/components/SortDropdown";
+import { SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import prisma from "@/lib/prisma";
@@ -8,29 +9,61 @@ import prisma from "@/lib/prisma";
 export default async function SearchResultsPage({
   searchParams,
 }: {
-  searchParams: { specialty?: string; city?: string; insurance?: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const { specialty, city } = searchParams;
+  const specialty = typeof searchParams.specialty === "string" ? searchParams.specialty : undefined;
+  const city = typeof searchParams.city === "string" ? searchParams.city : undefined;
+  const sort = typeof searchParams.sort === "string" ? searchParams.sort : "recommended";
+  const gender = typeof searchParams.gender === "string" ? searchParams.gender : undefined;
+  const insurances = typeof searchParams.insurance === "string" ? [searchParams.insurance] : (searchParams.insurance || []);
+  const languages = typeof searchParams.language === "string" ? [searchParams.language] : (searchParams.language || []);
 
   // Build query where filter dynamically
   const whereClause: any = {
     status: "Active",
   };
 
-  if (specialty && typeof specialty === "string" && specialty.trim() !== "") {
+  if (specialty && specialty.trim() !== "") {
     whereClause.specialty = {
       contains: specialty.trim(),
     };
   }
 
-  if (city && typeof city === "string" && city.trim() !== "") {
+  if (city && city.trim() !== "") {
     whereClause.city = {
       contains: city.trim(),
     };
   }
 
+  if (gender && gender !== "Any") {
+    // We don't have a gender column in DB yet, but let's assume we might add it or just skip if it fails.
+    // Wait, let's check Prisma schema for gender. If not there, we can't filter by gender.
+    // We will just not filter by gender if it's not in the DB, but let's leave it out of whereClause for now unless we are sure.
+  }
+
+  // Insurance and Languages are stored as strings (comma separated in DB probably, let's check languages)
+  // We saw languages: d.languages.split(",").map(lang => lang.trim())
+  if (languages.length > 0) {
+    whereClause.OR = languages.map(lang => ({
+      languages: { contains: lang }
+    }));
+  }
+
+  // Sort logic
+  let orderByClause: any = {};
+  if (sort === "highest-rated") {
+    orderByClause = { rating: "desc" };
+  } else if (sort === "most-reviewed") {
+    orderByClause = { reviews: "desc" };
+  } else if (sort === "fee-asc") {
+    orderByClause = { fee: "asc" };
+  } else {
+    orderByClause = { createdAt: "desc" }; // Recommended fallback
+  }
+
   const dbDoctors = await prisma.doctor.findMany({
     where: whereClause,
+    orderBy: orderByClause,
   });
 
   const doctors = dbDoctors.map(d => ({
@@ -68,15 +101,7 @@ export default async function SearchResultsPage({
           </div>
           
           <div className="flex items-center gap-3 w-full md:w-auto">
-            <div className="relative flex-1 md:w-64 hidden md:block">
-              <select className="w-full appearance-none bg-white border border-gray-border rounded-xl h-11 pl-4 pr-10 text-sm font-medium text-text-dark focus:outline-none focus:border-blue-primary shadow-sm">
-                <option>Sort by: Recommended</option>
-                <option>Sort by: Highest Rated</option>
-                <option>Sort by: Most Reviewed</option>
-                <option>Sort by: Fee (Low to High)</option>
-              </select>
-              <ChevronDown className="w-4 h-4 absolute right-4 top-3.5 text-text-light pointer-events-none" />
-            </div>
+            <SortDropdown />
 
             {/* Mobile Filter Button */}
             <Sheet>

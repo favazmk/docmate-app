@@ -81,10 +81,10 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
                 <h2 className="text-lg md:text-xl font-medium text-blue-primary mb-4">{doctor.specialty}</h2>
                 
                 <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-text-mid mb-6">
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5" title="Ratings are read-only placeholder">
                     <Star className="w-5 h-5 text-star-color fill-star-color" />
                     <span className="font-bold text-text-dark text-base">{doctor.rating.toFixed(1)}</span>
-                    <span className="text-text-light underline cursor-pointer hover:text-blue-primary">({doctor.reviews} reviews)</span>
+                    <span className="text-text-light underline cursor-help hover:text-blue-primary">({doctor.reviews} reviews)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span>{doctor.countryFlag}</span>
