@@ -34,72 +34,87 @@ export async function sendAppointmentEmails({
   }
 
   try {
-    // 1. Send Confirmation to Patient
-    await transporter.sendMail({
-      from: `"Docmate Support" <${process.env.SMTP_USER}>`,
-      to: patientEmail,
-      subject: "Appointment Confirmation - Docmate",
-      html: `
-        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px;">
-          <h2 style="color: #2200CC; margin-top: 0;">Appointment Confirmed!</h2>
-          <p>Hello <strong>${patientName}</strong>,</p>
-          <p>Your appointment has been successfully booked with <strong>${doctorName}</strong>.</p>
-          
-          <div style="background-color: #f8fafc; padding: 16px; border-radius: 8px; margin: 20px 0;">
-            <p style="margin: 4px 0;"><strong>Date:</strong> ${appointmentDate}</p>
-            <p style="margin: 4px 0;"><strong>Time:</strong> ${appointmentTime}</p>
-          </div>
-          
-          <p>If you need to reschedule or cancel, please log in to your patient dashboard.</p>
-          <p style="margin-bottom: 0;">Best regards,<br/><strong>The Docmate Team</strong></p>
-        </div>
-      `,
-    });
+    const promises = [];
 
-    // 2. Send Notification to Doctor
-    if (doctorEmail) {
-      await transporter.sendMail({
-        from: `"Docmate Alerts" <${process.env.SMTP_USER}>`,
-        to: doctorEmail,
-        subject: "New Appointment Booked - Docmate",
+    // 1. Send Confirmation to Patient
+    promises.push(
+      transporter.sendMail({
+        from: `"Docmate Support" <${process.env.SMTP_USER}>`,
+        to: patientEmail,
+        subject: "Appointment Confirmation - Docmate",
         html: `
           <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px;">
-            <h2 style="color: #2200CC; margin-top: 0;">New Appointment Received</h2>
-            <p>Hello <strong>${doctorName}</strong>,</p>
-            <p>You have a new patient booking via Docmate.</p>
+            <h2 style="color: #2200CC; margin-top: 0;">Appointment Confirmed!</h2>
+            <p>Hello <strong>${patientName}</strong>,</p>
+            <p>Your appointment has been successfully booked with <strong>${doctorName}</strong>.</p>
             
             <div style="background-color: #f8fafc; padding: 16px; border-radius: 8px; margin: 20px 0;">
-              <p style="margin: 4px 0;"><strong>Patient:</strong> ${patientName}</p>
               <p style="margin: 4px 0;"><strong>Date:</strong> ${appointmentDate}</p>
               <p style="margin: 4px 0;"><strong>Time:</strong> ${appointmentTime}</p>
             </div>
             
-            <p style="margin-bottom: 0;">Please log in to your provider dashboard to view more details.</p>
+            <p>If you need to reschedule or cancel, please log in to your patient dashboard.</p>
+            <p style="margin-bottom: 0;">Best regards,<br/><strong>The Docmate Team</strong></p>
           </div>
         `,
-      });
+      })
+    );
+
+    // 2. Send Notification to Doctor
+    if (doctorEmail) {
+      promises.push(
+        transporter.sendMail({
+          from: `"Docmate Alerts" <${process.env.SMTP_USER}>`,
+          to: doctorEmail,
+          subject: "New Appointment Booked - Docmate",
+          html: `
+            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px;">
+              <h2 style="color: #2200CC; margin-top: 0;">New Appointment Received</h2>
+              <p>Hello <strong>${doctorName}</strong>,</p>
+              <p>You have a new patient booking via Docmate.</p>
+              
+              <div style="background-color: #f8fafc; padding: 16px; border-radius: 8px; margin: 20px 0;">
+                <p style="margin: 4px 0;"><strong>Patient:</strong> ${patientName}</p>
+                <p style="margin: 4px 0;"><strong>Date:</strong> ${appointmentDate}</p>
+                <p style="margin: 4px 0;"><strong>Time:</strong> ${appointmentTime}</p>
+              </div>
+              
+              <p style="margin-bottom: 0;">Please log in to your provider dashboard to view more details.</p>
+            </div>
+          `,
+        })
+      );
     }
 
     // 3. Send Alert to Docmate Admin
-    await transporter.sendMail({
-      from: `"Docmate System" <${process.env.SMTP_USER}>`,
-      to: adminEmail,
-      subject: `New Booking Alert: ${doctorName}`,
-      html: `
-        <div style="font-family: sans-serif;">
-          <h3>New Platform Booking</h3>
-          <p>A new appointment was just booked on Docmate.</p>
-          <ul>
-            <li><strong>Patient:</strong> ${patientName} (${patientEmail})</li>
-            <li><strong>Doctor:</strong> ${doctorName}</li>
-            <li><strong>Date & Time:</strong> ${appointmentDate} at ${appointmentTime}</li>
-          </ul>
-        </div>
-      `,
+    promises.push(
+      transporter.sendMail({
+        from: `"Docmate System" <${process.env.SMTP_USER}>`,
+        to: adminEmail,
+        subject: `New Booking Alert: ${doctorName}`,
+        html: `
+          <div style="font-family: sans-serif;">
+            <h3>New Platform Booking</h3>
+            <p>A new appointment was just booked on Docmate.</p>
+            <ul>
+              <li><strong>Patient:</strong> ${patientName} (${patientEmail})</li>
+              <li><strong>Doctor:</strong> ${doctorName}</li>
+              <li><strong>Date & Time:</strong> ${appointmentDate} at ${appointmentTime}</li>
+            </ul>
+          </div>
+        `,
+      })
+    );
+
+    const results = await Promise.allSettled(promises);
+    results.forEach((result, index) => {
+      if (result.status === 'rejected') {
+        console.error(`Email ${index + 1} failed to send:`, result.reason);
+      }
     });
 
-    console.log("Appointment emails dispatched successfully.");
+    console.log("Appointment emails processing complete.");
   } catch (error) {
-    console.error("Error sending appointment emails:", error);
+    console.error("Critical error in sendAppointmentEmails:", error);
   }
 }
