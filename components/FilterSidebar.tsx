@@ -11,6 +11,7 @@ export default function FilterSidebar() {
   const pathname = usePathname();
   
   const currentSpecialty = searchParams.get("specialty") || "";
+  const currentArea = searchParams.get("city") || "";
   const currentGender = searchParams.get("gender") || "Any";
   const currentInsurances = searchParams.getAll("insurance");
   const currentLanguages = searchParams.getAll("language");
@@ -61,6 +62,18 @@ export default function FilterSidebar() {
     "Rheumatology",
     "Urology"
   ];
+  const areas = [
+    "Al Barsha",
+    "Al Qusais",
+    "Bur Dubai",
+    "Business Bay",
+    "Deira",
+    "Dubai Healthcare City",
+    "Dubai Marina",
+    "Jumeirah",
+    "Mirdif",
+    "Nad Al Sheba"
+  ];
   const insurances = ["Daman", "AXA", "Bupa", "Tawuniya", "MetLife"];
   const languages = ["English", "Arabic", "French", "Hindi", "Urdu"];
 
@@ -78,6 +91,16 @@ export default function FilterSidebar() {
           onChange={(val) => updateParam("specialty", val)}
           options={specialties}
           placeholder="All Specialties"
+        />
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <h4 className="font-semibold text-text-dark text-sm uppercase tracking-wider">Area</h4>
+        <CustomDropdown
+          value={currentArea}
+          onChange={(val) => updateParam("city", val)}
+          options={areas}
+          placeholder="All Areas"
         />
       </div>
 
