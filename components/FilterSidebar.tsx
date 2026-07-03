@@ -3,6 +3,7 @@
 import { Check, ChevronDown } from "lucide-react";
 import { Button } from "./ui/button";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import CustomDropdown from "./ui/CustomDropdown";
 
 export default function FilterSidebar() {
   const router = useRouter();
@@ -72,17 +73,12 @@ export default function FilterSidebar() {
 
       <div className="flex flex-col gap-3">
         <h4 className="font-semibold text-text-dark text-sm uppercase tracking-wider">Specialty</h4>
-        <div className="relative">
-          <select 
-            value={currentSpecialty || "All Specialties"} 
-            onChange={(e) => updateParam("specialty", e.target.value)}
-            className="w-full appearance-none bg-gray-bg border border-gray-border rounded-lg h-10 px-3 text-sm font-medium text-text-dark focus:outline-none focus:border-blue-primary"
-          >
-            <option value="All Specialties">All Specialties</option>
-            {specialties.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
-          <ChevronDown className="w-4 h-4 absolute right-3 top-3 text-text-light pointer-events-none" />
-        </div>
+        <CustomDropdown
+          value={currentSpecialty}
+          onChange={(val) => updateParam("specialty", val)}
+          options={specialties}
+          placeholder="All Specialties"
+        />
       </div>
 
       <div className="flex flex-col gap-3">

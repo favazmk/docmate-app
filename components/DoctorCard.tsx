@@ -1,7 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { BadgeCheck, Star } from "lucide-react";
-import { Button, buttonVariants } from "./ui/button";
+import { buttonVariants } from "./ui/button";
 import { Badge } from "./ui/badge";
 
 interface DoctorCardProps {
@@ -29,14 +32,23 @@ export default function DoctorCard({
   photoUrl,
   isVerified
 }: DoctorCardProps) {
+  const router = useRouter();
+
   return (
-    <div className="bg-white border border-gray-border rounded-xl p-5 flex flex-col hover:border-blue-primary/50 transition-colors">
+    <div 
+      onClick={() => router.push(`/doctors/${slug}`)}
+      className="bg-white border border-gray-border rounded-xl p-5 flex flex-col hover:border-blue-primary/50 transition-colors cursor-pointer"
+    >
       <div className="flex gap-4 mb-4">
         <div className="relative w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-gray-bg border border-gray-border">
           <Image src={photoUrl} alt={name} fill className="object-cover" />
         </div>
         <div className="flex flex-col">
-          <Link href={`/doctors/${slug}`} className="font-bold text-text-dark text-lg hover:text-blue-primary flex items-center gap-1.5 transition-colors">
+          <Link 
+            href={`/doctors/${slug}`} 
+            onClick={(e) => e.stopPropagation()}
+            className="font-bold text-text-dark text-lg hover:text-blue-primary flex items-center gap-1.5 transition-colors"
+          >
             {name}
             {isVerified && <BadgeCheck className="w-4 h-4 text-green-badge" />}
           </Link>
@@ -66,7 +78,11 @@ export default function DoctorCard({
 
       <div className="mt-auto pt-4 border-t border-gray-border flex items-center justify-between">
         <div></div>
-        <Link href={`/book/${slug}`} className={`${buttonVariants({ size: "sm" })} bg-blue-primary hover:bg-blue-hover text-white rounded-lg h-9 px-4 text-xs`}>
+        <Link 
+          href={`/book/${slug}`} 
+          onClick={(e) => e.stopPropagation()}
+          className={`${buttonVariants({ size: "sm" })} bg-blue-primary hover:bg-blue-hover text-white rounded-lg h-9 px-4 text-xs`}
+        >
           Book Now
         </Link>
       </div>

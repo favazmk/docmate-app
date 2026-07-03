@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { Search, MapPin, User, Stethoscope } from "lucide-react";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
+import CustomDropdown from "./ui/CustomDropdown";
 
 interface DoctorData {
   slug: string;
@@ -77,60 +78,36 @@ export default function SearchBar({ doctors = [] }: SearchBarProps) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-4">
         
         {/* Dropdown 1: Specialties */}
-        <div className="flex flex-col bg-gray-bg rounded-xl p-3 border border-gray-border focus-within:border-blue-primary transition-colors">
-          <div className="flex items-center gap-1.5 mb-1 text-blue-primary">
-            <Stethoscope className="w-4 h-4" />
-            <span className="text-[11px] font-semibold uppercase tracking-wider">1. Specialty</span>
-          </div>
-          <select
-            value={selectedSpecialty}
-            onChange={(e) => handleSpecialtyChange(e.target.value)}
-            className="bg-transparent border-none outline-none text-text-dark font-medium w-full h-7 text-sm cursor-pointer"
-          >
-            <option value="">Select Specialty</option>
-            {specialties.map(spec => (
-              <option key={spec} value={spec}>{spec}</option>
-            ))}
-          </select>
-        </div>
+        <CustomDropdown
+          value={selectedSpecialty}
+          onChange={handleSpecialtyChange}
+          options={specialties}
+          placeholder="Select Specialty"
+          icon={<Stethoscope className="w-4 h-4" />}
+          labelPrefix="1. Specialty"
+        />
 
         {/* Dropdown 2: Locations */}
-        <div className={`flex flex-col bg-gray-bg rounded-xl p-3 border border-gray-border focus-within:border-blue-primary transition-colors ${!selectedSpecialty ? 'opacity-50' : ''}`}>
-          <div className="flex items-center gap-1.5 mb-1 text-blue-primary">
-            <MapPin className="w-4 h-4" />
-            <span className="text-[11px] font-semibold uppercase tracking-wider">2. Area / Location</span>
-          </div>
-          <select
-            value={selectedLocation}
-            onChange={(e) => handleLocationChange(e.target.value)}
-            disabled={!selectedSpecialty}
-            className="bg-transparent border-none outline-none text-text-dark font-medium w-full h-7 text-sm cursor-pointer disabled:cursor-not-allowed"
-          >
-            <option value="">Select Area</option>
-            {locations.map(loc => (
-              <option key={loc} value={loc}>{loc}</option>
-            ))}
-          </select>
-        </div>
+        <CustomDropdown
+          value={selectedLocation}
+          onChange={handleLocationChange}
+          options={locations}
+          placeholder="Select Area"
+          disabled={!selectedSpecialty}
+          icon={<MapPin className="w-4 h-4" />}
+          labelPrefix="2. Area / Location"
+        />
 
         {/* Dropdown 3: Available Doctors */}
-        <div className={`flex flex-col bg-gray-bg rounded-xl p-3 border border-gray-border focus-within:border-blue-primary transition-colors ${(!selectedSpecialty || !selectedLocation) ? 'opacity-50' : ''}`}>
-          <div className="flex items-center gap-1.5 mb-1 text-blue-primary">
-            <User className="w-4 h-4" />
-            <span className="text-[11px] font-semibold uppercase tracking-wider">3. Available Doctor</span>
-          </div>
-          <select
-            value={selectedDoctorSlug}
-            onChange={(e) => setSelectedDoctorSlug(e.target.value)}
-            disabled={!selectedSpecialty || !selectedLocation}
-            className="bg-transparent border-none outline-none text-text-dark font-medium w-full h-7 text-sm cursor-pointer disabled:cursor-not-allowed"
-          >
-            <option value="">Select Doctor</option>
-            {availableDoctors.map(doc => (
-              <option key={doc.slug} value={doc.slug}>{doc.name}</option>
-            ))}
-          </select>
-        </div>
+        <CustomDropdown
+          value={selectedDoctorSlug}
+          onChange={setSelectedDoctorSlug}
+          options={availableDoctors.map(d => ({ value: d.slug, label: d.name }))}
+          placeholder="Select Doctor"
+          disabled={!selectedSpecialty || !selectedLocation}
+          icon={<User className="w-4 h-4" />}
+          labelPrefix="3. Available Doctor"
+        />
 
       </div>
       

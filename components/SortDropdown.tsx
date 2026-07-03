@@ -1,7 +1,7 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import CustomDropdown from "./ui/CustomDropdown";
 
 export default function SortDropdown() {
   const router = useRouter();
@@ -9,24 +9,30 @@ export default function SortDropdown() {
   const pathname = usePathname();
   const currentSort = searchParams.get("sort") || "recommended";
 
-  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleSortChange = (val: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("sort", e.target.value);
+    if (val) {
+      params.set("sort", val);
+    } else {
+      params.set("sort", "recommended");
+    }
     router.push(`${pathname}?${params.toString()}`);
   };
 
+  const options = [
+    { value: "recommended", label: "Sort by: Recommended" },
+    { value: "highest-rated", label: "Sort by: Highest Rated" },
+    { value: "most-reviewed", label: "Sort by: Most Reviewed" }
+  ];
+
   return (
     <div className="relative flex-1 md:w-64 hidden md:block">
-      <select 
+      <CustomDropdown
         value={currentSort}
         onChange={handleSortChange}
-        className="w-full appearance-none bg-white border border-gray-border rounded-xl h-11 pl-4 pr-10 text-sm font-medium text-text-dark focus:outline-none focus:border-blue-primary shadow-sm"
-      >
-        <option value="recommended">Sort by: Recommended</option>
-        <option value="highest-rated">Sort by: Highest Rated</option>
-        <option value="most-reviewed">Sort by: Most Reviewed</option>
-      </select>
-      <ChevronDown className="w-4 h-4 absolute right-4 top-3.5 text-text-light pointer-events-none" />
+        options={options}
+        placeholder="Sort by: Recommended"
+      />
     </div>
   );
 }

@@ -27,9 +27,9 @@ export default function Navbar() {
     // Scroll spy for homepage sections
     let observer: IntersectionObserver;
     if (pathname === "/") {
-      const sections = ["specialties", "emirates"];
+      const sections = ["specialties", "areas"];
       const elements = sections.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
-
+      
       const observerOptions = {
         root: null,
         rootMargin: "-30% 0px -50% 0px", // Trigger when the section takes up the middle of the screen
@@ -89,7 +89,7 @@ export default function Navbar() {
   const navLinks = [
     { label: "Find doctors", href: "/search" },
     { label: "Specialties", href: "/#specialties" },
-    { label: "Emirates", href: "/#emirates" },
+    { label: "Areas", href: "/#areas" },
     { label: "Blog", href: "/blog" },
   ];
 
