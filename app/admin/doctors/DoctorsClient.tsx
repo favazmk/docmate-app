@@ -231,10 +231,13 @@ export default function DoctorsClient({ doctors }: { doctors: any[] }) {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
                   <div className="flex flex-col gap-2">
                     <label className="text-sm font-semibold text-text-dark">Languages</label>
                     <input name="languages" defaultValue={editingDoctor?.languages} type="text" placeholder="English, Arabic" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-semibold text-text-dark">Clinic / Hospital Email *</label>
+                    <input required name="clinicEmail" defaultValue={editingDoctor?.clinicEmail} type="email" placeholder="info@kingscollegehospital.ae" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" />
                   </div>
                 </div>
 

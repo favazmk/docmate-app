@@ -41,6 +41,7 @@ model Doctor {
   reviews      Int           @default(0)
   city         String
   email        String        @unique
+  clinicEmail  String        @default("info@kingscollegehospital.ae")
   languages    String        @default("English")
   gender       String        @default("Male")
   fee          Int

@@ -13,15 +13,21 @@ const transporter = nodemailer.createTransport({
 export async function sendAppointmentEmails({
   patientEmail,
   patientName,
+  patientPhone,
+  patientReason,
   doctorEmail,
   doctorName,
+  clinicName,
   appointmentDate,
   appointmentTime,
 }: {
   patientEmail: string;
   patientName: string;
+  patientPhone: string;
+  patientReason: string;
   doctorEmail: string;
   doctorName: string;
+  clinicName: string;
   appointmentDate: string;
   appointmentTime: string;
 }) {
@@ -60,26 +66,31 @@ export async function sendAppointmentEmails({
       })
     );
 
-    // 2. Send Notification to Doctor
+    // 2. Send Notification to Hospital / Clinic
     if (doctorEmail) {
       promises.push(
         transporter.sendMail({
           from: `"Docmate Alerts" <${process.env.SMTP_USER}>`,
           to: doctorEmail,
-          subject: "New Appointment Request - Docmate",
+          subject: `New Appointment Request: ${doctorName} - Docmate`,
           html: `
             <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px;">
-              <h2 style="color: #2200CC; margin-top: 0;">New Request Received</h2>
-              <p>Hello <strong>${doctorName}</strong>,</p>
-              <p>You have a new patient appointment request via Docmate pending confirmation.</p>
+              <h2 style="color: #2200CC; margin-top: 0;">New Booking Request Received</h2>
+              <p>Hello Clinic Coordinator,</p>
+              <p>A patient has requested an appointment with <strong>${doctorName}</strong> at <strong>${clinicName}</strong> via Docmate.</p>
               
-              <div style="background-color: #f8fafc; padding: 16px; border-radius: 8px; margin: 20px 0;">
-                <p style="margin: 4px 0;"><strong>Patient:</strong> ${patientName}</p>
-                <p style="margin: 4px 0;"><strong>Preferred Date:</strong> ${appointmentDate}</p>
-                <p style="margin: 4px 0;"><strong>Time Slot:</strong> Pending call confirmation</p>
+              <div style="background-color: #f8fafc; padding: 18px; border-radius: 8px; margin: 20px 0; border: 1px solid #cbd5e1;">
+                <h3 style="margin-top: 0; color: #0f172a; border-bottom: 1px solid #cbd5e1; padding-bottom: 8px;">Patient Details</h3>
+                <p style="margin: 6px 0;"><strong>Name:</strong> ${patientName}</p>
+                <p style="margin: 6px 0;"><strong>Email:</strong> ${patientEmail}</p>
+                <p style="margin: 6px 0;"><strong>Phone Number:</strong> ${patientPhone}</p>
+                <p style="margin: 6px 0;"><strong>Preferred Date:</strong> ${appointmentDate}</p>
+                <p style="margin: 6px 0;"><strong>Time Slot:</strong> Pending Callback Confirmation</p>
+                <p style="margin: 6px 0;"><strong>Reason for Visit:</strong> ${patientReason || "None specified"}</p>
               </div>
               
-              <p style="margin-bottom: 0;">A clinic representative should contact the patient to confirm a booking time slot.</p>
+              <p style="color: #475569; font-size: 14px;"><strong>Action Required:</strong> Please contact the patient directly at their phone number above within 24 hours to schedule and finalize their appointment.</p>
+              <p style="margin-top: 24px; margin-bottom: 0; font-size: 14px; color: #94a3b8;">Best regards,<br/><strong>The Docmate Team</strong></p>
             </div>
           `,
         })
@@ -97,9 +108,10 @@ export async function sendAppointmentEmails({
             <h3>New Platform Booking</h3>
             <p>A new appointment was just booked on Docmate.</p>
             <ul>
-              <li><strong>Patient:</strong> ${patientName} (${patientEmail})</li>
+              <li><strong>Patient:</strong> ${patientName} (${patientEmail}, Phone: ${patientPhone})</li>
               <li><strong>Doctor:</strong> ${doctorName}</li>
               <li><strong>Date & Time:</strong> ${appointmentDate} at ${appointmentTime}</li>
+              <li><strong>Reason:</strong> ${patientReason}</li>
             </ul>
           </div>
         `,

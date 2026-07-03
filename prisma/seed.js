@@ -18,6 +18,7 @@ const doctors = doctorsData.map((doc) => ({
   reviews: doc.reviews,
   city: doc.city,
   email: `dr.${doc.slug}@kingscollegehospital.ae`,
+  clinicEmail: "info@kingscollegehospital.ae",
   languages: doc.languages,
   gender: doc.gender,
   fee: doc.fee,

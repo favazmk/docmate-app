@@ -129,17 +129,7 @@ export default async function SpecialtyCityPage({
           </div>
         </div>
 
-        {/* SEO FAQ Section */}
-        <div className="mt-20 bg-white border border-gray-border rounded-2xl p-8 shadow-sm max-w-4xl">
-          <h3 className="text-2xl font-bold text-text-dark mb-6">Frequently Asked Questions</h3>
-          
-          <div className="flex flex-col gap-6">
-            <div>
-              <h4 className="font-bold text-text-dark text-lg mb-2">How do I book a {specialtyFormatted.toLowerCase()} in {emirateFormatted}?</h4>
-              <p className="text-text-mid">You can easily book a {specialtyFormatted.toLowerCase()} in {emirateFormatted} by selecting an available time slot on any of the doctor profiles listed above. The booking is confirmed instantly.</p>
-            </div>
-          </div>
-        </div>
+
 
       </div>
     </div>

@@ -57,8 +57,11 @@ export async function createAppointment(data: {
     await sendAppointmentEmails({
       patientEmail: data.patientEmail.toLowerCase(),
       patientName: data.patientName,
-      doctorEmail: doctor.email,
+      patientPhone: data.patientPhone,
+      patientReason: data.reason || "None specified",
+      doctorEmail: doctor.clinicEmail || doctor.email,
       doctorName: doctor.name,
+      clinicName: doctor.affiliation,
       appointmentDate: data.date,
       appointmentTime: data.timeSlot,
     }).catch(console.error);

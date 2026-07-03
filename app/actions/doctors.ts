@@ -9,6 +9,7 @@ export async function createDoctor(formData: FormData) {
   try {
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
+    const clinicEmail = formData.get("clinicEmail") as string;
     const specialty = formData.get("specialty") as string;
     const city = formData.get("city") as string;
     const fee = 0;
@@ -32,6 +33,7 @@ export async function createDoctor(formData: FormData) {
         name,
         slug,
         email,
+        clinicEmail: clinicEmail || "info@kingscollegehospital.ae",
         specialty,
         city,
         fee,
@@ -57,6 +59,7 @@ export async function updateDoctor(id: string, formData: FormData) {
   try {
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
+    const clinicEmail = formData.get("clinicEmail") as string;
     const specialty = formData.get("specialty") as string;
     const city = formData.get("city") as string;
     const fee = 0;
@@ -69,6 +72,7 @@ export async function updateDoctor(id: string, formData: FormData) {
       data: {
         name,
         email,
+        clinicEmail: clinicEmail || "info@kingscollegehospital.ae",
         specialty,
         city,
         fee,
