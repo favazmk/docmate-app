@@ -42,6 +42,7 @@ model Doctor {
   city         String
   email        String        @unique
   languages    String        @default("English")
+  gender       String        @default("Male")
   fee          Int
   affiliation  String
   bio          String        @db.Text

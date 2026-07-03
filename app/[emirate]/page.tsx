@@ -15,7 +15,7 @@ export default function EmirateLandingPage({ params }: { params: { emirate: stri
   const emirateName = params.emirate.replace("-", " ");
   const emirateFormatted = emirateName.charAt(0).toUpperCase() + emirateName.slice(1);
 
-  const specialties = ["Cardiologist", "Dermatologist", "Dentist", "Pediatrician", "Gynecologist", "Neurologist"];
+  const specialties = ["Cardiology", "Dermatology", "Pediatrics", "Gynecology", "Neurology", "Orthopedics"];
 
   return (
     <div className="bg-gray-bg min-h-screen py-12 px-4">

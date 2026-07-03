@@ -35,9 +35,7 @@ export default async function SearchResultsPage({
   }
 
   if (gender && gender !== "Any") {
-    // We don't have a gender column in DB yet, but let's assume we might add it or just skip if it fails.
-    // Wait, let's check Prisma schema for gender. If not there, we can't filter by gender.
-    // We will just not filter by gender if it's not in the DB, but let's leave it out of whereClause for now unless we are sure.
+    whereClause.gender = gender;
   }
 
   // Insurance and Languages are stored as strings (comma separated in DB probably, let's check languages)

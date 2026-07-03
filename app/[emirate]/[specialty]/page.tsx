@@ -19,17 +19,38 @@ export async function generateMetadata({ params }: { params: { emirate: string, 
   };
 }
 
-export default async function SpecialtyCityPage({ params }: { params: { emirate: string, specialty: string } }) {
+export default async function SpecialtyCityPage({ 
+  params,
+  searchParams
+}: { 
+  params: { emirate: string, specialty: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   const emirate = params.emirate.replace("-", " ");
   const emirateFormatted = emirate.charAt(0).toUpperCase() + emirate.slice(1);
   const specialtyFormatted = params.specialty.charAt(0).toUpperCase() + params.specialty.slice(1);
 
+  const gender = typeof searchParams.gender === "string" ? searchParams.gender : undefined;
+  const languages = typeof searchParams.language === "string" ? [searchParams.language] : (searchParams.language || []);
+
+  const whereClause: any = {
+    status: "Active",
+    city: { contains: emirateFormatted },
+    specialty: { contains: params.specialty }
+  };
+
+  if (gender && gender !== "Any") {
+    whereClause.gender = gender;
+  }
+
+  if (languages.length > 0) {
+    whereClause.OR = languages.map(lang => ({
+      languages: { contains: lang }
+    }));
+  }
+
   const dbDoctors = await prisma.doctor.findMany({
-    where: {
-      status: "Active",
-      city: { contains: emirateFormatted },
-      specialty: { contains: params.specialty }
-    }
+    where: whereClause
   });
 
   const featuredDoctors = dbDoctors.map(d => ({
