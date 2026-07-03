@@ -145,9 +145,11 @@ export default async function Home() {
             ))}
           </div>
 
-          <Button variant="outline" className="border-2 border-blue-primary text-blue-primary hover:bg-blue-light h-12 px-8 rounded-xl font-semibold">
-            View all doctors
-          </Button>
+          <Link href="/search">
+            <Button variant="outline" className="border-2 border-blue-primary text-blue-primary hover:bg-blue-light h-12 px-8 rounded-xl font-semibold">
+              View all doctors
+            </Button>
+          </Link>
         </div>
       </section>
 
