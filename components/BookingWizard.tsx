@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { CheckCircle2, ChevronLeft, CalendarDays, MapPin, Loader2, PhoneCall, Info } from "lucide-react";
+import { CheckCircle2, ChevronLeft, CalendarDays, MapPin, Loader2, Calendar, ChevronRight } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { createAppointment } from "@/app/actions/booking";
 
@@ -27,47 +27,75 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
   const [errorMsg, setErrorMsg] = useState("");
   const [isConfirmed, setIsConfirmed] = useState(false);
 
-  // Dynamically generate the next 5 weekdays
-  const dates = useMemo(() => {
-    const list = [];
-    const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    
-    const current = new Date();
-    let count = 0;
-    while (list.length < 5 && count < 10) {
-      current.setDate(current.getDate() + 1);
-      const dayIndex = current.getDay();
-      
-      // Skip Saturday (6) and Sunday (0) for preferred weekdays
-      if (dayIndex === 0 || dayIndex === 6) {
-        continue;
-      }
-      
-      const dayName = daysOfWeek[dayIndex];
-      const dateNum = current.getDate();
-      const monthName = months[current.getMonth()];
-      const year = current.getFullYear();
-      
-      list.push({
-        day: dayName,
-        date: String(dateNum),
-        fullDate: `${dayName}, ${dateNum} ${monthName} ${year}`,
-        available: true
-      });
-      count++;
-    }
-    return list;
-  }, []);
+  // Calendar State
+  const today = useMemo(() => new Date(), []);
+  const [selectedDate, setSelectedDate] = useState<Date>(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow;
+  });
+  const [currentYear, setCurrentYear] = useState(selectedDate.getFullYear());
+  const [currentMonth, setCurrentMonth] = useState(selectedDate.getMonth()); // 0-indexed
 
-  const [selectedDate, setSelectedDate] = useState(0);
-
-  // Form Fields
+  // Form Fields (editable even if user metadata is present)
   const [name, setName] = useState(user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
   const [phonePrefix, setPhonePrefix] = useState("+971");
   const [phone, setPhone] = useState("");
   const [reason, setReason] = useState("");
+
+  // Month names helper
+  const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const daysOfWeekShort = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+
+  // Calendar Grid Generation
+  const calendarDays = useMemo(() => {
+    const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
+    const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+    
+    const days = [];
+    
+    // Padding for previous month days
+    for (let i = 0; i < firstDayIndex; i++) {
+      days.push(null);
+    }
+    
+    // Current month days
+    for (let d = 1; d <= totalDays; d++) {
+      days.push(new Date(currentYear, currentMonth, d));
+    }
+    
+    return days;
+  }, [currentYear, currentMonth]);
+
+  const handlePrevMonth = () => {
+    if (currentMonth === 0) {
+      setCurrentMonth(11);
+      setCurrentYear(currentYear - 1);
+    } else {
+      setCurrentMonth(currentMonth - 1);
+    }
+  };
+
+  const handleNextMonth = () => {
+    if (currentMonth === 11) {
+      setCurrentMonth(0);
+      setCurrentYear(currentYear + 1);
+    } else {
+      setCurrentMonth(currentMonth + 1);
+    }
+  };
+
+  const isDateInPast = (date: Date) => {
+    const comparisonDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    return date < comparisonDate;
+  };
+
+  const formatAppointmentDate = (date: Date) => {
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const monthShorts = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    return `${days[date.getDay()]}, ${date.getDate()} ${monthShorts[date.getMonth()]} ${date.getFullYear()}`;
+  };
 
   const handleConfirmBooking = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,7 +110,7 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
     try {
       const result = await createAppointment({
         doctorSlug: doctor.slug,
-        date: dates[selectedDate].fullDate,
+        date: formatAppointmentDate(selectedDate),
         timeSlot: "Pending Phone Call",
         patientName: name,
         patientEmail: email,
@@ -135,11 +163,11 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
         <div className="bg-white border border-gray-border rounded-2xl p-6 md:p-8 shadow-sm">
           <div className="mb-8">
             <h3 className="text-xl font-bold text-text-dark mb-2 flex items-center gap-2">
-              <PhoneCall className="w-5.5 h-5.5 text-blue-primary" />
-              Request Appointment Call
+              <CalendarDays className="w-5.5 h-5.5 text-blue-primary" />
+              Book Appointment
             </h3>
             <p className="text-sm text-text-mid">
-              Select your preferred date and enter your contact details. A hospital representative will call you to finalize your slot.
+              Select your preferred appointment date and provide your contact information to finalize your request.
             </p>
           </div>
 
@@ -150,37 +178,76 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
           )}
 
           <form onSubmit={handleConfirmBooking} className="flex flex-col gap-6">
-            {/* Preferred Date Selector */}
+            
+            {/* Custom Interactive Calendar Grid */}
             <div>
               <label className="text-sm font-bold text-text-dark mb-3 block flex items-center gap-1.5">
-                <CalendarDays className="w-4 h-4 text-blue-primary" />
-                Select Preferred Date
+                <Calendar className="w-4 h-4 text-blue-primary" />
+                Select Appointment Date
               </label>
-              <div className="flex gap-2 overflow-x-auto pb-2">
-                {dates.map((d, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => setSelectedDate(i)}
-                    className={`flex flex-col items-center justify-center w-16 h-20 rounded-xl border shrink-0 transition-all ${
-                      selectedDate === i 
-                        ? "bg-blue-primary border-blue-primary text-white shadow-md shadow-blue-primary/20" 
-                        : "bg-white border-gray-border text-text-dark hover:border-blue-primary hover:bg-blue-light/50"
-                    }`}
+              
+              <div className="border border-gray-border rounded-2xl p-4 max-w-sm mx-auto sm:mx-0 bg-white">
+                {/* Month Navigator */}
+                <div className="flex items-center justify-between mb-4">
+                  <button 
+                    type="button" 
+                    onClick={handlePrevMonth}
+                    className="p-1.5 hover:bg-gray-bg rounded-lg text-text-mid hover:text-text-dark transition-colors"
                   >
-                    <span className="text-[10px] uppercase font-semibold mb-1">{d.day}</span>
-                    <span className="text-xl font-bold leading-tight">{d.date}</span>
+                    <ChevronLeft className="w-4 h-4" />
                   </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Info Notice */}
-            <div className="bg-blue-light/40 border border-blue-primary/10 rounded-xl p-4 flex gap-3 text-blue-primary">
-              <Info className="w-5 h-5 shrink-0 mt-0.5" />
-              <div className="text-xs font-semibold leading-relaxed">
-                <span className="block font-bold mb-0.5">How the appointment process works:</span>
-                Since doctor calendars update in real-time, you are requesting a callback. A coordinator from <span className="underline">{doctor.clinicName}</span> will contact you to verify free slots and finalize your exact time.
+                  <span className="font-bold text-sm text-text-dark select-none">
+                    {months[currentMonth]} {currentYear}
+                  </span>
+                  <button 
+                    type="button" 
+                    onClick={handleNextMonth}
+                    className="p-1.5 hover:bg-gray-bg rounded-lg text-text-mid hover:text-text-dark transition-colors"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+                
+                {/* Weekdays Labels */}
+                <div className="grid grid-cols-7 gap-1 text-center mb-2">
+                  {daysOfWeekShort.map((day) => (
+                    <span key={day} className="text-xs font-semibold text-text-light select-none">
+                      {day}
+                    </span>
+                  ))}
+                </div>
+                
+                {/* Days Grid */}
+                <div className="grid grid-cols-7 gap-1 text-center">
+                  {calendarDays.map((date, index) => {
+                    if (!date) {
+                      return <div key={`empty-${index}`} />;
+                    }
+                    
+                    const isSelected = selectedDate.getDate() === date.getDate() && 
+                                       selectedDate.getMonth() === date.getMonth() && 
+                                       selectedDate.getFullYear() === date.getFullYear();
+                    const isPast = isDateInPast(date);
+                    
+                    return (
+                      <button
+                        key={date.toISOString()}
+                        type="button"
+                        disabled={isPast}
+                        onClick={() => setSelectedDate(date)}
+                        className={`w-9 h-9 mx-auto rounded-full flex items-center justify-center text-xs font-bold transition-all select-none ${
+                          isPast 
+                            ? "text-text-light/40 cursor-not-allowed font-medium" 
+                            : isSelected 
+                              ? "bg-blue-primary text-white shadow-md shadow-blue-primary/20 scale-105" 
+                              : "text-text-dark hover:bg-blue-light/50 hover:text-blue-primary"
+                        }`}
+                      >
+                        {date.getDate()}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
@@ -196,8 +263,7 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
                   placeholder="John Doe" 
                   value={name}
                   onChange={e => setName(e.target.value)}
-                  readOnly={!!user?.name}
-                  className={`w-full border border-gray-border rounded-xl h-12 px-4 text-sm font-medium text-text-dark focus:outline-none focus:border-blue-primary focus:ring-1 focus:ring-blue-primary ${user?.name ? 'bg-gray-100 cursor-not-allowed' : 'bg-gray-bg'}`} 
+                  className="w-full bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium text-text-dark focus:outline-none focus:border-blue-primary focus:ring-1 focus:ring-blue-primary" 
                 />
               </div>
               
@@ -210,8 +276,7 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
                     placeholder="john@example.com" 
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-                    readOnly={!!user?.email}
-                    className={`w-full border border-gray-border rounded-xl h-12 px-4 text-sm font-medium text-text-dark focus:outline-none focus:border-blue-primary focus:ring-1 focus:ring-blue-primary ${user?.email ? 'bg-gray-100 cursor-not-allowed' : 'bg-gray-bg'}`} 
+                    className="w-full bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium text-text-dark focus:outline-none focus:border-blue-primary focus:ring-1 focus:ring-blue-primary" 
                   />
                 </div>
                 <div className="flex flex-col gap-2 flex-1">
@@ -259,10 +324,10 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
                 {isSubmitting ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    Submitting Request...
+                    Booking...
                   </>
                 ) : (
-                  "Request Call to Confirm"
+                  "Book Appointment"
                 )}
               </Button>
             </div>
@@ -275,9 +340,9 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
             <CheckCircle2 className="w-10 h-10 text-green-badge" />
           </div>
           
-          <h2 className="text-2xl md:text-3xl font-bold text-text-dark mb-4">Request Submitted!</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-text-dark mb-4">Appointment Request Received!</h2>
           <p className="text-text-mid mb-8 max-w-lg mx-auto">
-            Your booking request has been forwarded. A representative from <span className="font-semibold text-text-dark">{doctor.clinicName}</span> will call you shortly at <span className="font-semibold text-text-dark">{phonePrefix} {phone}</span> to finalize your appointment time.
+            Your booking request has been successfully submitted. A representative from <span className="font-semibold text-text-dark">{doctor.clinicName}</span> will contact you shortly at <span className="font-semibold text-text-dark">{phonePrefix} {phone}</span> to schedule and finalize your appointment time.
           </p>
 
           <div className="bg-gray-bg rounded-2xl p-6 w-full max-w-sm mb-8 text-left border border-gray-border">
@@ -290,7 +355,7 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
               </div>
               <div>
                 <span className="text-xs font-semibold text-text-light uppercase tracking-wider block mb-1">Preferred Date</span>
-                <span className="text-sm font-bold text-blue-primary">{dates[selectedDate].fullDate}</span>
+                <span className="text-sm font-bold text-blue-primary">{formatAppointmentDate(selectedDate)}</span>
               </div>
               <div>
                 <span className="text-xs font-semibold text-text-light uppercase tracking-wider block mb-1">Time Slot</span>
