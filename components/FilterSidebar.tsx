@@ -42,7 +42,24 @@ export default function FilterSidebar() {
     router.push(pathname);
   };
 
-  const specialties = ["Dermatologist", "Cardiologist", "Orthopedist", "Pediatrician", "Neurologist", "Dentist", "General Practitioner"];
+  const specialties = [
+    "Cardiology",
+    "Dermatology",
+    "Endocrinology",
+    "Family Medicine",
+    "Gastroenterology",
+    "General Surgery",
+    "Gynecology",
+    "Nephrology",
+    "Neurology",
+    "Oncology",
+    "Ophthalmology",
+    "Orthopedics",
+    "Pediatrics",
+    "Pulmonology",
+    "Rheumatology",
+    "Urology"
+  ];
   const insurances = ["Daman", "AXA", "Bupa", "Tawuniya", "MetLife"];
   const languages = ["English", "Arabic", "French", "Hindi", "Urdu"];
 

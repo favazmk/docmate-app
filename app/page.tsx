@@ -12,14 +12,14 @@ export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const specialties = [
-    { name: "Dentistry", count: 423, icon: Activity, href: "/search?specialty=dentistry" },
-    { name: "Cardiology", count: 156, icon: Heart, href: "/search?specialty=cardiology" },
-    { name: "Ophthalmology", count: 89, icon: Eye, href: "/search?specialty=ophthalmology" },
-    { name: "Orthopedics", count: 210, icon: Bone, href: "/search?specialty=orthopedics" },
-    { name: "Pediatrics", count: 342, icon: Baby, href: "/search?specialty=pediatrics" },
-    { name: "Neurology", count: 67, icon: Brain, href: "/search?specialty=neurology" },
-    { name: "Pulmonology", count: 45, icon: Stethoscope, href: "/search?specialty=pulmonology" },
-    { name: "View All", count: 22, icon: Activity, href: "/search", isViewAll: true },
+    { name: "Gynecology", count: 423, icon: Activity, href: "/search?specialty=Gynecology" },
+    { name: "Cardiology", count: 156, icon: Heart, href: "/search?specialty=Cardiology" },
+    { name: "Ophthalmology", count: 89, icon: Eye, href: "/search?specialty=Ophthalmology" },
+    { name: "Orthopedics", count: 210, icon: Bone, href: "/search?specialty=Orthopedics" },
+    { name: "Pediatrics", count: 342, icon: Baby, href: "/search?specialty=Pediatrics" },
+    { name: "Neurology", count: 67, icon: Brain, href: "/search?specialty=Neurology" },
+    { name: "Pulmonology", count: 45, icon: Stethoscope, href: "/search?specialty=Pulmonology" },
+    { name: "View All", count: 16, icon: Activity, href: "/search", isViewAll: true },
   ];
 
   let dbDoctors: Doctor[] = [];
@@ -185,7 +185,7 @@ export default async function Home() {
                 1
               </div>
               <h3 className="text-xl font-bold text-text-dark mb-3">Search</h3>
-              <p className="text-text-mid">Find the right doctor by specialty, location, or accepted insurance plans.</p>
+              <p className="text-text-mid">Find the right doctor by specialty, location, or spoken languages.</p>
             </div>
             <div className="flex flex-col items-center text-center">
               <div className="w-16 h-16 rounded-2xl bg-blue-primary text-white flex items-center justify-center text-2xl font-bold mb-6 shadow-lg shadow-blue-primary/30">
