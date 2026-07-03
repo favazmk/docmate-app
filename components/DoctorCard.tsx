@@ -76,8 +76,14 @@ export default function DoctorCard({
         </div>
       </div>
 
-      <div className="mt-auto pt-4 border-t border-gray-border flex items-center justify-between">
-        <div></div>
+      <div className="mt-auto pt-4 border-t border-gray-border flex items-center justify-between gap-3">
+        <Link 
+          href={`/doctors/${slug}`}
+          onClick={(e) => e.stopPropagation()}
+          className={`${buttonVariants({ size: "sm", variant: "outline" })} border-gray-border text-text-dark hover:bg-gray-bg rounded-lg h-9 px-4 text-xs font-semibold`}
+        >
+          View Profile
+        </Link>
         <Link 
           href={`/book/${slug}`} 
           onClick={(e) => e.stopPropagation()}
