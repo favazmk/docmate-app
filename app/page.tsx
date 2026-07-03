@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import SearchBar from "@/components/SearchBar";
 import SpecialtyCard from "@/components/SpecialtyCard";
+import Image from "next/image";
 import DoctorCard from "@/components/DoctorCard";
 import CountryCard from "@/components/CountryCard";
 import { BadgeCheck, Globe, Zap, ShieldCheck, Star, Activity, Heart, Eye, Bone, Baby, Brain, Stethoscope } from "lucide-react";
@@ -73,15 +74,39 @@ export default async function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-blue-hover to-blue-primary pt-16 pb-32 px-4 relative">
-        <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
-          <span className="uppercase tracking-widest text-[11px] font-bold text-white/70 mb-4">
+      <section className="relative pt-16 pb-32 px-4 overflow-hidden bg-[#0F172A]">
+        {/* Background Image for Desktop */}
+        <div className="hidden md:block absolute inset-0 z-0">
+          <Image 
+            src="/hero_desktop.png" 
+            alt="Medical Clinic Dubai" 
+            fill 
+            priority
+            className="object-cover opacity-25" 
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-900/60 to-slate-900/90" />
+        </div>
+        
+        {/* Background Image for Mobile */}
+        <div className="block md:hidden absolute inset-0 z-0">
+          <Image 
+            src="/hero_mobile.png" 
+            alt="Medical Clinic Dubai Mobile" 
+            fill 
+            priority
+            className="object-cover opacity-20" 
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-900/70 to-slate-900/95" />
+        </div>
+
+        <div className="max-w-4xl mx-auto text-center flex flex-col items-center relative z-10">
+          <span className="uppercase tracking-widest text-[11px] font-bold text-blue-300 mb-4">
             Dubai's #1 doctor booking platform
           </span>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6 tracking-tight">
-            Find and Book the <span className="text-white/90">Best Doctors</span> Near You
+            Find and Book the <span className="text-blue-200">Best Doctors</span> Near You
           </h1>
-          <p className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl mx-auto lg:mx-0 font-medium">
+          <p className="text-lg md:text-xl text-slate-200 mb-8 max-w-2xl mx-auto lg:mx-0 font-medium">
             Verified specialists in Dubai. Book in under 2 minutes.
           </p>
         </div>
