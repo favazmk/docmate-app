@@ -82,9 +82,9 @@ export default async function Home() {
             alt="Medical Clinic Dubai" 
             fill 
             priority
-            className="object-cover opacity-25" 
+            className="object-cover opacity-70" 
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-900/60 to-slate-900/90" />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-900/40 to-slate-900/70" />
         </div>
         
         {/* Background Image for Mobile */}
@@ -94,9 +94,9 @@ export default async function Home() {
             alt="Medical Clinic Dubai Mobile" 
             fill 
             priority
-            className="object-cover opacity-20" 
+            className="object-cover opacity-65" 
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-900/70 to-slate-900/95" />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-900/50 to-slate-900/80" />
         </div>
 
         <div className="max-w-4xl mx-auto text-center flex flex-col items-center relative z-10">
