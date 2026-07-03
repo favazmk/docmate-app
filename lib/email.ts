@@ -41,20 +41,20 @@ export async function sendAppointmentEmails({
       transporter.sendMail({
         from: `"Docmate Support" <${process.env.SMTP_USER}>`,
         to: patientEmail,
-        subject: "Appointment Confirmation - Docmate",
+        subject: "Appointment Request Received - Docmate",
         html: `
           <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px;">
-            <h2 style="color: #2200CC; margin-top: 0;">Appointment Confirmed!</h2>
+            <h2 style="color: #2200CC; margin-top: 0;">Request Received!</h2>
             <p>Hello <strong>${patientName}</strong>,</p>
-            <p>Your appointment has been successfully booked with <strong>${doctorName}</strong>.</p>
+            <p>Your appointment request has been received for <strong>${doctorName}</strong>.</p>
             
             <div style="background-color: #f8fafc; padding: 16px; border-radius: 8px; margin: 20px 0;">
-              <p style="margin: 4px 0;"><strong>Date:</strong> ${appointmentDate}</p>
-              <p style="margin: 4px 0;"><strong>Time:</strong> ${appointmentTime}</p>
+              <p style="margin: 4px 0;"><strong>Preferred Date:</strong> ${appointmentDate}</p>
+              <p style="margin: 4px 0;"><strong>Time Slot:</strong> Pending call confirmation</p>
             </div>
             
-            <p>If you need to reschedule or cancel, please log in to your patient dashboard.</p>
-            <p style="margin-bottom: 0;">Best regards,<br/><strong>The Docmate Team</strong></p>
+            <p><strong>What's next?</strong> A coordinator from the hospital will call you shortly on your provided phone number to finalize your exact appointment time slot.</p>
+            <p style="margin-top: 20px; margin-bottom: 0;">Best regards,<br/><strong>The Docmate Team</strong></p>
           </div>
         `,
       })
@@ -66,20 +66,20 @@ export async function sendAppointmentEmails({
         transporter.sendMail({
           from: `"Docmate Alerts" <${process.env.SMTP_USER}>`,
           to: doctorEmail,
-          subject: "New Appointment Booked - Docmate",
+          subject: "New Appointment Request - Docmate",
           html: `
             <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px;">
-              <h2 style="color: #2200CC; margin-top: 0;">New Appointment Received</h2>
+              <h2 style="color: #2200CC; margin-top: 0;">New Request Received</h2>
               <p>Hello <strong>${doctorName}</strong>,</p>
-              <p>You have a new patient booking via Docmate.</p>
+              <p>You have a new patient appointment request via Docmate pending confirmation.</p>
               
               <div style="background-color: #f8fafc; padding: 16px; border-radius: 8px; margin: 20px 0;">
                 <p style="margin: 4px 0;"><strong>Patient:</strong> ${patientName}</p>
-                <p style="margin: 4px 0;"><strong>Date:</strong> ${appointmentDate}</p>
-                <p style="margin: 4px 0;"><strong>Time:</strong> ${appointmentTime}</p>
+                <p style="margin: 4px 0;"><strong>Preferred Date:</strong> ${appointmentDate}</p>
+                <p style="margin: 4px 0;"><strong>Time Slot:</strong> Pending call confirmation</p>
               </div>
               
-              <p style="margin-bottom: 0;">Please log in to your provider dashboard to view more details.</p>
+              <p style="margin-bottom: 0;">A clinic representative should contact the patient to confirm a booking time slot.</p>
             </div>
           `,
         })

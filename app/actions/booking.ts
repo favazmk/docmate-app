@@ -49,7 +49,7 @@ export async function createAppointment(data: {
         patientEmail: data.patientEmail.toLowerCase(),
         patientPhone: data.patientPhone,
         reason: data.reason || "",
-        status: "CONFIRMED",
+        status: "PENDING",
       },
     });
 
