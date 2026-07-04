@@ -16,7 +16,7 @@ export default async function AdminAppointmentsPage() {
     }
   });
 
-  const newAppointmentsCount = 3;
+  const newAppointmentsCount = appointments.length;
 
   return (
     <div className="bg-gray-bg min-h-screen flex">
@@ -91,7 +91,7 @@ export default async function AdminAppointmentsPage() {
                   ) : appointments.map((apt) => (
                     <tr key={apt.id} className="hover:bg-gray-50/50 transition-colors">
                       <td className="px-6 py-4 font-medium text-text-dark">{apt.id.substring(0, 8).toUpperCase()}</td>
-                      <td className="px-6 py-4 font-bold text-text-dark">{apt.user?.name || "Unknown"}</td>
+                      <td className="px-6 py-4 font-bold text-text-dark">{apt.patientName}</td>
                       <td className="px-6 py-4 text-text-mid">{apt.doctor?.name || "Unknown"}</td>
                       <td className="px-6 py-4 text-text-mid">{apt.date}, {apt.timeSlot}</td>
                       <td className="px-6 py-4">

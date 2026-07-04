@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import SearchBar from "@/components/SearchBar";
 import SpecialtyCard from "@/components/SpecialtyCard";
 import Image from "next/image";
+import CitiesGrid from "@/components/CitiesGrid";
 import DoctorCard from "@/components/DoctorCard";
 import CountryCard from "@/components/CountryCard";
 import { BadgeCheck, Globe, Zap, ShieldCheck, Star, Activity, Heart, Eye, Bone, Baby, Brain, Stethoscope } from "lucide-react";
@@ -188,11 +189,7 @@ export default async function Home() {
             Top Areas in Dubai
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full text-left">
-            {topDubaiAreas.map((area, i) => (
-              <CountryCard key={i} flag={area.flag} name={area.name} cities={area.cities} href={area.href} />
-            ))}
-          </div>
+          <CitiesGrid areas={topDubaiAreas} />
         </div>
       </section>
 

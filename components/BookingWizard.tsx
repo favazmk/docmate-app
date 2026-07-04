@@ -372,9 +372,15 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
             <Link href="/" className={`${buttonVariants({ variant: "outline" })} border-2 border-gray-border text-text-dark hover:bg-gray-bg h-12 px-8 rounded-xl font-bold`}>
               Back to Home
             </Link>
-            <Link href="/dashboard" className={`${buttonVariants()} bg-blue-primary hover:bg-blue-hover text-white h-12 px-8 rounded-xl font-bold shadow-md shadow-blue-primary/20`}>
-              View Dashboard
-            </Link>
+            {user ? (
+              <Link href="/dashboard" className={`${buttonVariants()} bg-blue-primary hover:bg-blue-hover text-white h-12 px-8 rounded-xl font-bold shadow-md shadow-blue-primary/20`}>
+                View Dashboard
+              </Link>
+            ) : (
+              <Link href="/track" className={`${buttonVariants()} bg-blue-primary hover:bg-blue-hover text-white h-12 px-8 rounded-xl font-bold shadow-md shadow-blue-primary/20`}>
+                Track Booking
+              </Link>
+            )}
           </div>
         </div>
       )}

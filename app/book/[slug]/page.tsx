@@ -13,7 +13,7 @@ export default async function BookingFlowPage({ params }: { params: { slug: stri
     where: { slug: params.slug }
   });
 
-  if (!dbDoctor) {
+  if (!dbDoctor || dbDoctor.status !== "Active") {
     notFound();
   }
 

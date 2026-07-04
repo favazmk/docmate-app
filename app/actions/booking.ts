@@ -20,28 +20,27 @@ export async function createAppointment(data: {
       where: { slug: data.doctorSlug },
     });
 
-    if (!doctor) {
-      return { success: false, error: "Doctor not found" };
+    if (!doctor || doctor.status !== "Active") {
+      return { success: false, error: "Doctor is currently not active or not found" };
     }
 
-    // 2. Authenticate the user
+    // 2. Authenticate the user (optional for guest booking)
     const session = await getServerSession(authOptions);
-    if (!session || !session.user || !session.user.email) {
-      return { success: false, error: "You must be logged in to book an appointment" };
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-    });
-
-    if (!user) {
-      return { success: false, error: "User profile not found" };
+    let userId: string | null = null;
+    
+    if (session?.user?.email) {
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+      });
+      if (user) {
+        userId = user.id;
+      }
     }
 
     // 3. Create the appointment
     const appointment = await prisma.appointment.create({
       data: {
-        userId: user.id,
+        userId: userId,
         doctorId: doctor.id,
         date: data.date,
         timeSlot: data.timeSlot,
@@ -70,5 +69,27 @@ export async function createAppointment(data: {
   } catch (error: any) {
     console.error("Booking error:", error);
     return { success: false, error: error?.message || "An error occurred during booking" };
+  }
+}
+
+export async function getAppointmentsByEmailAndPhone(email: string, phone: string) {
+  try {
+    const appointments = await prisma.appointment.findMany({
+      where: {
+        patientEmail: email.toLowerCase().trim(),
+        patientPhone: phone.trim(),
+      },
+      include: {
+        doctor: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return { success: true, appointments };
+  } catch (error: any) {
+    console.error("Error fetching appointments:", error);
+    return { success: false, error: "Failed to fetch appointments" };
   }
 }

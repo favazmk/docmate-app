@@ -12,7 +12,6 @@ export default withAuth(
     const isAdminLogin = pathname === '/admin/login';
     const isAdminPage = pathname.startsWith('/admin') && !isAdminLogin;
     const isDashboardPage = pathname.startsWith('/dashboard');
-    const isBookPage = pathname.startsWith('/book');
 
     // If trying to access an auth page (login/register/admin-login) while authenticated
     if (isAuthPage || isAdminLogin) {
@@ -36,7 +35,7 @@ export default withAuth(
         return NextResponse.redirect(new URL(`/admin/login`, req.url));
       }
       
-      if (isDashboardPage || isBookPage) {
+      if (isDashboardPage) {
         return NextResponse.redirect(
           new URL(`/login?callbackUrl=${encodeURIComponent(from)}`, req.url)
         );
@@ -64,5 +63,5 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/admin/:path*', '/login', '/register', '/book/:path*'],
+  matcher: ['/dashboard/:path*', '/admin/:path*', '/login', '/register'],
 };

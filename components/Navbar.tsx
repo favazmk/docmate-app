@@ -16,6 +16,7 @@ import { useSession } from "next-auth/react";
 export default function Navbar() {
   const pathname = usePathname();
   const [activeHash, setActiveHash] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
   const { data: session, status } = useSession();
   useEffect(() => {
     setActiveHash(window.location.hash);
@@ -144,8 +145,8 @@ export default function Navbar() {
 
         {/* Mobile Nav */}
         <div className="md:hidden">
-          <Sheet>
-            <SheetTrigger className="p-2 hover:bg-gray-100 rounded-md inline-flex items-center justify-center">
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <SheetTrigger className="p-2 hover:bg-gray-100 rounded-md inline-flex items-center justify-center" onClick={() => setIsOpen(true)}>
               <Menu className="w-5 h-5 text-text-dark" />
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] sm:w-[400px]">
@@ -156,6 +157,7 @@ export default function Navbar() {
                     <Link 
                       key={link.label} 
                       href={link.href} 
+                      onClick={() => setIsOpen(false)}
                       className={`text-lg font-medium transition-colors ${isActive ? "text-blue-primary font-bold" : "text-text-dark hover:text-blue-primary"}`}
                     >
                       {link.label}
@@ -165,6 +167,7 @@ export default function Navbar() {
                 <div className="h-px bg-gray-border w-full"></div>
                 <Link 
                   href="/list-your-clinic" 
+                  onClick={() => setIsOpen(false)}
                   className={`text-lg font-medium transition-colors ${
                     pathname === "/list-your-clinic" ? "text-blue-primary font-bold" : "text-blue-primary"
                   }`}
@@ -175,11 +178,11 @@ export default function Navbar() {
                 {status === "loading" ? (
                   <div className="h-10 w-full bg-gray-100 animate-pulse rounded-lg"></div>
                 ) : session ? (
-                  <Link href="/dashboard">
+                  <Link href="/dashboard" onClick={() => setIsOpen(false)}>
                     <Button className="bg-blue-primary hover:bg-blue-hover text-white rounded-lg w-full">Profile</Button>
                   </Link>
                 ) : (
-                  <Link href="/login">
+                  <Link href="/login" onClick={() => setIsOpen(false)}>
                     <Button className="bg-blue-primary hover:bg-blue-hover text-white rounded-lg w-full">Sign In</Button>
                   </Link>
                 )}

@@ -29,15 +29,14 @@ export default async function AdminDashboardPage() {
 
   const recentBookings = rawBookings.map(b => ({
     id: b.id.substring(0, 8).toUpperCase(),
-    patient: b.user.name,
+    patient: b.patientName,
     doctor: b.doctor.name,
     date: b.date,
     time: b.timeSlot,
     status: b.status,
   }));
 
-  // Simple mock count for new appointments (assuming we don't have an "isRead" flag yet)
-  const newAppointmentsCount = 3;
+  const newAppointmentsCount = totalBookings;
 
   return (
     <div className="bg-gray-bg min-h-screen flex">
@@ -122,7 +121,7 @@ export default async function AdminDashboardPage() {
                 </div>
                 <span className="flex items-center text-xs font-bold text-text-mid bg-gray-100 px-2 py-1 rounded-full">Active</span>
               </div>
-              <h3 className="text-text-light font-medium text-sm mb-1">Live Emirates</h3>
+              <h3 className="text-text-light font-medium text-sm mb-1">Active Cities</h3>
               <p className="text-3xl font-bold text-text-dark">{liveEmirates}</p>
             </div>
 

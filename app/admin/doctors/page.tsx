@@ -10,5 +10,7 @@ export default async function AdminDoctorsPage() {
     orderBy: { createdAt: "desc" }
   });
 
-  return <DoctorsClient doctors={doctors} />;
+  const appointmentCount = await prisma.appointment.count();
+
+  return <DoctorsClient doctors={doctors} appointmentCount={appointmentCount} />;
 }

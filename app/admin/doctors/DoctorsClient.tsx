@@ -1,19 +1,63 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Users, Activity, Calendar, Search, Plus, X, Upload, CheckCircle2, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { createDoctor, updateDoctor, deleteDoctor } from "@/app/actions/doctors";
+import { createDoctor, updateDoctor, deleteDoctor, toggleDoctorStatus } from "@/app/actions/doctors";
 import { useRouter } from "next/navigation";
 
-export default function DoctorsClient({ doctors }: { doctors: any[] }) {
+export default function DoctorsClient({ doctors, appointmentCount = 0 }: { doctors: any[], appointmentCount?: number }) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editingDoctor, setEditingDoctor] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const router = useRouter();
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("alphabetical-asc");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [cityFilter, setCityFilter] = useState("all");
+  const [specialtyFilter, setSpecialtyFilter] = useState("all");
+
+  const filteredDoctors = useMemo(() => {
+    return doctors
+      .filter((doc) => {
+        const matchesSearch =
+          doc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          doc.specialty.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          doc.city.toLowerCase().includes(searchQuery.toLowerCase());
+
+        const matchesStatus = statusFilter === "all" || doc.status === statusFilter;
+        const matchesCity = cityFilter === "all" || doc.city === cityFilter;
+        const matchesSpecialty = specialtyFilter === "all" || doc.specialty === specialtyFilter;
+
+        return matchesSearch && matchesStatus && matchesCity && matchesSpecialty;
+      })
+      .sort((a, b) => {
+        if (sortBy === "alphabetical-asc") {
+          return a.name.localeCompare(b.name);
+        } else if (sortBy === "alphabetical-desc") {
+          return b.name.localeCompare(a.name);
+        } else if (sortBy === "date-desc") {
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        } else if (sortBy === "date-asc") {
+          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        }
+        return 0;
+      });
+  }, [doctors, searchQuery, sortBy, statusFilter, cityFilter, specialtyFilter]);
+
+  const uniqueCities = useMemo(() => {
+    const cities = doctors.map((d) => d.city);
+    return Array.from(new Set(cities));
+  }, [doctors]);
+
+  const uniqueSpecialties = useMemo(() => {
+    const specialties = doctors.map((d) => d.specialty);
+    return Array.from(new Set(specialties));
+  }, [doctors]);
 
   const handleEdit = (doc: any) => {
     setEditingDoctor(doc);
@@ -24,6 +68,17 @@ export default function DoctorsClient({ doctors }: { doctors: any[] }) {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this doctor?")) return;
     const res = await deleteDoctor(id);
+    if (res.success) {
+      router.refresh();
+    } else {
+      alert("Error: " + res.error);
+    }
+  };
+
+  const handleToggleStatus = async (id: string, currentStatus: string) => {
+    const actionName = currentStatus === "Active" ? "pause" : "resume";
+    if (!confirm(`Are you sure you want to ${actionName} this doctor?`)) return;
+    const res = await toggleDoctorStatus(id, currentStatus);
     if (res.success) {
       router.refresh();
     } else {
@@ -61,7 +116,7 @@ export default function DoctorsClient({ doctors }: { doctors: any[] }) {
     }
   };
 
-  const newAppointmentsCount = 3;
+  const newAppointmentsCount = appointmentCount;
 
   return (
     <div className="bg-gray-bg min-h-screen flex">
@@ -123,6 +178,94 @@ export default function DoctorsClient({ doctors }: { doctors: any[] }) {
             </Button>
           </div>
 
+          {/* Filters Bar */}
+          <div className="bg-white border border-gray-border rounded-2xl p-4 mb-6 shadow-sm flex flex-wrap gap-4 items-center">
+            {/* Search query */}
+            <div className="relative flex-grow min-w-[240px]">
+              <Search className="w-4 h-4 absolute left-3.5 top-3.5 text-text-light" />
+              <input
+                type="text"
+                placeholder="Search by name, specialty, or city..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-gray-bg border border-gray-border rounded-xl h-11 pl-10 pr-4 text-sm font-medium focus:outline-none focus:border-blue-primary"
+              />
+            </div>
+
+            {/* Status Filter */}
+            <div className="flex flex-col gap-1 min-w-[120px]">
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="bg-gray-bg border border-gray-border rounded-xl h-11 px-3 text-sm font-medium focus:outline-none focus:border-blue-primary"
+              >
+                <option value="all">All Statuses</option>
+                <option value="Active">Active</option>
+                <option value="Paused">Paused</option>
+              </select>
+            </div>
+
+            {/* Specialty Filter */}
+            <div className="flex flex-col gap-1 min-w-[140px]">
+              <select
+                value={specialtyFilter}
+                onChange={(e) => setSpecialtyFilter(e.target.value)}
+                className="bg-gray-bg border border-gray-border rounded-xl h-11 px-3 text-sm font-medium focus:outline-none focus:border-blue-primary"
+              >
+                <option value="all">All Specialties</option>
+                {uniqueSpecialties.map((spec) => (
+                  <option key={spec} value={spec}>{spec}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* City Filter */}
+            <div className="flex flex-col gap-1 min-w-[120px]">
+              <select
+                value={cityFilter}
+                onChange={(e) => setCityFilter(e.target.value)}
+                className="bg-gray-bg border border-gray-border rounded-xl h-11 px-3 text-sm font-medium focus:outline-none focus:border-blue-primary"
+              >
+                <option value="all">All Cities</option>
+                {uniqueCities.map((city) => (
+                  <option key={city} value={city}>{city}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Sort Dropdown */}
+            <div className="flex flex-col gap-1 min-w-[160px]">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="bg-gray-bg border border-gray-border rounded-xl h-11 px-3 text-sm font-medium focus:outline-none focus:border-blue-primary"
+              >
+                <option value="alphabetical-asc">Name (A → Z)</option>
+                <option value="alphabetical-desc">Name (Z → A)</option>
+                <option value="date-desc">Newest Added</option>
+                <option value="date-asc">Oldest Added</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between mb-4 text-xs font-bold text-text-mid uppercase tracking-wider px-1">
+            <span>Showing {filteredDoctors.length} of {doctors.length} Doctors</span>
+            {(searchQuery || statusFilter !== "all" || cityFilter !== "all" || specialtyFilter !== "all") && (
+              <button
+                onClick={() => {
+                  setSearchQuery("");
+                  setSortBy("alphabetical-asc");
+                  setStatusFilter("all");
+                  setCityFilter("all");
+                  setSpecialtyFilter("all");
+                }}
+                className="text-blue-primary hover:underline font-bold"
+              >
+                Clear Filters
+              </button>
+            )}
+          </div>
+
           {/* Doctors Table */}
           <div className="bg-white border border-gray-border rounded-2xl shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
@@ -133,12 +276,17 @@ export default function DoctorsClient({ doctors }: { doctors: any[] }) {
                     <th className="px-6 py-4">Specialty</th>
                     <th className="px-6 py-4">City</th>
                     <th className="px-6 py-4">Status</th>
-                    <th className="px-6 py-4">Email</th>
+                    <th className="px-6 py-4">Clinic Email</th>
+                    <th className="px-6 py-4">Clinic Phone</th>
                     <th className="px-6 py-4">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-border">
-                  {doctors.map((doc) => (
+                  {filteredDoctors.length === 0 ? (
+                    <tr>
+                      <td colSpan={8} className="px-6 py-8 text-center text-text-mid font-medium">No doctors found matching filters.</td>
+                    </tr>
+                  ) : filteredDoctors.map((doc) => (
                     <tr key={doc.id} className="hover:bg-gray-50/50 transition-colors">
                       <td className="px-6 py-4 font-bold text-text-dark">{doc.name}</td>
                       <td className="px-6 py-4 text-text-mid">{doc.specialty}</td>
@@ -150,8 +298,12 @@ export default function DoctorsClient({ doctors }: { doctors: any[] }) {
                           {doc.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-text-mid">{doc.email}</td>
+                      <td className="px-6 py-4 text-text-mid">{doc.clinicEmail}</td>
+                      <td className="px-6 py-4 text-text-mid">{doc.clinicPhone || "+971 800 7777"}</td>
                       <td className="px-6 py-4 flex items-center gap-3">
+                        <button onClick={() => handleToggleStatus(doc.id, doc.status)} className={`hover:underline font-medium text-sm ${doc.status === 'Active' ? 'text-amber-600 hover:text-amber-700' : 'text-green-600 hover:text-green-700'}`}>
+                          {doc.status === 'Active' ? 'Pause' : 'Resume'}
+                        </button>
                         <button onClick={() => handleEdit(doc)} className="text-blue-primary hover:underline font-medium text-sm">Edit</button>
                         <button onClick={() => handleDelete(doc.id)} className="text-red-600 hover:underline font-medium text-sm">Delete</button>
                       </td>
@@ -200,8 +352,8 @@ export default function DoctorsClient({ doctors }: { doctors: any[] }) {
                     <input required name="name" defaultValue={editingDoctor?.name} type="text" placeholder="Dr. First Last" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm font-semibold text-text-dark">Email Address *</label>
-                    <input required name="email" defaultValue={editingDoctor?.email} type="email" placeholder="doctor@docmate.com" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" />
+                    <label className="text-sm font-semibold text-text-dark">Clinic / Hospital Phone *</label>
+                    <input required name="clinicPhone" defaultValue={editingDoctor?.clinicPhone || "+971 800 7777"} type="tel" placeholder="+971 800 7777" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" />
                   </div>
                 </div>
 

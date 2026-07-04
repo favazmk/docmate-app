@@ -6,9 +6,10 @@ interface BookingWidgetProps {
   slug: string;
   doctorName: string;
   clinicName: string;
+  clinicPhone?: string;
 }
 
-export default function BookingWidget({ slug, doctorName, clinicName }: BookingWidgetProps) {
+export default function BookingWidget({ slug, doctorName, clinicName, clinicPhone = "+971 800 7777" }: BookingWidgetProps) {
   return (
     <div className="bg-white border border-gray-border rounded-2xl p-6 shadow-lg shadow-gray-border/30 sticky top-8">
       <div className="mb-6">
@@ -32,9 +33,11 @@ export default function BookingWidget({ slug, doctorName, clinicName }: BookingW
       <hr className="my-6 border-gray-border" />
 
       <div className="flex flex-col gap-3">
-        <Button variant="outline" className="w-full border-2 border-gray-border text-text-dark hover:bg-gray-bg h-11 rounded-xl font-semibold">
-          Call Clinic
-        </Button>
+        <a href={`tel:${clinicPhone}`} className="w-full">
+          <Button variant="outline" className="w-full border-2 border-gray-border text-text-dark hover:bg-gray-bg h-11 rounded-xl font-semibold">
+            Call Clinic
+          </Button>
+        </a>
         <div className="flex items-start gap-2 mt-2 text-xs text-text-mid">
           <MapPin className="w-4 h-4 shrink-0 text-text-light" />
           <p>{clinicName}, Dubai</p>

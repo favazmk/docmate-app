@@ -89,7 +89,9 @@ export async function sendAppointmentEmails({
                 <p style="margin: 6px 0;"><strong>Reason for Visit:</strong> ${patientReason || "None specified"}</p>
               </div>
               
-              <p style="color: #475569; font-size: 14px;"><strong>Action Required:</strong> Please contact the patient directly at their phone number above within 24 hours to schedule and finalize their appointment.</p>
+              <p style="color: #1e3a8a; font-size: 15px; font-weight: bold; background-color: #eff6ff; padding: 12px; border-radius: 8px; border: 1px solid #bfdbfe;">
+                <strong>Action Required:</strong> Please call the patient directly at their phone number above to confirm their booking and schedule their exact appointment time.
+              </p>
               <p style="margin-top: 24px; margin-bottom: 0; font-size: 14px; color: #94a3b8;">Best regards,<br/><strong>The Docmate Team</strong></p>
             </div>
           `,
