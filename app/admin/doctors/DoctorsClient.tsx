@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Users, Activity, Calendar, Search, Plus, X, Upload, CheckCircle2, Bell } from "lucide-react";
+import { Users, Activity, Calendar, Search, Plus, X, Upload, CheckCircle2, Bell, Pause, Play, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createDoctor, updateDoctor, deleteDoctor, toggleDoctorStatus } from "@/app/actions/doctors";
 import { useRouter } from "next/navigation";
@@ -14,6 +14,33 @@ export default function DoctorsClient({ doctors, appointmentCount = 0 }: { docto
   const [editingDoctor, setEditingDoctor] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const router = useRouter();
+
+  // Confirmation state
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    onConfirm: () => void;
+    confirmText?: string;
+    cancelText?: string;
+    isDanger?: boolean;
+  }>({
+    isOpen: false,
+    title: "",
+    description: "",
+    onConfirm: () => {},
+  });
+
+  // Alert state
+  const [alertModal, setAlertModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+  }>({
+    isOpen: false,
+    title: "",
+    description: "",
+  });
 
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("alphabetical-asc");
@@ -65,25 +92,51 @@ export default function DoctorsClient({ doctors, appointmentCount = 0 }: { docto
     setIsAddModalOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this doctor?")) return;
-    const res = await deleteDoctor(id);
-    if (res.success) {
-      router.refresh();
-    } else {
-      alert("Error: " + res.error);
-    }
+  const handleDelete = (id: string) => {
+    setConfirmModal({
+      isOpen: true,
+      title: "Delete Doctor Profile?",
+      description: "Are you sure you want to delete this doctor? This action is permanent and cannot be undone.",
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      isDanger: true,
+      onConfirm: async () => {
+        const res = await deleteDoctor(id);
+        if (res.success) {
+          router.refresh();
+        } else {
+          setAlertModal({
+            isOpen: true,
+            title: "Failed to Delete",
+            description: res.error || "An error occurred while deleting the doctor profile."
+          });
+        }
+      }
+    });
   };
 
-  const handleToggleStatus = async (id: string, currentStatus: string) => {
+  const handleToggleStatus = (id: string, currentStatus: string) => {
     const actionName = currentStatus === "Active" ? "pause" : "resume";
-    if (!confirm(`Are you sure you want to ${actionName} this doctor?`)) return;
-    const res = await toggleDoctorStatus(id, currentStatus);
-    if (res.success) {
-      router.refresh();
-    } else {
-      alert("Error: " + res.error);
-    }
+    setConfirmModal({
+      isOpen: true,
+      title: currentStatus === "Active" ? "Pause Doctor Profile?" : "Resume Doctor Profile?",
+      description: `Are you sure you want to ${actionName} this doctor? This will ${currentStatus === "Active" ? "hide their profile from public searches" : "make their profile visible to patients again"}.`,
+      confirmText: currentStatus === "Active" ? "Pause" : "Resume",
+      cancelText: "Cancel",
+      isDanger: currentStatus === "Active",
+      onConfirm: async () => {
+        const res = await toggleDoctorStatus(id, currentStatus);
+        if (res.success) {
+          router.refresh();
+        } else {
+          setAlertModal({
+            isOpen: true,
+            title: "Failed to Update Status",
+            description: res.error || `An error occurred while attempting to ${actionName} the doctor profile.`
+          });
+        }
+      }
+    });
   };
 
   const openAddModal = () => {
@@ -301,11 +354,31 @@ export default function DoctorsClient({ doctors, appointmentCount = 0 }: { docto
                       <td className="px-6 py-4 text-text-mid">{doc.clinicEmail}</td>
                       <td className="px-6 py-4 text-text-mid">{doc.clinicPhone || "+971 800 7777"}</td>
                       <td className="px-6 py-4 flex items-center gap-3">
-                        <button onClick={() => handleToggleStatus(doc.id, doc.status)} className={`hover:underline font-medium text-sm ${doc.status === 'Active' ? 'text-amber-600 hover:text-amber-700' : 'text-green-600 hover:text-green-700'}`}>
-                          {doc.status === 'Active' ? 'Pause' : 'Resume'}
+                        <button 
+                          onClick={() => handleToggleStatus(doc.id, doc.status)} 
+                          className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                          title={doc.status === 'Active' ? 'Pause Doctor' : 'Resume Doctor'}
+                        >
+                          {doc.status === 'Active' ? (
+                            <Pause className="w-4.5 h-4.5 text-amber-600" />
+                          ) : (
+                            <Play className="w-4.5 h-4.5 text-green-600" />
+                          )}
                         </button>
-                        <button onClick={() => handleEdit(doc)} className="text-blue-primary hover:underline font-medium text-sm">Edit</button>
-                        <button onClick={() => handleDelete(doc.id)} className="text-red-600 hover:underline font-medium text-sm">Delete</button>
+                        <button 
+                          onClick={() => handleEdit(doc)} 
+                          className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                          title="Edit Profile"
+                        >
+                          <Pencil className="w-4.5 h-4.5 text-blue-primary" />
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(doc.id)} 
+                          className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                          title="Delete Profile"
+                        >
+                          <Trash2 className="w-4.5 h-4.5 text-red-600" />
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -414,6 +487,57 @@ export default function DoctorsClient({ doctors, appointmentCount = 0 }: { docto
                 {loading ? "Saving..." : <><CheckCircle2 className="w-4 h-4" /> Save Doctor</>}
               </Button>
             </div>
+          </div>
+        </div>
+      )}
+      {/* Brand Confirm Modal */}
+      {confirmModal.isOpen && (
+        <div className="fixed inset-0 z-55 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl border border-gray-border shadow-2xl w-full max-w-md p-6 text-center flex flex-col items-center animate-in zoom-in-95 duration-200">
+            <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-4 ${confirmModal.isDanger ? "bg-red-50 text-red-600" : "bg-blue-light text-blue-primary"}`}>
+              {confirmModal.isDanger ? <span className="text-2xl font-bold">⚠️</span> : <span className="text-2xl font-bold">ℹ️</span>}
+            </div>
+            <h3 className="text-lg font-bold text-text-dark mb-2">{confirmModal.title}</h3>
+            <p className="text-sm text-text-mid mb-6 leading-relaxed">{confirmModal.description}</p>
+            
+            <div className="flex gap-3 w-full justify-center">
+              <Button 
+                variant="outline" 
+                onClick={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+                className="border-gray-border text-text-dark hover:bg-gray-200 h-11 px-5 rounded-xl font-bold flex-1"
+              >
+                {confirmModal.cancelText || "Cancel"}
+              </Button>
+              <Button 
+                onClick={() => {
+                  confirmModal.onConfirm();
+                  setConfirmModal(prev => ({ ...prev, isOpen: false }));
+                }}
+                className={`h-11 px-5 rounded-xl font-bold flex-1 text-white ${confirmModal.isDanger ? "bg-red-600 hover:bg-red-700" : "bg-blue-primary hover:bg-blue-hover"}`}
+              >
+                {confirmModal.confirmText || "Confirm"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Brand Alert Modal */}
+      {alertModal.isOpen && (
+        <div className="fixed inset-0 z-55 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl border border-gray-border shadow-2xl w-full max-w-md p-6 text-center flex flex-col items-center animate-in zoom-in-95 duration-200">
+            <div className="w-14 h-14 bg-red-50 text-red-600 rounded-full flex items-center justify-center mb-4">
+              <span className="text-2xl font-bold">❌</span>
+            </div>
+            <h3 className="text-lg font-bold text-text-dark mb-2">{alertModal.title}</h3>
+            <p className="text-sm text-text-mid mb-6 leading-relaxed">{alertModal.description}</p>
+            
+            <Button 
+              onClick={() => setAlertModal(prev => ({ ...prev, isOpen: false }))}
+              className="bg-blue-primary hover:bg-blue-hover text-white h-11 px-8 rounded-xl font-bold w-full shadow-lg shadow-blue-primary/20"
+            >
+              Close
+            </Button>
           </div>
         </div>
       )}

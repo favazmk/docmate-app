@@ -5,6 +5,7 @@ import { SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import prisma from "@/lib/prisma";
+import SearchInput from "@/components/SearchInput";
 
 export default async function SearchResultsPage({
   searchParams,
@@ -16,35 +17,48 @@ export default async function SearchResultsPage({
   const sort = typeof searchParams.sort === "string" ? searchParams.sort : "recommended";
   const gender = typeof searchParams.gender === "string" ? searchParams.gender : undefined;
   const languages = typeof searchParams.language === "string" ? [searchParams.language] : (searchParams.language || []);
+  const query = typeof searchParams.query === "string" ? searchParams.query : undefined;
 
-  // Build query where filter dynamically
-  const whereClause: any = {
-    status: "Active",
-  };
+  // Build query where filter dynamically using AND combinations
+  const andClauses: any[] = [{ status: "Active" }];
 
   if (specialty && specialty.trim() !== "") {
-    whereClause.specialty = {
-      contains: specialty.trim(),
-    };
+    andClauses.push({
+      specialty: { contains: specialty.trim() }
+    });
   }
 
   if (city && city.trim() !== "") {
-    whereClause.city = {
-      contains: city.trim(),
-    };
+    andClauses.push({
+      city: { contains: city.trim() }
+    });
   }
 
   if (gender && gender !== "Any") {
-    whereClause.gender = gender;
+    andClauses.push({
+      gender: gender
+    });
   }
 
-  // Insurance and Languages are stored as strings (comma separated in DB probably, let's check languages)
-  // We saw languages: d.languages.split(",").map(lang => lang.trim())
   if (languages.length > 0) {
-    whereClause.OR = languages.map(lang => ({
-      languages: { contains: lang }
-    }));
+    andClauses.push({
+      OR: languages.map(lang => ({
+        languages: { contains: lang }
+      }))
+    });
   }
+
+  if (query && query.trim() !== "") {
+    andClauses.push({
+      OR: [
+        { name: { contains: query.trim() } },
+        { specialty: { contains: query.trim() } },
+        { affiliation: { contains: query.trim() } }
+      ]
+    });
+  }
+
+  const whereClause = { AND: andClauses };
 
   // Sort logic
   let orderByClause: any = {};
@@ -93,15 +107,17 @@ export default async function SearchResultsPage({
             </p>
           </div>
           
-          <div className="flex items-center gap-3 w-full md:w-auto">
-            <SortDropdown />
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+            <SearchInput initialValue={query} />
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <SortDropdown />
 
-            {/* Mobile Filter Button */}
-            <Sheet>
-              <SheetTrigger className="md:hidden flex-1 bg-white border border-gray-border rounded-xl h-11 flex items-center justify-center gap-2 text-sm font-medium text-text-dark shadow-sm">
-                <SlidersHorizontal className="w-4 h-4" />
-                Filters
-              </SheetTrigger>
+              {/* Mobile Filter Button */}
+              <Sheet>
+                <SheetTrigger className="md:hidden flex-1 bg-white border border-gray-border rounded-xl h-11 flex items-center justify-center gap-2 text-sm font-medium text-text-dark shadow-sm">
+                  <SlidersHorizontal className="w-4 h-4" />
+                  Filters
+                </SheetTrigger>
               <SheetContent side="bottom" className="h-[85vh] p-0 rounded-t-2xl">
                 <div className="h-full overflow-y-auto p-4 pb-20">
                   <FilterSidebar />
@@ -110,6 +126,7 @@ export default async function SearchResultsPage({
             </Sheet>
           </div>
         </div>
+      </div>
 
         <div className="flex gap-8">
           {/* Desktop Sidebar */}
