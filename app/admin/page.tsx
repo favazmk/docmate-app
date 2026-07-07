@@ -3,12 +3,20 @@ import Image from "next/image";
 import { Users, Calendar, Activity, TrendingUp, Search, Plus, Bell } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { PrismaClient } from "@prisma/client";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 const prisma = new PrismaClient();
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboardPage() {
+  const session = await getServerSession(authOptions);
+  if (!session || (session.user as any)?.role !== "ADMIN") {
+    redirect("/admin/login");
+  }
+
   const totalDoctors = await prisma.doctor.count();
   const totalBookings = await prisma.appointment.count();
   const registeredPatients = await prisma.user.count({ where: { role: 'PATIENT' } });

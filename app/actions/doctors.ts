@@ -2,11 +2,21 @@
 
 import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 const prisma = new PrismaClient();
 
+async function requireAdmin() {
+  const session = await getServerSession(authOptions);
+  if (!session || (session.user as any)?.role !== "ADMIN") {
+    throw new Error("Unauthorized");
+  }
+}
+
 export async function createDoctor(formData: FormData) {
   try {
+    await requireAdmin();
     const name = formData.get("name") as string;
     const clinicEmail = formData.get("clinicEmail") as string;
     const clinicPhone = formData.get("clinicPhone") as string;
@@ -53,6 +63,7 @@ export async function createDoctor(formData: FormData) {
 
 export async function updateDoctor(id: string, formData: FormData) {
   try {
+    await requireAdmin();
     const name = formData.get("name") as string;
     const clinicEmail = formData.get("clinicEmail") as string;
     const clinicPhone = formData.get("clinicPhone") as string;
@@ -92,6 +103,7 @@ export async function updateDoctor(id: string, formData: FormData) {
 
 export async function deleteDoctor(id: string) {
   try {
+    await requireAdmin();
     await prisma.doctor.delete({
       where: { id }
     });
@@ -108,6 +120,7 @@ export async function deleteDoctor(id: string) {
 
 export async function toggleDoctorStatus(id: string, currentStatus: string) {
   try {
+    await requireAdmin();
     const newStatus = currentStatus === "Active" ? "Paused" : "Active";
     const doctor = await prisma.doctor.update({
       where: { id },

@@ -2,12 +2,20 @@ import Link from "next/link";
 import Image from "next/image";
 import { Users, Activity, Calendar, Search, Bell } from "lucide-react";
 import { PrismaClient } from "@prisma/client";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 const prisma = new PrismaClient();
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminAppointmentsPage() {
+  const session = await getServerSession(authOptions);
+  if (!session || (session.user as any)?.role !== "ADMIN") {
+    redirect("/admin/login");
+  }
+
   const appointments = await prisma.appointment.findMany({
     orderBy: { createdAt: "desc" },
     include: {
