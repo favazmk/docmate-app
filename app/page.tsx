@@ -13,24 +13,18 @@ import { Doctor } from "@prisma/client";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const specialties = [
-    { name: "Gynecology", count: 423, icon: Activity, href: "/search?specialty=Gynecology" },
-    { name: "Cardiology", count: 156, icon: Heart, href: "/search?specialty=Cardiology" },
-    { name: "Ophthalmology", count: 89, icon: Eye, href: "/search?specialty=Ophthalmology" },
-    { name: "Orthopedics", count: 210, icon: Bone, href: "/search?specialty=Orthopedics" },
-    { name: "Pediatrics", count: 342, icon: Baby, href: "/search?specialty=Pediatrics" },
-    { name: "Neurology", count: 67, icon: Brain, href: "/search?specialty=Neurology" },
-    { name: "Pulmonology", count: 45, icon: Stethoscope, href: "/search?specialty=Pulmonology" },
-    { name: "View All", count: 16, icon: Activity, href: "/search", isViewAll: true },
-  ];
-
   let dbDoctors: Doctor[] = [];
   let searchBarDoctors: { slug: string; name: string; specialty: string; city: string }[] = [];
+  let specialtiesWithCounts: { specialty: string; _count: { id: number } }[] = [];
+  let totalActiveDoctors = 0;
+  let totalSpecialtiesCount = 0;
+
   try {
     dbDoctors = await prisma.doctor.findMany({
       take: 4,
       where: { status: "Active" }
     });
+    
     searchBarDoctors = await prisma.doctor.findMany({
       where: { status: "Active" },
       select: {
@@ -40,9 +34,48 @@ export default async function Home() {
         city: true
       }
     });
+
+    const counts = await prisma.doctor.groupBy({
+      by: ['specialty'],
+      where: { status: "Active" },
+      _count: {
+        id: true
+      }
+    });
+    specialtiesWithCounts = counts as any;
+
+    totalActiveDoctors = await prisma.doctor.count({
+      where: { status: "Active" }
+    });
+
+    const distinctSpecialties = await prisma.doctor.findMany({
+      where: { status: "Active" },
+      select: { specialty: true },
+      distinct: ['specialty']
+    });
+    totalSpecialtiesCount = distinctSpecialties.length;
+
   } catch (e) {
-    console.error("Error fetching doctors on homepage:", e);
+    console.error("Error fetching homepage DB data:", e);
   }
+
+  const getSpecialtyCount = (name: string) => {
+    const found = specialtiesWithCounts.find(
+      s => s.specialty.toLowerCase() === name.toLowerCase()
+    );
+    return found ? found._count.id : 0;
+  };
+
+  const specialties = [
+    { name: "Gynecology", count: getSpecialtyCount("Gynecology"), icon: Activity, href: "/search?specialty=Gynecology" },
+    { name: "Cardiology", count: getSpecialtyCount("Cardiology"), icon: Heart, href: "/search?specialty=Cardiology" },
+    { name: "Ophthalmology", count: getSpecialtyCount("Ophthalmology"), icon: Eye, href: "/search?specialty=Ophthalmology" },
+    { name: "Orthopedics", count: getSpecialtyCount("Orthopedics"), icon: Bone, href: "/search?specialty=Orthopedics" },
+    { name: "Pediatrics", count: getSpecialtyCount("Pediatrics"), icon: Baby, href: "/search?specialty=Pediatrics" },
+    { name: "Neurology", count: getSpecialtyCount("Neurology"), icon: Brain, href: "/search?specialty=Neurology" },
+    { name: "Pulmonology", count: getSpecialtyCount("Pulmonology"), icon: Stethoscope, href: "/search?specialty=Pulmonology" },
+    { name: "View All", count: totalSpecialtiesCount, icon: Activity, href: "/search", isViewAll: true },
+  ];
 
   const featuredDoctors = dbDoctors.map(d => ({
     slug: d.slug,
@@ -122,7 +155,7 @@ export default async function Home() {
       <section className="bg-blue-light border-y border-gray-border/50 py-6 mt-12 px-4">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-6 md:gap-12">
           <div className="flex items-center gap-2 text-blue-primary font-medium text-sm">
-            <BadgeCheck className="w-5 h-5" /> 500+ verified doctors
+            <BadgeCheck className="w-5 h-5" /> {totalActiveDoctors} verified doctors
           </div>
           <div className="flex items-center gap-2 text-blue-primary font-medium text-sm">
             <Globe className="w-5 h-5" /> Focused on Dubai
