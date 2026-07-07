@@ -5,12 +5,21 @@ import BookingWidget from "@/components/BookingWidget";
 import { Badge } from "@/components/ui/badge";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import DoctorAboutSection from "@/components/DoctorAboutSection";
+import DoctorReviews from "@/components/DoctorReviews";
 
 export const dynamic = "force-dynamic";
 
 export default async function DoctorProfilePage({ params }: { params: { slug: string } }) {
   const dbDoctor = await prisma.doctor.findUnique({
-    where: { slug: params.slug }
+    where: { slug: params.slug },
+    include: {
+      reviewsList: {
+        orderBy: {
+          createdAt: "desc"
+        }
+      }
+    }
   });
 
   if (!dbDoctor || dbDoctor.status !== "Active") {
@@ -39,6 +48,14 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
     clinicName: dbDoctor.affiliation,
     insurances: ["Daman", "AXA", "Nextcare", "Oman Insurance", "MetLife"]
   };
+
+  const initialReviews = dbDoctor.reviewsList.map(r => ({
+    id: r.id,
+    patientName: r.patientName,
+    rating: r.rating,
+    comment: r.comment,
+    createdAt: r.createdAt
+  }));
 
   return (
     <div className="bg-gray-bg min-h-screen py-8 px-4">
@@ -106,10 +123,7 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
             </div>
 
             {/* About Section */}
-            <div className="bg-white border border-gray-border rounded-2xl p-6 md:p-8 shadow-sm">
-              <h3 className="text-xl font-bold text-text-dark mb-4">About the Doctor</h3>
-              <p className="text-text-mid leading-relaxed">{doctor.bio}</p>
-            </div>
+            <DoctorAboutSection bio={doctor.bio} />
 
             {/* Qualifications */}
             <div className="bg-white border border-gray-border rounded-2xl p-6 md:p-8 shadow-sm">
@@ -127,6 +141,12 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
               </ul>
             </div>
 
+            {/* Reviews Section */}
+            <DoctorReviews 
+              doctorId={dbDoctor.id} 
+              doctorSlug={params.slug} 
+              initialReviews={initialReviews} 
+            />
 
             {/* Clinic Location */}
             <div className="bg-white border border-gray-border rounded-2xl p-6 md:p-8 shadow-sm mb-12">
