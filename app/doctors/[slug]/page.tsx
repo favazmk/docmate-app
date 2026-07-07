@@ -40,11 +40,13 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
     isVerified: true,
     experience: "15+ Years Experience",
     bio: dbDoctor.bio,
-    qualifications: [
-      "MD, Board Certified Specialist",
-      `Fellowship in Clinical ${dbDoctor.specialty}`,
-      `Affiliated with ${dbDoctor.affiliation}`
-    ],
+    qualifications: dbDoctor.qualifications
+      ? dbDoctor.qualifications.split("\n").map(q => q.trim()).filter(Boolean)
+      : [
+          "MD, Board Certified Specialist",
+          `Fellowship in Clinical ${dbDoctor.specialty}`,
+          `Affiliated with ${dbDoctor.affiliation}`
+        ],
     clinicName: dbDoctor.affiliation,
     insurances: ["Daman", "AXA", "Nextcare", "Oman Insurance", "MetLife"]
   };

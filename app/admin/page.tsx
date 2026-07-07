@@ -121,7 +121,7 @@ export default async function AdminDashboardPage() {
                 </div>
                 <span className="flex items-center text-xs font-bold text-text-mid bg-gray-100 px-2 py-1 rounded-full">Active</span>
               </div>
-              <h3 className="text-text-light font-medium text-sm mb-1">Active Cities</h3>
+              <h3 className="text-text-light font-medium text-sm mb-1">Active Areas</h3>
               <p className="text-3xl font-bold text-text-dark">{liveEmirates}</p>
             </div>
 

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
+import CustomDropdown from "@/components/ui/CustomDropdown";
 import Image from "next/image";
 import { Users, Activity, Calendar, Search, Plus, X, Upload, CheckCircle2, Bell, Pause, Play, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,42 @@ export default function DoctorsClient({ doctors, appointmentCount = 0 }: { docto
   const [editingDoctor, setEditingDoctor] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const router = useRouter();
+
+  const [selectedSpecialty, setSelectedSpecialty] = useState("");
+  const [selectedArea, setSelectedArea] = useState("");
+
+  const specialtyOptions = [
+    "Gynecology",
+    "Cardiology",
+    "Ophthalmology",
+    "Orthopedics",
+    "Pediatrics",
+    "Neurology",
+    "Pulmonology"
+  ];
+
+  const areaOptions = [
+    "Dubai Healthcare City",
+    "Jumeirah",
+    "Al Barsha",
+    "Dubai Marina",
+    "Bur Dubai",
+    "Deira",
+    "Business Bay",
+    "Al Qusais",
+    "Mirdif",
+    "Nad Al Sheba"
+  ];
+
+  useEffect(() => {
+    if (editingDoctor) {
+      setSelectedSpecialty(editingDoctor.specialty);
+      setSelectedArea(editingDoctor.city);
+    } else {
+      setSelectedSpecialty("");
+      setSelectedArea("");
+    }
+  }, [editingDoctor, isAddModalOpen]);
 
   // Confirmation state
   const [confirmModal, setConfirmModal] = useState<{
@@ -433,25 +470,23 @@ export default function DoctorsClient({ doctors, appointmentCount = 0 }: { docto
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-2">
                     <label className="text-sm font-semibold text-text-dark">Specialty *</label>
-                    <select required name="specialty" defaultValue={editingDoctor?.specialty} className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary">
-                      <option>Cardiologist</option>
-                      <option>Dermatologist</option>
-                      <option>Orthopedics</option>
-                      <option>Pediatrician</option>
-                      <option>Dentist</option>
-                    </select>
+                    <CustomDropdown
+                      value={selectedSpecialty}
+                      onChange={setSelectedSpecialty}
+                      options={specialtyOptions}
+                      placeholder="Select Specialty"
+                    />
+                    <input type="hidden" name="specialty" value={selectedSpecialty} />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm font-semibold text-text-dark">Emirate (City) *</label>
-                    <select required name="city" defaultValue={editingDoctor?.city} className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary">
-                      <option>Dubai</option>
-                      <option>Abu Dhabi</option>
-                      <option>Sharjah</option>
-                      <option>Ajman</option>
-                      <option>Umm Al Quwain</option>
-                      <option>Ras Al Khaimah</option>
-                      <option>Fujairah</option>
-                    </select>
+                    <label className="text-sm font-semibold text-text-dark">Area (City) *</label>
+                    <CustomDropdown
+                      value={selectedArea}
+                      onChange={setSelectedArea}
+                      options={areaOptions}
+                      placeholder="Select Area"
+                    />
+                    <input type="hidden" name="city" value={selectedArea} />
                   </div>
                 </div>
 
@@ -469,6 +504,11 @@ export default function DoctorsClient({ doctors, appointmentCount = 0 }: { docto
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-semibold text-text-dark">Clinic / Hospital Affiliation *</label>
                   <input required name="affiliation" defaultValue={editingDoctor?.affiliation} type="text" placeholder="e.g. Mediclinic City Hospital" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" />
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-semibold text-text-dark">Qualifications (one per line) *</label>
+                  <textarea required name="qualifications" defaultValue={editingDoctor?.qualifications || "MD, Board Certified Specialist"} rows={3} placeholder="MD, Board Certified Specialist&#10;Fellowship in Clinical Cardiology" className="bg-gray-bg border border-gray-border rounded-xl p-4 text-sm font-medium focus:outline-none focus:border-blue-primary resize-none"></textarea>
                 </div>
 
                 <div className="flex flex-col gap-2">

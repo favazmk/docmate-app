@@ -48,6 +48,7 @@ model Doctor {
   fee          Int
   affiliation  String
   bio          String        @db.Text
+  qualifications String?     @db.Text
   status       String        @default("Active") // Active, Pending
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt

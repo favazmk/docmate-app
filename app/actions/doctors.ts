@@ -16,6 +16,7 @@ export async function createDoctor(formData: FormData) {
     const languages = formData.get("languages") as string;
     const affiliation = formData.get("affiliation") as string;
     const bio = formData.get("bio") as string;
+    const qualifications = formData.get("qualifications") as string;
     
     // Generate slug from name
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Math.floor(Math.random() * 1000);
@@ -34,6 +35,7 @@ export async function createDoctor(formData: FormData) {
         languages: languages || "English",
         affiliation: affiliation || "Independent",
         bio: bio || "A dedicated healthcare professional.",
+        qualifications: qualifications || "MD, Board Certified Specialist",
         photoUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff`,
         status: "Active"
       }
@@ -60,6 +62,7 @@ export async function updateDoctor(id: string, formData: FormData) {
     const languages = formData.get("languages") as string;
     const affiliation = formData.get("affiliation") as string;
     const bio = formData.get("bio") as string;
+    const qualifications = formData.get("qualifications") as string;
 
     const doctor = await prisma.doctor.update({
       where: { id },
@@ -73,6 +76,7 @@ export async function updateDoctor(id: string, formData: FormData) {
         languages: languages || "English",
         affiliation: affiliation || "Independent",
         bio: bio || "A dedicated healthcare professional.",
+        qualifications: qualifications || "MD, Board Certified Specialist",
       }
     });
 
