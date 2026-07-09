@@ -25,6 +25,7 @@ const doctors = doctorsData.map((doc) => ({
   affiliation: doc.affiliation,
   bio: doc.bio,
   photoUrl: doc.photoUrl,
+  qualifications: doc.qualifications,
   status: "Active"
 }));
 
