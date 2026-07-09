@@ -132,7 +132,7 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
   };
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-4xl mx-auto">
       {/* Header / Back */}
       {!isConfirmed && (
         <div className="mb-6 flex items-center">
@@ -177,16 +177,16 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
             </div>
           )}
 
-          <form onSubmit={handleConfirmBooking} className="flex flex-col gap-6">
+          <form onSubmit={handleConfirmBooking} className="grid grid-cols-1 md:grid-cols-12 gap-8">
             
-            {/* Custom Interactive Calendar Grid */}
-            <div>
-              <label className="text-sm font-bold text-text-dark mb-3 block flex items-center gap-1.5">
+            {/* Left Column: Calendar Selection */}
+            <div className="md:col-span-6 flex flex-col">
+              <label className="text-sm font-bold text-text-dark mb-3 flex items-center gap-1.5 select-none">
                 <Calendar className="w-4 h-4 text-blue-primary" />
                 Select Appointment Date
               </label>
               
-              <div className="border border-gray-border rounded-2xl p-4 max-w-sm mx-auto sm:mx-0 bg-white">
+              <div className="border border-gray-border rounded-2xl p-4 w-full bg-white">
                 {/* Month Navigator */}
                 <div className="flex items-center justify-between mb-4">
                   <button 
@@ -251,24 +251,24 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
               </div>
             </div>
 
-            <div className="h-px bg-gray-border my-1"></div>
-
-            {/* Contact Details Fields */}
-            <div className="flex flex-col gap-5">
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-bold text-text-dark">Full Name <span className="text-red-500">*</span></label>
-                <input 
-                  type="text" 
-                  required
-                  placeholder="John Doe" 
-                  value={name}
-                  onChange={e => setName(e.target.value)}
-                  className="w-full bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium text-text-dark focus:outline-none focus:border-blue-primary focus:ring-1 focus:ring-blue-primary" 
-                />
-              </div>
-              
-              <div className="flex flex-col sm:flex-row gap-5">
-                <div className="flex flex-col gap-2 flex-1">
+            {/* Right Column: Contact Details Fields & Button */}
+            <div className="md:col-span-6 flex flex-col justify-between gap-6">
+              <div className="flex flex-col gap-4">
+                {/* Full Name */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-sm font-bold text-text-dark">Full Name <span className="text-red-500">*</span></label>
+                  <input 
+                    type="text" 
+                    required
+                    placeholder="John Doe" 
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                    className="w-full bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium text-text-dark focus:outline-none focus:border-blue-primary focus:ring-1 focus:ring-blue-primary" 
+                  />
+                </div>
+                
+                {/* Email */}
+                <div className="flex flex-col gap-1.5">
                   <label className="text-sm font-bold text-text-dark">Email <span className="text-red-500">*</span></label>
                   <input 
                     type="email" 
@@ -279,7 +279,9 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
                     className="w-full bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium text-text-dark focus:outline-none focus:border-blue-primary focus:ring-1 focus:ring-blue-primary" 
                   />
                 </div>
-                <div className="flex flex-col gap-2 flex-1">
+
+                {/* Phone Number */}
+                <div className="flex flex-col gap-1.5">
                   <label className="text-sm font-bold text-text-dark">Phone Number <span className="text-red-500">*</span></label>
                   <div className="flex">
                     <select 
@@ -301,35 +303,37 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
                     />
                   </div>
                 </div>
+
+                {/* Reason for Visit */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-sm font-bold text-text-dark">Reason for Visit (Optional)</label>
+                  <textarea 
+                    rows={3} 
+                    placeholder="Briefly describe your symptoms..." 
+                    value={reason}
+                    onChange={e => setReason(e.target.value)}
+                    className="w-full bg-gray-bg border border-gray-border rounded-xl p-4 text-sm font-medium text-text-dark focus:outline-none focus:border-blue-primary focus:ring-1 focus:ring-blue-primary resize-none"
+                  ></textarea>
+                </div>
               </div>
 
-              <div className="flex flex-col gap-2 mb-2">
-                <label className="text-sm font-bold text-text-dark">Reason for Visit (Optional)</label>
-                <textarea 
-                  rows={3} 
-                  placeholder="Briefly describe your symptoms..." 
-                  value={reason}
-                  onChange={e => setReason(e.target.value)}
-                  className="w-full bg-gray-bg border border-gray-border rounded-xl p-4 text-sm font-medium text-text-dark focus:outline-none focus:border-blue-primary focus:ring-1 focus:ring-blue-primary resize-none"
-                ></textarea>
+              {/* Submit Action */}
+              <div className="pt-6 border-t border-gray-border mt-auto">
+                <Button 
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="bg-blue-primary hover:bg-blue-hover text-white h-12 px-8 rounded-xl font-bold text-base w-full shadow-md shadow-blue-primary/20 flex items-center justify-center gap-2"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Booking...
+                    </>
+                  ) : (
+                    "Book Appointment"
+                  )}
+                </Button>
               </div>
-            </div>
-
-            <div className="pt-6 border-t border-gray-border">
-              <Button 
-                type="submit"
-                disabled={isSubmitting}
-                className="bg-blue-primary hover:bg-blue-hover text-white h-12 px-8 rounded-xl font-bold text-base w-full shadow-md shadow-blue-primary/20 flex items-center justify-center gap-2"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    Booking...
-                  </>
-                ) : (
-                  "Book Appointment"
-                )}
-              </Button>
             </div>
           </form>
         </div>
