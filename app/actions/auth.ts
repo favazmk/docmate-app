@@ -8,8 +8,10 @@ export async function registerPatient(formData: FormData) {
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
+    const phone = formData.get("phone") as string;
+    const phonePrefix = formData.get("phonePrefix") as string;
 
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !phone) {
       return { success: false, error: "All fields are required" };
     }
 
@@ -21,12 +23,22 @@ export async function registerPatient(formData: FormData) {
       return { success: false, error: "An account with this email already exists" };
     }
 
+    const fullPhone = `${phonePrefix} ${phone.trim()}`;
+    const existingPhone = await prisma.user.findFirst({
+      where: { phone: fullPhone }
+    });
+
+    if (existingPhone) {
+      return { success: false, error: "An account with this phone number already exists" };
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await prisma.user.create({
       data: {
         name,
         email: email.toLowerCase(),
+        phone: fullPhone,
         password: hashedPassword,
         role: "PATIENT",
       },

@@ -104,6 +104,30 @@ export default function RegisterPage() {
 
             <div>
               <label className="block text-sm font-medium text-text-dark mb-1">
+                Phone Number
+              </label>
+              <div className="flex">
+                <select
+                  name="phonePrefix"
+                  defaultValue="+971"
+                  className="bg-gray-bg border border-gray-border border-r-0 rounded-l-xl px-3 text-sm font-medium text-text-dark focus:outline-none"
+                >
+                  <option>+971</option>
+                  <option>+966</option>
+                  <option>+965</option>
+                </select>
+                <input
+                  type="tel"
+                  name="phone"
+                  required
+                  className="appearance-none block w-full px-3 py-2 border border-gray-border rounded-r-xl placeholder-gray-400 focus:outline-none focus:ring-blue-primary focus:border-blue-primary sm:text-sm"
+                  placeholder="50 123 4567"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-text-dark mb-1">
                 Password
               </label>
               <div className="relative">
