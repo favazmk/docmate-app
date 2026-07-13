@@ -23,7 +23,7 @@ model User {
   id           String        @id @default(uuid())
   name         String
   email        String        @unique
-  password     String
+  password     String?       // Optional for passwordless logins
   phone        String?
   role         Role          @default(PATIENT)
   createdAt    DateTime      @default(now())
@@ -31,29 +31,67 @@ model User {
   appointments Appointment[]
 }
 
+model HospitalGroup {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  photoUrl  String?  @db.VarChar(500)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  clinics   Clinic[]
+}
+
+model Clinic {
+  id              String        @id @default(uuid())
+  hospitalGroupId String
+  hospitalGroup   HospitalGroup @relation(fields: [hospitalGroupId], references: [id], onDelete: Cascade)
+  name            String        // Branch name (e.g. Dubai Hills Hospital, Jumeirah Clinic)
+  city            String        // Dubai, Sharjah, Abu Dhabi
+  email           String        @default("info@clinic.com")
+  phone           String        @default("+971 800 7777")
+  photoUrl        String?       @db.VarChar(500)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  doctors         Doctor[]
+
+  @@unique([hospitalGroupId, name])
+}
+
+model Specialty {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  iconName  String   @default("Activity")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  doctors   Doctor[]
+}
+
 model Doctor {
-  id           String        @id @default(uuid())
-  name         String
-  slug         String        @unique
-  specialty    String
-  photoUrl     String?       @db.VarChar(500)
-  rating       Float         @default(5.0)
-  reviews      Int           @default(0)
-  city         String
-  email        String        @unique
-  clinicEmail  String        @default("info@kingscollegehospital.ae")
-  clinicPhone  String        @default("+971 800 7777")
-  languages    String        @default("English")
-  gender       String        @default("Male")
-  fee          Int
-  affiliation  String
-  bio          String        @db.Text
-  qualifications String?     @db.Text
-  status       String        @default("Active") // Active, Pending
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  appointments Appointment[]
-  reviewsList  Review[]
+  id             String        @id @default(uuid())
+  name           String
+  slug           String        @unique
+  specialtyId    String?
+  specialtyRef   Specialty?    @relation(fields: [specialtyId], references: [id], onDelete: SetNull)
+  specialty      String        // Fallback/Display compatibility
+  photoUrl       String?       @db.VarChar(500)
+  rating         Float         @default(5.0)
+  reviews        Int           @default(0)
+  city           String        // Dubai, Sharjah, Abu Dhabi
+  email          String        @unique
+  clinicId       String?
+  clinic         Clinic?       @relation(fields: [clinicId], references: [id], onDelete: SetNull)
+  clinicEmail    String        @default("info@clinic.com")
+  clinicPhone    String        @default("+971 800 7777")
+  languages      String        @default("English")
+  gender         String        @default("Male")
+  fee            Int
+  affiliation    String        // Fallback/Display compatibility
+  bio            String        @db.Text
+  qualifications String?       @db.Text
+  status         String        @default("Active") // Active, Pending
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  appointments   Appointment[]
+  reviewsList    Review[]
 }
 
 model Appointment {
