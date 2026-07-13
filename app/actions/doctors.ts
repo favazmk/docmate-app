@@ -18,16 +18,27 @@ export async function createDoctor(formData: FormData) {
   try {
     await requireAdmin();
     const name = formData.get("name") as string;
-    const clinicEmail = formData.get("clinicEmail") as string;
-    const clinicPhone = formData.get("clinicPhone") as string;
-    const specialty = formData.get("specialty") as string;
-    const city = formData.get("city") as string;
-    const fee = 0;
+    const specialtyId = formData.get("specialtyId") as string;
+    const clinicId = formData.get("clinicId") as string;
     const languages = formData.get("languages") as string;
-    const affiliation = formData.get("affiliation") as string;
     const bio = formData.get("bio") as string;
     const qualifications = formData.get("qualifications") as string;
+    const feeStr = formData.get("fee") as string;
+    const fee = feeStr ? parseInt(feeStr, 10) : 250;
     
+    // Resolve specialty details
+    const specRecord = await prisma.specialty.findUnique({
+      where: { id: specialtyId }
+    });
+    if (!specRecord) throw new Error("Specialty is required");
+
+    // Resolve clinic details
+    const clinicRecord = await prisma.clinic.findUnique({
+      where: { id: clinicId },
+      include: { hospitalGroup: true }
+    });
+    if (!clinicRecord) throw new Error("Clinic branch is required");
+
     // Generate slug from name
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Math.floor(Math.random() * 1000);
     const email = `dr.${slug}@kingscollegehospital.ae`;
@@ -37,13 +48,15 @@ export async function createDoctor(formData: FormData) {
         name,
         slug,
         email,
-        clinicEmail: clinicEmail || "info@kingscollegehospital.ae",
-        clinicPhone: clinicPhone || "+971 800 7777",
-        specialty,
-        city,
+        specialtyId: specRecord.id,
+        specialty: specRecord.name,
+        clinicId: clinicRecord.id,
+        clinicEmail: clinicRecord.email,
+        clinicPhone: clinicRecord.phone,
+        city: clinicRecord.city,
         fee,
         languages: languages || "English",
-        affiliation: affiliation || "Independent",
+        affiliation: `${clinicRecord.hospitalGroup.name} - ${clinicRecord.name}`,
         bio: bio || "A dedicated healthcare professional.",
         qualifications: qualifications || "MD, Board Certified Specialist",
         photoUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff`,
@@ -53,11 +66,12 @@ export async function createDoctor(formData: FormData) {
 
     revalidatePath("/admin/doctors");
     revalidatePath("/search");
+    revalidatePath("/");
     
     return { success: true, doctor };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error creating doctor:", error);
-    return { success: false, error: "Failed to create doctor" };
+    return { success: false, error: error.message || "Failed to create doctor" };
   }
 }
 
@@ -65,27 +79,40 @@ export async function updateDoctor(id: string, formData: FormData) {
   try {
     await requireAdmin();
     const name = formData.get("name") as string;
-    const clinicEmail = formData.get("clinicEmail") as string;
-    const clinicPhone = formData.get("clinicPhone") as string;
-    const specialty = formData.get("specialty") as string;
-    const city = formData.get("city") as string;
-    const fee = 0;
+    const specialtyId = formData.get("specialtyId") as string;
+    const clinicId = formData.get("clinicId") as string;
     const languages = formData.get("languages") as string;
-    const affiliation = formData.get("affiliation") as string;
     const bio = formData.get("bio") as string;
     const qualifications = formData.get("qualifications") as string;
+    const feeStr = formData.get("fee") as string;
+    const fee = feeStr ? parseInt(feeStr, 10) : 250;
+
+    // Resolve specialty details
+    const specRecord = await prisma.specialty.findUnique({
+      where: { id: specialtyId }
+    });
+    if (!specRecord) throw new Error("Specialty is required");
+
+    // Resolve clinic details
+    const clinicRecord = await prisma.clinic.findUnique({
+      where: { id: clinicId },
+      include: { hospitalGroup: true }
+    });
+    if (!clinicRecord) throw new Error("Clinic branch is required");
 
     const doctor = await prisma.doctor.update({
       where: { id },
       data: {
         name,
-        clinicEmail: clinicEmail || "info@kingscollegehospital.ae",
-        clinicPhone: clinicPhone || "+971 800 7777",
-        specialty,
-        city,
+        specialtyId: specRecord.id,
+        specialty: specRecord.name,
+        clinicId: clinicRecord.id,
+        clinicEmail: clinicRecord.email,
+        clinicPhone: clinicRecord.phone,
+        city: clinicRecord.city,
         fee,
         languages: languages || "English",
-        affiliation: affiliation || "Independent",
+        affiliation: `${clinicRecord.hospitalGroup.name} - ${clinicRecord.name}`,
         bio: bio || "A dedicated healthcare professional.",
         qualifications: qualifications || "MD, Board Certified Specialist",
       }
@@ -93,11 +120,12 @@ export async function updateDoctor(id: string, formData: FormData) {
 
     revalidatePath("/admin/doctors");
     revalidatePath("/search");
+    revalidatePath("/");
     
     return { success: true, doctor };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error updating doctor:", error);
-    return { success: false, error: "Failed to update doctor" };
+    return { success: false, error: error.message || "Failed to update doctor" };
   }
 }
 
