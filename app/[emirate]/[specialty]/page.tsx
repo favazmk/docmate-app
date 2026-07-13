@@ -50,7 +50,14 @@ export default async function SpecialtyCityPage({
   }
 
   const dbDoctors = await prisma.doctor.findMany({
-    where: whereClause
+    where: whereClause,
+    include: {
+      clinic: {
+        include: {
+          hospitalGroup: true
+        }
+      }
+    }
   });
 
   const featuredDoctors = dbDoctors.map(d => ({
@@ -63,7 +70,9 @@ export default async function SpecialtyCityPage({
     countryFlag: "🇦🇪",
     languages: d.languages.split(",").map(lang => lang.trim()),
     photoUrl: d.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(d.name)}&background=2200CC&color=fff`,
-    isVerified: true
+    isVerified: true,
+    clinicName: d.clinic ? `${d.clinic.hospitalGroup.name} - ${d.clinic.name}` : d.affiliation,
+    fee: d.fee
   }));
 
   return (
@@ -120,9 +129,9 @@ export default async function SpecialtyCityPage({
                 <p className="text-text-mid max-w-sm text-sm">We couldn't find any active {specialtyFormatted.toLowerCase()} doctors in {emirateFormatted} right now. Try searching in other cities or specialties!</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="flex flex-col gap-6">
                 {featuredDoctors.map((doc, i) => (
-                  <DoctorCard key={i} {...doc} />
+                  <DoctorCard key={i} {...doc} variant="row" />
                 ))}
               </div>
             )}

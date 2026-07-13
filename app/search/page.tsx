@@ -73,6 +73,13 @@ export default async function SearchResultsPage({
   const dbDoctors = await prisma.doctor.findMany({
     where: whereClause,
     orderBy: orderByClause,
+    include: {
+      clinic: {
+        include: {
+          hospitalGroup: true
+        }
+      }
+    }
   });
 
   const doctors = dbDoctors.map(d => ({
@@ -85,7 +92,9 @@ export default async function SearchResultsPage({
     countryFlag: "🇦🇪",
     languages: d.languages.split(",").map(lang => lang.trim()),
     photoUrl: d.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(d.name)}&background=2200CC&color=fff`,
-    isVerified: true
+    isVerified: true,
+    clinicName: d.clinic ? `${d.clinic.hospitalGroup.name} - ${d.clinic.name}` : d.affiliation,
+    fee: d.fee
   }));
 
   return (
@@ -145,9 +154,9 @@ export default async function SearchResultsPage({
                 <p className="text-text-mid max-w-sm text-sm">We couldn't find any active doctors matching your search query. Try broadening your criteria or search parameters!</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="flex flex-col gap-6">
                 {doctors.map((doc, i) => (
-                  <DoctorCard key={i} {...doc} />
+                  <DoctorCard key={i} {...doc} variant="row" />
                 ))}
               </div>
             )}

@@ -173,7 +173,7 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
 
           {/* Sticky Booking Widget (Right) */}
           <div className="lg:col-span-1">
-            <BookingWidget slug={params.slug} doctorName={doctor.name} clinicName={doctor.clinicName} clinicPhone={dbDoctor.clinicPhone || "+971 800 7777"} />
+            <BookingWidget slug={params.slug} doctorName={doctor.name} clinicName={doctor.clinicName} />
           </div>
 
         </div>

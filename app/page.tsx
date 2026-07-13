@@ -8,12 +8,10 @@ import CountryCard from "@/components/CountryCard";
 import { BadgeCheck, Globe, Zap, ShieldCheck, Star, Activity, Heart, Eye, Bone, Baby, Brain, Stethoscope } from "lucide-react";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
-import { Doctor } from "@prisma/client";
-
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  let dbDoctors: Doctor[] = [];
+  let dbDoctors: any[] = [];
   let searchBarDoctors: { slug: string; name: string; specialty: string; city: string }[] = [];
   let specialtiesWithCounts: { specialty: string; _count: { id: number } }[] = [];
   let totalActiveDoctors = 0;
@@ -22,7 +20,14 @@ export default async function Home() {
   try {
     dbDoctors = await prisma.doctor.findMany({
       take: 4,
-      where: { status: "Active" }
+      where: { status: "Active" },
+      include: {
+        clinic: {
+          include: {
+            hospitalGroup: true
+          }
+        }
+      }
     });
     
     searchBarDoctors = await prisma.doctor.findMany({
@@ -85,24 +90,18 @@ export default async function Home() {
     reviews: d.reviews,
     city: d.city,
     countryFlag: "🇦🇪",
-    languages: d.languages.split(",").map(s => s.trim()),
+    languages: d.languages.split(",").map((s: string) => s.trim()),
     fee: d.fee,
     currency: "AED",
     photoUrl: d.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(d.name)}&background=2200CC&color=fff`,
-    isVerified: true
+    isVerified: true,
+    clinicName: d.clinic ? `${d.clinic.hospitalGroup.name} - ${d.clinic.name}` : d.affiliation
   }));
 
-  const topDubaiAreas = [
-    { flag: "DHC", name: "Dubai Healthcare City", cities: "Major hospitals & specialized clinics", href: "/search?city=Dubai Healthcare City" },
-    { flag: "JUM", name: "Jumeirah", cities: "Premium clinics & aesthetic centers", href: "/search?city=Jumeirah" },
-    { flag: "ALB", name: "Al Barsha", cities: "Family medicine & general hospitals", href: "/search?city=Al Barsha" },
-    { flag: "MAR", name: "Dubai Marina", cities: "Specialized care & dental clinics", href: "/search?city=Dubai Marina" },
-    { flag: "BUR", name: "Bur Dubai", cities: "Established general hospitals", href: "/search?city=Bur Dubai" },
-    { flag: "DEI", name: "Deira", cities: "Accessible healthcare & polyclinics", href: "/search?city=Deira" },
-    { flag: "BAY", name: "Business Bay", cities: "Corporate clinics & wellness centers", href: "/search?city=Business Bay" },
-    { flag: "QUS", name: "Al Qusais", cities: "Large scale general hospitals", href: "/search?city=Al Qusais" },
-    { flag: "MIR", name: "Mirdif", cities: "Community clinics & pediatrics", href: "/search?city=Mirdif" },
-    { flag: "NAS", name: "Nad Al Sheba", cities: "Modern healthcare facilities", href: "/search?city=Nad Al Sheba" },
+  const topCities = [
+    { flag: "DXB", name: "Dubai", cities: "Dubai's top hospitals & clinics", href: "/search?city=Dubai" },
+    { flag: "AUH", name: "Abu Dhabi", cities: "Capital healthcare & medical centers", href: "/search?city=Abu%20Dhabi" },
+    { flag: "SHJ", name: "Sharjah", cities: "Family-focused clinics & polyclinics", href: "/search?city=Sharjah" },
   ];
 
   return (
@@ -134,14 +133,14 @@ export default async function Home() {
         </div>
 
         <div className="max-w-4xl mx-auto text-center flex flex-col items-center relative z-10">
-          <span className="uppercase tracking-widest text-[11px] font-bold text-blue-300 mb-4">
+          <span className="uppercase tracking-widest text-[11px] font-medium text-blue-300 mb-4">
             Dubai's #1 doctor booking platform
           </span>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6 tracking-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-white leading-tight mb-6 tracking-tight">
             Find and Book the <span className="text-blue-200">Best Doctors</span> Near You
           </h1>
           <p className="text-lg md:text-xl text-slate-200 mb-8 max-w-2xl mx-auto lg:mx-0 font-medium">
-            Verified specialists in Dubai. Book in under 2 minutes.
+            Verified specialists in Dubai, Sharjah & Abu Dhabi. Book in under 2 minutes.
           </p>
         </div>
       </section>
@@ -158,7 +157,7 @@ export default async function Home() {
             <BadgeCheck className="w-5 h-5" /> {totalActiveDoctors} verified doctors
           </div>
           <div className="flex items-center gap-2 text-blue-primary font-medium text-sm">
-            <Globe className="w-5 h-5" /> Focused on Dubai
+            <Globe className="w-5 h-5" /> Dubai, Sharjah & Abu Dhabi
           </div>
           <div className="flex items-center gap-2 text-blue-primary font-medium text-sm">
             <Zap className="w-5 h-5" /> Instant confirmation
@@ -200,7 +199,7 @@ export default async function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full mb-10 text-left">
             {featuredDoctors.map((d, i) => (
-              <DoctorCard key={i} {...d} />
+              <DoctorCard key={i} {...d} variant="grid" />
             ))}
           </div>
 
@@ -212,17 +211,17 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Browse by Area */}
-      <section id="areas" className="py-20 px-4 bg-white">
+      {/* Browse by City */}
+      <section id="cities" className="py-20 px-4 bg-white">
         <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
           <div className="bg-blue-light text-blue-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4 border border-blue-primary/10">
-            Available across Dubai
+            Available across the UAE
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-text-dark mb-12 tracking-tight">
-            Top Areas in Dubai
+            Top Cities in the UAE
           </h2>
 
-          <CitiesGrid areas={topDubaiAreas} />
+          <CitiesGrid areas={topCities} />
         </div>
       </section>
 

@@ -72,14 +72,22 @@ export default function CustomDropdown({
         }`}
       >
         <div className="flex items-center gap-2.5 truncate">
-          {icon && <div className="text-blue-primary shrink-0">{icon}</div>}
+          {icon && (
+            <div className={`shrink-0 transition-colors ${disabled ? "text-text-light/40" : "text-blue-primary"}`}>
+              {icon}
+            </div>
+          )}
           <div className="flex flex-col truncate">
             {labelPrefix && (
-              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-primary mb-0.5">
+              <span className={`text-[10px] font-bold uppercase tracking-wider mb-0.5 transition-colors ${
+                disabled ? "text-text-light/40" : "text-blue-primary"
+              }`}>
                 {labelPrefix}
               </span>
             )}
-            <span className={`text-sm font-semibold truncate ${value ? "text-text-dark" : "text-text-mid font-medium"}`}>
+            <span className={`text-sm font-semibold truncate transition-colors ${
+              disabled ? "text-text-light/40" : value ? "text-text-dark" : "text-text-mid font-medium"
+            }`}>
               {displayLabel}
             </span>
           </div>

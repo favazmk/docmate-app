@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { BadgeCheck, Star } from "lucide-react";
+import { BadgeCheck, Star, MapPin, Stethoscope, Globe2 } from "lucide-react";
 import { buttonVariants } from "./ui/button";
 import { Badge } from "./ui/badge";
 
@@ -14,10 +14,13 @@ interface DoctorCardProps {
   rating: number;
   reviews: number;
   city: string;
-  countryFlag: string;
+  countryFlag?: string;
   languages: string[];
   photoUrl: string;
   isVerified: boolean;
+  clinicName?: string;
+  fee?: number;
+  variant?: "grid" | "row";
 }
 
 export default function DoctorCard({
@@ -27,70 +30,175 @@ export default function DoctorCard({
   rating,
   reviews,
   city,
-  countryFlag,
+  countryFlag = "🇦🇪",
   languages,
   photoUrl,
-  isVerified
+  isVerified,
+  clinicName,
+  fee = 250,
+  variant = "row"
 }: DoctorCardProps) {
   const router = useRouter();
 
-  return (
-    <div 
-      onClick={() => router.push(`/doctors/${slug}`)}
-      className="bg-white border border-gray-border rounded-xl p-5 flex flex-col hover:border-blue-primary/50 transition-colors cursor-pointer"
-    >
-      <div className="flex gap-4 mb-4">
-        <div className="relative w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-gray-bg border border-gray-border">
-          <Image src={photoUrl} alt={name} fill className="object-cover" />
+  if (variant === "grid") {
+    return (
+      <div 
+        onClick={() => router.push(`/doctors/${slug}`)}
+        className="bg-white border border-gray-border rounded-2xl flex flex-col hover:border-blue-primary hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden group h-full"
+      >
+        {/* Large Image Container */}
+        <div className="relative w-full h-64 bg-gray-bg border-b border-gray-border">
+          <Image src={photoUrl} alt={name} fill className="object-cover group-hover:scale-[1.02] transition-transform duration-500" />
+          <div className="absolute top-4 left-4">
+            <span className="bg-blue-primary text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm">
+              Featured
+            </span>
+          </div>
         </div>
-        <div className="flex flex-col">
-          <Link 
-            href={`/doctors/${slug}`} 
-            onClick={(e) => e.stopPropagation()}
-            className="font-bold text-text-dark text-lg hover:text-blue-primary flex items-center gap-1.5 transition-colors"
-          >
-            {name}
-            {isVerified && <BadgeCheck className="w-4 h-4 text-green-badge" />}
-          </Link>
-          <span className="text-sm font-medium text-blue-primary">{specialty}</span>
+
+        {/* Card Content */}
+        <div className="p-5 flex flex-col flex-1">
+          <span className="text-xs font-bold text-blue-primary uppercase tracking-wide mb-1.5 flex items-center gap-1">
+            <Stethoscope className="w-3.5 h-3.5" /> {specialty}
+          </span>
           
-          <div className="flex items-center gap-1.5 mt-1" title="Ratings are read-only placeholder">
-            <Star className="w-3.5 h-3.5 text-star-color fill-star-color" />
-            <span className="text-xs font-semibold text-text-dark">{rating.toFixed(1)}</span>
-            <span className="text-xs text-text-light">({reviews})</span>
+          <h3 className="font-extrabold text-text-dark text-lg hover:text-blue-primary flex items-center gap-1.5 transition-colors mb-1.5">
+            {name}
+            {isVerified && <BadgeCheck className="w-5 h-5 text-green-badge shrink-0" />}
+          </h3>
+
+          {/* Clinic & City details */}
+          {clinicName && (
+            <p className="text-xs font-bold text-text-mid mb-1 line-clamp-1">
+              🏢 {clinicName}
+            </p>
+          )}
+
+          <div className="flex items-center gap-1.5 mb-4 text-xs text-text-light font-medium">
+            <MapPin className="w-3.5 h-3.5 text-blue-primary" />
+            <span>{city}</span>
+          </div>
+
+          <div className="flex items-center gap-1.5 mb-4" title="Ratings are read-only placeholder">
+            <Star className="w-4 h-4 text-star-color fill-star-color" />
+            <span className="text-sm font-bold text-text-dark">{rating.toFixed(1)}</span>
+            <span className="text-xs text-text-light">({reviews} reviews)</span>
+          </div>
+
+          {/* Languages */}
+          <div className="flex items-center gap-1.5 flex-wrap mb-6">
+            {languages.slice(0, 3).map(lang => (
+              <Badge key={lang} variant="secondary" className="bg-gray-bg text-text-mid font-semibold text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-md hover:bg-gray-border">
+                {lang}
+              </Badge>
+            ))}
+          </div>
+
+          {/* Pricing & CTA */}
+          <div className="mt-auto pt-4 border-t border-gray-border flex items-center justify-between gap-3">
+            <div className="flex flex-col">
+              <span className="text-[10px] text-text-light uppercase tracking-wider font-bold">Consultation</span>
+              <span className="text-sm font-extrabold text-text-dark">AED {fee}</span>
+            </div>
+            <Link 
+              href={`/book/${slug}`} 
+              onClick={(e) => e.stopPropagation()}
+              className={`${buttonVariants({ size: "sm" })} bg-blue-primary hover:bg-blue-hover text-white rounded-xl h-10 px-5 font-bold shadow-md shadow-blue-primary/10 transition-all`}
+            >
+              Book Now
+            </Link>
           </div>
         </div>
       </div>
+    );
+  }
 
-      <div className="flex flex-col gap-2 mb-5 text-sm text-text-mid">
-        <div className="flex items-center gap-2">
-          <span>{countryFlag}</span>
+  // Doctify Wide Row style (variant === "row")
+  return (
+    <div 
+      onClick={() => router.push(`/doctors/${slug}`)}
+      className="bg-white border border-gray-border rounded-2xl p-6 flex flex-col md:flex-row gap-6 hover:border-blue-primary hover:shadow-lg transition-all duration-300 cursor-pointer"
+    >
+      {/* Left Column - Doctor Photo */}
+      <div className="relative w-full md:w-40 h-44 rounded-2xl overflow-hidden shrink-0 bg-gray-50 border border-gray-border">
+        <Image src={photoUrl} alt={name} fill className="object-cover" />
+      </div>
+
+      {/* Middle Column - Doctor Details */}
+      <div className="flex-grow flex flex-col gap-2">
+        <div className="flex flex-col">
+          <span className="text-xs font-bold text-blue-primary uppercase tracking-wide flex items-center gap-1 mb-1">
+            <Stethoscope className="w-3.5 h-3.5" /> {specialty}
+          </span>
+          <Link 
+            href={`/doctors/${slug}`} 
+            onClick={(e) => e.stopPropagation()}
+            className="font-extrabold text-text-dark text-xl hover:text-blue-primary flex items-center gap-1.5 transition-colors"
+          >
+            {name}
+            {isVerified && <BadgeCheck className="w-5 h-5 text-green-badge shrink-0" />}
+          </Link>
+        </div>
+
+        {clinicName && (
+          <div className="text-sm font-semibold text-text-dark flex items-center gap-1.5">
+            <span className="text-lg">🏢</span>
+            <span>{clinicName}</span>
+          </div>
+        )}
+
+        <div className="flex items-center gap-1.5 text-xs text-text-light font-medium">
+          <MapPin className="w-4 h-4 text-blue-primary shrink-0" />
           <span>{city}</span>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
+
+        {/* Languages */}
+        <div className="flex items-center gap-1.5 flex-wrap mt-1">
           {languages.map(lang => (
-            <Badge key={lang} variant="secondary" className="bg-gray-bg text-text-mid font-medium text-[10px] uppercase tracking-wider hover:bg-gray-border">
+            <Badge key={lang} variant="secondary" className="bg-gray-bg text-text-mid font-semibold text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-md">
               {lang}
             </Badge>
           ))}
         </div>
       </div>
 
-      <div className="mt-auto pt-4 border-t border-gray-border flex items-center justify-between gap-3">
-        <Link 
-          href={`/doctors/${slug}`}
-          onClick={(e) => e.stopPropagation()}
-          className={`${buttonVariants({ size: "sm", variant: "outline" })} border-gray-border text-text-dark hover:bg-gray-bg rounded-lg h-9 px-4 text-xs font-semibold`}
-        >
-          View Profile
-        </Link>
-        <Link 
-          href={`/book/${slug}`} 
-          onClick={(e) => e.stopPropagation()}
-          className={`${buttonVariants({ size: "sm" })} bg-blue-primary hover:bg-blue-hover text-white rounded-lg h-9 px-4 text-xs`}
-        >
-          Book Now
-        </Link>
+      {/* Right Column - Ratings, Fee & Booking */}
+      <div className="w-full md:w-52 shrink-0 flex flex-col items-start md:items-end justify-between border-t md:border-t-0 md:border-l border-gray-border pt-4 md:pt-0 md:pl-6">
+        {/* Rating Block */}
+        <div className="flex flex-col md:items-end gap-1.5" title="Ratings are read-only placeholder">
+          <div className="flex items-center gap-1.5">
+            <Star className="w-4 h-4 text-star-color fill-star-color" />
+            <span className="text-base font-bold text-text-dark">{rating.toFixed(1)}</span>
+            <span className="text-xs text-text-light">({reviews} reviews)</span>
+          </div>
+          <span className="text-[10px] bg-green-50 text-green-600 px-2 py-0.5 rounded-md font-bold uppercase tracking-wider">
+            Patient Choice
+          </span>
+        </div>
+
+        {/* Consultation Fee */}
+        <div className="flex flex-col md:items-end mt-4 md:mt-0">
+          <span className="text-[10px] text-text-light uppercase tracking-wider font-bold">Consultation Fee</span>
+          <span className="text-lg font-extrabold text-text-dark">AED {fee}</span>
+        </div>
+
+        {/* Actions */}
+        <div className="w-full flex gap-3 mt-4 md:mt-0">
+          <Link 
+            href={`/doctors/${slug}`}
+            onClick={(e) => e.stopPropagation()}
+            className={`${buttonVariants({ size: "sm", variant: "outline" })} flex-1 border-gray-border text-text-dark hover:bg-gray-bg rounded-xl h-10 text-xs font-bold`}
+          >
+            Profile
+          </Link>
+          <Link 
+            href={`/book/${slug}`} 
+            onClick={(e) => e.stopPropagation()}
+            className={`${buttonVariants({ size: "sm" })} flex-1 bg-blue-primary hover:bg-blue-hover text-white rounded-xl h-10 text-xs font-bold shadow-md shadow-blue-primary/10`}
+          >
+            Book Now
+          </Link>
+        </div>
       </div>
     </div>
   );

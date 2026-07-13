@@ -88,9 +88,10 @@ export default function Navbar() {
   };
 
   const navLinks = [
+    { label: "About Us", href: "/about" },
     { label: "Find doctors", href: "/search" },
     { label: "Specialties", href: "/#specialties" },
-    { label: "Areas", href: "/#areas" },
+    { label: "Cities", href: "/#cities" },
     { label: "Blog", href: "/blog" },
   ];
 
