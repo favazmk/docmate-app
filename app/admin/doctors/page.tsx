@@ -15,10 +15,36 @@ export default async function AdminDoctorsPage() {
   }
 
   const doctors = await prisma.doctor.findMany({
-    orderBy: { createdAt: "desc" }
+    orderBy: { createdAt: "desc" },
+    include: {
+      specialtyRef: true,
+      clinic: {
+        include: {
+          hospitalGroup: true
+        }
+      }
+    }
+  });
+
+  const specialties = await prisma.specialty.findMany({
+    orderBy: { name: "asc" }
+  });
+
+  const clinics = await prisma.clinic.findMany({
+    orderBy: { name: "asc" },
+    include: {
+      hospitalGroup: true
+    }
   });
 
   const appointmentCount = await prisma.appointment.count();
 
-  return <DoctorsClient doctors={doctors} appointmentCount={appointmentCount} />;
+  return (
+    <DoctorsClient
+      doctors={doctors}
+      specialties={specialties}
+      clinics={clinics}
+      appointmentCount={appointmentCount}
+    />
+  );
 }

@@ -1,10 +1,10 @@
 import Link from "next/link";
-import Image from "next/image";
-import { Users, Activity, Calendar, Search, Bell } from "lucide-react";
 import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import AdminSidebar from "@/components/AdminSidebar";
+import AdminHeader from "@/components/AdminHeader";
 
 const prisma = new PrismaClient();
 
@@ -24,52 +24,14 @@ export default async function AdminAppointmentsPage() {
     }
   });
 
-  const newAppointmentsCount = appointments.length;
-
   return (
     <div className="bg-gray-bg min-h-screen flex">
       {/* Admin Sidebar */}
-      <aside className="w-64 bg-sidebar border-r border-sidebar-border hidden md:flex flex-col">
-        <div className="h-16 flex items-center px-6 border-b border-sidebar-border bg-white">
-          <Link href="/" className="flex items-center">
-            <Image src="/logo.png" alt="Doc Mate Logo" width={110} height={32} className="object-contain" priority />
-          </Link>
-        </div>
-        <nav className="flex-1 overflow-y-auto py-6 px-4 flex flex-col gap-2">
-          <Link href="/admin" className="flex items-center gap-3 px-4 py-3 rounded-xl text-text-mid hover:bg-gray-100 font-medium text-sm transition-colors">
-            <Activity className="w-5 h-5" /> Dashboard
-          </Link>
-          <Link href="/admin/doctors" className="flex items-center gap-3 px-4 py-3 rounded-xl text-text-mid hover:bg-gray-100 font-medium text-sm transition-colors">
-            <Users className="w-5 h-5" /> Doctors
-          </Link>
-          <Link href="/admin/appointments" className="flex items-center justify-between px-4 py-3 rounded-xl bg-blue-primary text-white font-medium text-sm">
-            <div className="flex items-center gap-3">
-              <Calendar className="w-5 h-5" /> Appointments
-            </div>
-            {newAppointmentsCount > 0 && (
-              <span className="bg-white text-blue-primary text-xs font-bold px-2 py-0.5 rounded-full">{newAppointmentsCount}</span>
-            )}
-          </Link>
-        </nav>
-      </aside>
+      <AdminSidebar />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
-        <header className="h-16 bg-white border-b border-gray-border px-6 flex items-center justify-between shrink-0">
-          <h1 className="font-bold text-text-dark text-lg">Manage Appointments</h1>
-          <div className="flex items-center gap-4">
-            
-            {/* Notification Bell */}
-            <Link href="/admin/appointments" className="relative p-2 text-text-mid hover:text-blue-primary transition-colors">
-              <Bell className="w-5 h-5" />
-              {newAppointmentsCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
-              )}
-            </Link>
-
-            <div className="w-8 h-8 rounded-full bg-blue-light text-blue-primary flex items-center justify-center font-bold text-sm">A</div>
-          </div>
-        </header>
+        <AdminHeader title="Manage Appointments" badgeText={appointments.length} />
 
         <main className="flex-1 p-4 md:p-6 overflow-y-auto relative">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">

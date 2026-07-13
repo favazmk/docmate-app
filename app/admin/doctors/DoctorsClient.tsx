@@ -8,47 +8,63 @@ import { Users, Activity, Calendar, Search, Plus, X, Upload, CheckCircle2, Bell,
 import { Button } from "@/components/ui/button";
 import { createDoctor, updateDoctor, deleteDoctor, toggleDoctorStatus } from "@/app/actions/doctors";
 import { useRouter } from "next/navigation";
+import AdminSidebar from "@/components/AdminSidebar";
+import AdminHeader from "@/components/AdminHeader";
 
-export default function DoctorsClient({ doctors, appointmentCount = 0 }: { doctors: any[], appointmentCount?: number }) {
+interface SpecialtyData {
+  id: string;
+  name: string;
+}
+
+interface ClinicData {
+  id: string;
+  name: string;
+  city: string;
+  hospitalGroup: {
+    name: string;
+  };
+}
+
+export default function DoctorsClient({
+  doctors,
+  specialties = [],
+  clinics = [],
+  appointmentCount = 0
+}: {
+  doctors: any[];
+  specialties?: SpecialtyData[];
+  clinics?: ClinicData[];
+  appointmentCount?: number;
+}) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editingDoctor, setEditingDoctor] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const router = useRouter();
 
-  const [selectedSpecialty, setSelectedSpecialty] = useState("");
-  const [selectedArea, setSelectedArea] = useState("");
+  const [specialtyId, setSpecialtyId] = useState("");
+  const [clinicId, setClinicId] = useState("");
+  const [fee, setFee] = useState(250);
 
-  const specialtyOptions = [
-    "Gynecology",
-    "Cardiology",
-    "Ophthalmology",
-    "Orthopedics",
-    "Pediatrics",
-    "Neurology",
-    "Pulmonology"
-  ];
+  const specialtyOptions = specialties.map(s => ({
+    value: s.id,
+    label: s.name
+  }));
 
-  const areaOptions = [
-    "Dubai Healthcare City",
-    "Jumeirah",
-    "Al Barsha",
-    "Dubai Marina",
-    "Bur Dubai",
-    "Deira",
-    "Business Bay",
-    "Al Qusais",
-    "Mirdif",
-    "Nad Al Sheba"
-  ];
+  const clinicOptions = clinics.map(c => ({
+    value: c.id,
+    label: `${c.hospitalGroup.name} - ${c.name} (${c.city})`
+  }));
 
   useEffect(() => {
     if (editingDoctor) {
-      setSelectedSpecialty(editingDoctor.specialty);
-      setSelectedArea(editingDoctor.city);
+      setSpecialtyId(editingDoctor.specialtyId || "");
+      setClinicId(editingDoctor.clinicId || "");
+      setFee(editingDoctor.fee || 250);
     } else {
-      setSelectedSpecialty("");
-      setSelectedArea("");
+      setSpecialtyId("");
+      setClinicId("");
+      setFee(250);
     }
   }, [editingDoctor, isAddModalOpen]);
 
@@ -211,51 +227,11 @@ export default function DoctorsClient({ doctors, appointmentCount = 0 }: { docto
   return (
     <div className="bg-gray-bg min-h-screen flex">
       {/* Admin Sidebar */}
-      <aside className="w-64 bg-sidebar border-r border-sidebar-border hidden md:flex flex-col">
-        <div className="h-16 flex items-center px-6 border-b border-sidebar-border bg-white">
-          <Link href="/" className="flex items-center">
-            <Image src="/logo.png" alt="Doc Mate Logo" width={110} height={32} className="object-contain" priority />
-          </Link>
-        </div>
-        <nav className="flex-1 overflow-y-auto py-6 px-4 flex flex-col gap-2">
-          <Link href="/admin" className="flex items-center gap-3 px-4 py-3 rounded-xl text-text-mid hover:bg-gray-100 font-medium text-sm transition-colors">
-            <Activity className="w-5 h-5" /> Dashboard
-          </Link>
-          <Link href="/admin/doctors" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-primary text-white font-medium text-sm">
-            <Users className="w-5 h-5" /> Doctors
-          </Link>
-          <Link href="/admin/appointments" className="flex items-center justify-between px-4 py-3 rounded-xl text-text-mid hover:bg-gray-100 font-medium text-sm transition-colors">
-            <div className="flex items-center gap-3">
-              <Calendar className="w-5 h-5" /> Appointments
-            </div>
-            {newAppointmentsCount > 0 && (
-              <span className="bg-blue-primary text-white text-xs font-bold px-2 py-0.5 rounded-full">{newAppointmentsCount}</span>
-            )}
-          </Link>
-        </nav>
-      </aside>
+      <AdminSidebar />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
-        <header className="h-16 bg-white border-b border-gray-border px-6 flex items-center justify-between shrink-0">
-          <h1 className="font-bold text-text-dark text-lg">Manage Doctors</h1>
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <Search className="w-4 h-4 absolute left-3 top-2.5 text-text-light" />
-              <input type="text" placeholder="Search..." className="bg-gray-bg border border-gray-border rounded-lg h-9 pl-9 pr-4 text-sm focus:outline-none focus:border-blue-primary" />
-            </div>
-
-            {/* Notification Bell */}
-            <Link href="/admin/appointments" className="relative p-2 text-text-mid hover:text-blue-primary transition-colors">
-              <Bell className="w-5 h-5" />
-              {newAppointmentsCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
-              )}
-            </Link>
-
-            <div className="w-8 h-8 rounded-full bg-blue-light text-blue-primary flex items-center justify-center font-bold text-sm">A</div>
-          </div>
-        </header>
+        <AdminHeader title="Manage Doctors" badgeText={doctors.length} />
 
         <main className="flex-1 p-4 md:p-6 overflow-y-auto relative">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -462,8 +438,8 @@ export default function DoctorsClient({ doctors, appointmentCount = 0 }: { docto
                     <input required name="name" defaultValue={editingDoctor?.name} type="text" placeholder="Dr. First Last" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm font-semibold text-text-dark">Clinic / Hospital Phone *</label>
-                    <input required name="clinicPhone" defaultValue={editingDoctor?.clinicPhone || "+971 800 7777"} type="tel" placeholder="+971 800 7777" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" />
+                    <label className="text-sm font-semibold text-text-dark">Languages</label>
+                    <input name="languages" defaultValue={editingDoctor?.languages || "English"} type="text" placeholder="English, Arabic" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" />
                   </div>
                 </div>
 
@@ -471,39 +447,30 @@ export default function DoctorsClient({ doctors, appointmentCount = 0 }: { docto
                   <div className="flex flex-col gap-2">
                     <label className="text-sm font-semibold text-text-dark">Specialty *</label>
                     <CustomDropdown
-                      value={selectedSpecialty}
-                      onChange={setSelectedSpecialty}
+                      value={specialtyId}
+                      onChange={setSpecialtyId}
                       options={specialtyOptions}
                       placeholder="Select Specialty"
                     />
-                    <input type="hidden" name="specialty" value={selectedSpecialty} />
+                    <input type="hidden" name="specialtyId" value={specialtyId} />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm font-semibold text-text-dark">Area (City) *</label>
+                    <label className="text-sm font-semibold text-text-dark">Clinic Branch *</label>
                     <CustomDropdown
-                      value={selectedArea}
-                      onChange={setSelectedArea}
-                      options={areaOptions}
-                      placeholder="Select Area"
+                      value={clinicId}
+                      onChange={setClinicId}
+                      options={clinicOptions}
+                      placeholder="Select Clinic Branch"
                     />
-                    <input type="hidden" name="city" value={selectedArea} />
+                    <input type="hidden" name="clinicId" value={clinicId} />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm font-semibold text-text-dark">Languages</label>
-                    <input name="languages" defaultValue={editingDoctor?.languages} type="text" placeholder="English, Arabic" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" />
+                    <label className="text-sm font-semibold text-text-dark">Consultation Fee (AED) *</label>
+                    <input required name="fee" value={fee} onChange={(e) => setFee(parseInt(e.target.value) || 0)} type="number" placeholder="250" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" />
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <label className="text-sm font-semibold text-text-dark">Clinic / Hospital Email *</label>
-                    <input required name="clinicEmail" defaultValue={editingDoctor?.clinicEmail} type="email" placeholder="info@kingscollegehospital.ae" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" />
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm font-semibold text-text-dark">Clinic / Hospital Affiliation *</label>
-                  <input required name="affiliation" defaultValue={editingDoctor?.affiliation} type="text" placeholder="e.g. Mediclinic City Hospital" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" />
                 </div>
 
                 <div className="flex flex-col gap-2">

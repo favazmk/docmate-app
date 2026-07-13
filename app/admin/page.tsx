@@ -1,11 +1,12 @@
 import Link from "next/link";
-import Image from "next/image";
-import { Users, Calendar, Activity, TrendingUp, Search, Plus, Bell } from "lucide-react";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { TrendingUp, Users, Calendar, Activity } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
 import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import AdminSidebar from "@/components/AdminSidebar";
+import AdminHeader from "@/components/AdminHeader";
 
 const prisma = new PrismaClient();
 
@@ -44,57 +45,15 @@ export default async function AdminDashboardPage() {
     status: b.status,
   }));
 
-  const newAppointmentsCount = totalBookings;
-
   return (
     <div className="bg-gray-bg min-h-screen flex">
       
       {/* Admin Sidebar */}
-      <aside className="w-64 bg-sidebar border-r border-sidebar-border hidden md:flex flex-col">
-        <div className="h-16 flex items-center px-6 border-b border-sidebar-border bg-white">
-          <Link href="/" className="flex items-center">
-            <Image src="/logo.png" alt="Doc Mate Logo" width={110} height={32} className="object-contain" priority />
-          </Link>
-        </div>
-        <nav className="flex-1 overflow-y-auto py-6 px-4 flex flex-col gap-2">
-          <Link href="/admin" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-primary text-white font-medium text-sm">
-            <Activity className="w-5 h-5" /> Dashboard
-          </Link>
-          <Link href="/admin/doctors" className="flex items-center gap-3 px-4 py-3 rounded-xl text-text-mid hover:bg-gray-100 font-medium text-sm transition-colors">
-            <Users className="w-5 h-5" /> Doctors
-          </Link>
-          <Link href="/admin/appointments" className="flex items-center justify-between px-4 py-3 rounded-xl text-text-mid hover:bg-gray-100 font-medium text-sm transition-colors">
-            <div className="flex items-center gap-3">
-              <Calendar className="w-5 h-5" /> Appointments
-            </div>
-            {newAppointmentsCount > 0 && (
-              <span className="bg-blue-primary text-white text-xs font-bold px-2 py-0.5 rounded-full">{newAppointmentsCount}</span>
-            )}
-          </Link>
-        </nav>
-      </aside>
+      <AdminSidebar />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 bg-white border-b border-gray-border px-6 flex items-center justify-between">
-          <h1 className="font-bold text-text-dark text-lg">Admin Overview</h1>
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <Search className="w-4 h-4 absolute left-3 top-2.5 text-text-light" />
-              <input type="text" placeholder="Search..." className="bg-gray-bg border border-gray-border rounded-lg h-9 pl-9 pr-4 text-sm focus:outline-none focus:border-blue-primary" />
-            </div>
-            
-            {/* Notification Bell */}
-            <Link href="/admin/appointments" className="relative p-2 text-text-mid hover:text-blue-primary transition-colors">
-              <Bell className="w-5 h-5" />
-              {newAppointmentsCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
-              )}
-            </Link>
-
-            <div className="w-8 h-8 rounded-full bg-blue-light text-blue-primary flex items-center justify-center font-bold text-sm">A</div>
-          </div>
-        </header>
+        <AdminHeader title="Admin Overview" />
 
         <main className="flex-1 p-6 overflow-y-auto">
           
