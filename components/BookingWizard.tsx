@@ -303,18 +303,6 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
                     />
                   </div>
                 </div>
-
-                {/* Reason for Visit */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-bold text-text-dark">Reason for Visit (Optional)</label>
-                  <textarea 
-                    rows={3} 
-                    placeholder="Briefly describe your symptoms..." 
-                    value={reason}
-                    onChange={e => setReason(e.target.value)}
-                    className="w-full bg-gray-bg border border-gray-border rounded-xl p-4 text-sm font-medium text-text-dark focus:outline-none focus:border-blue-primary focus:ring-1 focus:ring-blue-primary resize-none"
-                  ></textarea>
-                </div>
               </div>
 
               {/* Submit Action */}
@@ -360,10 +348,6 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
               <div>
                 <span className="text-xs font-semibold text-text-light uppercase tracking-wider block mb-1">Preferred Date</span>
                 <span className="text-sm font-bold text-blue-primary">{formatAppointmentDate(selectedDate)}</span>
-              </div>
-              <div>
-                <span className="text-xs font-semibold text-text-light uppercase tracking-wider block mb-1">Time Slot</span>
-                <span className="text-sm font-bold text-text-mid italic">Pending Call Confirmation</span>
               </div>
               <div>
                 <span className="text-xs font-semibold text-text-light uppercase tracking-wider block mb-1">Location</span>

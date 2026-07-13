@@ -201,9 +201,11 @@ export default function TrackBookingPage() {
                         <div className="flex items-center gap-2 md:justify-end text-sm text-text-dark font-bold">
                           <Calendar className="w-4 h-4 text-blue-primary" /> {apt.date}
                         </div>
-                        <div className="flex items-center gap-2 md:justify-end text-xs text-text-mid font-medium">
-                          <Clock className="w-4 h-4 text-text-light" /> {apt.timeSlot}
-                        </div>
+                        {!apt.timeSlot.toLowerCase().includes("pending") && (
+                          <div className="flex items-center gap-2 md:justify-end text-xs text-text-mid font-medium">
+                            <Clock className="w-4 h-4 text-text-light" /> {apt.timeSlot}
+                          </div>
+                        )}
                       </div>
 
                       <div className="flex flex-col gap-0.5">

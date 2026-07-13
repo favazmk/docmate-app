@@ -64,7 +64,10 @@ export default function DashboardClient({ appointments, userName }: { appointmen
                         <h3 className="font-bold text-text-dark text-lg">{apt.doctor.name}</h3>
                         <span className="text-sm font-medium text-blue-primary">{apt.doctor.specialty}</span>
                         <div className="text-sm text-text-mid mt-2 leading-relaxed">
-                          <p className="font-semibold text-text-dark">{apt.date} at {apt.timeSlot}</p>
+                          <p className="font-semibold text-text-dark">
+                            {apt.date}
+                            {!apt.timeSlot.toLowerCase().includes("pending") && ` at ${apt.timeSlot}`}
+                          </p>
                           <p>{apt.doctor.city}</p>
                         </div>
                       </div>
