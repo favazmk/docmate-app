@@ -256,7 +256,7 @@ export default async function Home() {
             {hospitalGroups.map((h) => (
               <Link
                 key={h.id}
-                href={`/search?hospitalGroupId=${h.id}`}
+                href={`/hospitals/${h.id}`}
                 className="bg-white border border-gray-border rounded-2xl p-6 flex items-center gap-5 hover:border-blue-primary hover:shadow-lg transition-all duration-300 group cursor-pointer"
               >
                 <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-gray-border bg-gray-50 flex items-center justify-center shrink-0">
