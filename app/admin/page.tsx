@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { TrendingUp, Users, Calendar, Activity } from "lucide-react";
+import { Users, Calendar, Activity } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth";
@@ -64,7 +64,6 @@ export default async function AdminDashboardPage() {
                 <div className="w-12 h-12 rounded-xl bg-blue-light text-blue-primary flex items-center justify-center">
                   <Users className="w-6 h-6" />
                 </div>
-                <span className="flex items-center text-xs font-bold text-green-badge bg-green-badge-bg px-2 py-1 rounded-full"><TrendingUp className="w-3 h-3 mr-1" /> +12%</span>
               </div>
               <h3 className="text-text-light font-medium text-sm mb-1">Total Doctors</h3>
               <p className="text-3xl font-bold text-text-dark">{totalDoctors}</p>
@@ -75,7 +74,6 @@ export default async function AdminDashboardPage() {
                 <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
                   <Calendar className="w-6 h-6" />
                 </div>
-                <span className="flex items-center text-xs font-bold text-green-badge bg-green-badge-bg px-2 py-1 rounded-full"><TrendingUp className="w-3 h-3 mr-1" /> +24%</span>
               </div>
               <h3 className="text-text-light font-medium text-sm mb-1">Total Bookings</h3>
               <p className="text-3xl font-bold text-text-dark">{totalBookings}</p>
@@ -86,7 +84,6 @@ export default async function AdminDashboardPage() {
                 <div className="w-12 h-12 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center">
                   <Activity className="w-6 h-6" />
                 </div>
-                <span className="flex items-center text-xs font-bold text-text-mid bg-gray-100 px-2 py-1 rounded-full">Active</span>
               </div>
               <h3 className="text-text-light font-medium text-sm mb-1">Active Areas</h3>
               <p className="text-3xl font-bold text-text-dark">{liveEmirates}</p>
@@ -97,7 +94,6 @@ export default async function AdminDashboardPage() {
                 <div className="w-12 h-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center">
                   <Users className="w-6 h-6" />
                 </div>
-                <span className="flex items-center text-xs font-bold text-green-badge bg-green-badge-bg px-2 py-1 rounded-full"><TrendingUp className="w-3 h-3 mr-1" /> +8%</span>
               </div>
               <h3 className="text-text-light font-medium text-sm mb-1">Registered Patients</h3>
               <p className="text-3xl font-bold text-text-dark">{registeredPatients}</p>

@@ -46,19 +46,16 @@ export default function HospitalsClient({ hospitals }: HospitalsClientProps) {
   const handleOpenEdit = (h: HospitalData) => {
     setEditingHospital(h);
     setName(h.name);
-    setPhotoUrl(h.photoUrl || "");
     setErrorMsg("");
     setIsAddModalOpen(true);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setErrorMsg("");
 
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("photoUrl", photoUrl);
+    const formData = new FormData(e.currentTarget);
 
     let res;
     if (editingHospital) {
@@ -169,7 +166,7 @@ export default function HospitalsClient({ hospitals }: HospitalsClientProps) {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-6">
+            <form onSubmit={handleSubmit} encType="multipart/form-data" className="p-6 flex flex-col gap-6">
               {errorMsg && (
                 <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm border border-red-200">
                   {errorMsg}
@@ -180,6 +177,7 @@ export default function HospitalsClient({ hospitals }: HospitalsClientProps) {
                 <label className="text-sm font-semibold text-text-dark">Group Name *</label>
                 <input
                   required
+                  name="name"
                   type="text"
                   placeholder="e.g. Mediclinic Middle East"
                   value={name}
@@ -189,14 +187,16 @@ export default function HospitalsClient({ hospitals }: HospitalsClientProps) {
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-semibold text-text-dark">Logo Photo URL</label>
+                <label className="text-sm font-semibold text-text-dark">Logo Photo</label>
                 <input
-                  type="text"
-                  placeholder="https://example.com/logo.jpg"
-                  value={photoUrl}
-                  onChange={(e) => setPhotoUrl(e.target.value)}
-                  className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary"
+                  name="photo"
+                  type="file"
+                  accept="image/*"
+                  className="bg-gray-bg border border-gray-border rounded-xl h-12 p-3 text-sm font-medium focus:outline-none focus:border-blue-primary"
                 />
+                {editingHospital?.photoUrl && (
+                  <p className="text-xs text-text-mid mt-1">Current Logo: <a href={editingHospital.photoUrl} target="_blank" className="text-blue-primary underline">View Logo</a></p>
+                )}
               </div>
 
               <div className="flex justify-end gap-3 pt-4 border-t border-gray-border mt-2">

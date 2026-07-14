@@ -76,18 +76,12 @@ export default function ClinicsClient({ clinics, hospitalGroups }: ClinicsClient
     setIsAddModalOpen(true);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setErrorMsg("");
 
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("hospitalGroupId", hospitalGroupId);
-    formData.append("city", city);
-    formData.append("email", email);
-    formData.append("phone", phone);
-    formData.append("photoUrl", photoUrl);
+    const formData = new FormData(e.currentTarget);
 
     let res;
     if (editingClinic) {
@@ -216,7 +210,7 @@ export default function ClinicsClient({ clinics, hospitalGroups }: ClinicsClient
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-4">
+            <form onSubmit={handleSubmit} encType="multipart/form-data" className="p-6 flex flex-col gap-4">
               {errorMsg && (
                 <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm border border-red-200">
                   {errorMsg}
@@ -227,6 +221,7 @@ export default function ClinicsClient({ clinics, hospitalGroups }: ClinicsClient
                 <label className="text-sm font-semibold text-text-dark">Branch Name *</label>
                 <input
                   required
+                  name="name"
                   type="text"
                   placeholder="e.g. Jumeirah Clinic"
                   value={name}
@@ -238,6 +233,7 @@ export default function ClinicsClient({ clinics, hospitalGroups }: ClinicsClient
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-semibold text-text-dark">Hospital Group *</label>
                 <select
+                  name="hospitalGroupId"
                   value={hospitalGroupId}
                   onChange={(e) => setHospitalGroupId(e.target.value)}
                   className="bg-gray-bg border border-gray-border rounded-xl h-11 px-4 text-sm font-medium focus:outline-none"
@@ -253,6 +249,7 @@ export default function ClinicsClient({ clinics, hospitalGroups }: ClinicsClient
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-semibold text-text-dark">City *</label>
                 <select
+                  name="city"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   className="bg-gray-bg border border-gray-border rounded-xl h-11 px-4 text-sm font-medium focus:outline-none"
@@ -266,6 +263,7 @@ export default function ClinicsClient({ clinics, hospitalGroups }: ClinicsClient
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-semibold text-text-dark">Email Address</label>
                 <input
+                  name="email"
                   type="email"
                   placeholder="info@clinic.com"
                   value={email}
@@ -277,6 +275,7 @@ export default function ClinicsClient({ clinics, hospitalGroups }: ClinicsClient
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-semibold text-text-dark">Phone Number</label>
                 <input
+                  name="phone"
                   type="text"
                   placeholder="+971 4 123 4567"
                   value={phone}
@@ -286,14 +285,16 @@ export default function ClinicsClient({ clinics, hospitalGroups }: ClinicsClient
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-semibold text-text-dark">Photo URL</label>
+                <label className="text-sm font-semibold text-text-dark">Photo</label>
                 <input
-                  type="text"
-                  placeholder="https://example.com/clinic.jpg"
-                  value={photoUrl}
-                  onChange={(e) => setPhotoUrl(e.target.value)}
-                  className="bg-gray-bg border border-gray-border rounded-xl h-11 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary"
+                  name="photo"
+                  type="file"
+                  accept="image/*"
+                  className="bg-gray-bg border border-gray-border rounded-xl h-11 p-3 text-sm font-medium focus:outline-none focus:border-blue-primary"
                 />
+                {editingClinic?.photoUrl && (
+                  <p className="text-xs text-text-mid mt-1">Current Photo: <a href={editingClinic.photoUrl} target="_blank" className="text-blue-primary underline">View Photo</a></p>
+                )}
               </div>
 
               <div className="flex justify-end gap-3 pt-4 border-t border-gray-border mt-4">

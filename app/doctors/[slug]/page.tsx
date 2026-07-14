@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { BadgeCheck, Star, MapPin, Globe, GraduationCap, ShieldCheck } from "lucide-react";
 import BookingWidget from "@/components/BookingWidget";
+import DoctorGallery from "@/components/DoctorGallery";
 import { Badge } from "@/components/ui/badge";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
@@ -36,7 +37,7 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
     languages: dbDoctor.languages.split(",").map(lang => lang.trim()),
     fee: dbDoctor.fee,
     currency: "AED",
-    photoUrl: dbDoctor.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(dbDoctor.name)}&background=2200CC&color=fff`,
+    photoUrls: dbDoctor.photoUrl ? dbDoctor.photoUrl.split(",") : [],
     isVerified: true,
     experience: "15+ Years Experience",
     bio: dbDoctor.bio,
@@ -83,9 +84,7 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
             
             {/* Header Card */}
             <div className="bg-white border border-gray-border rounded-2xl p-6 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-start shadow-sm">
-              <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden shrink-0 border border-gray-border bg-gray-bg">
-                <Image src={doctor.photoUrl} alt={doctor.name} fill className="object-cover" />
-              </div>
+              <DoctorGallery photoUrls={doctor.photoUrls} name={doctor.name} />
               
               <div className="flex flex-col flex-1">
                 <div className="flex flex-wrap items-center gap-3 mb-2">

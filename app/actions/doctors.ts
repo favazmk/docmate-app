@@ -4,6 +4,7 @@ import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { uploadImages } from "@/lib/upload";
 
 const prisma = new PrismaClient();
 
@@ -43,6 +44,11 @@ export async function createDoctor(formData: FormData) {
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Math.floor(Math.random() * 1000);
     const email = `dr.${slug}@kingscollegehospital.ae`;
 
+    // Process uploaded doctor photos
+    const photos = formData.getAll("photos") as File[];
+    const uploadedPhotoUrl = await uploadImages(photos);
+    const photoUrl = uploadedPhotoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff`;
+
     const doctor = await prisma.doctor.create({
       data: {
         name,
@@ -59,7 +65,7 @@ export async function createDoctor(formData: FormData) {
         affiliation: `${clinicRecord.hospitalGroup.name} - ${clinicRecord.name}`,
         bio: bio || "A dedicated healthcare professional.",
         qualifications: qualifications || "MD, Board Certified Specialist",
-        photoUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff`,
+        photoUrl,
         status: "Active"
       }
     });
@@ -100,6 +106,10 @@ export async function updateDoctor(id: string, formData: FormData) {
     });
     if (!clinicRecord) throw new Error("Clinic branch is required");
 
+    // Process uploaded doctor photos if new ones are selected
+    const photos = formData.getAll("photos") as File[];
+    const uploadedPhotoUrl = await uploadImages(photos);
+
     const doctor = await prisma.doctor.update({
       where: { id },
       data: {
@@ -115,6 +125,7 @@ export async function updateDoctor(id: string, formData: FormData) {
         affiliation: `${clinicRecord.hospitalGroup.name} - ${clinicRecord.name}`,
         bio: bio || "A dedicated healthcare professional.",
         qualifications: qualifications || "MD, Board Certified Specialist",
+        ...(uploadedPhotoUrl ? { photoUrl: uploadedPhotoUrl } : {})
       }
     });
 

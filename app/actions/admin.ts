@@ -4,6 +4,7 @@ import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { uploadImages } from "@/lib/upload";
 
 const prisma = new PrismaClient();
 
@@ -93,14 +94,16 @@ export async function createHospitalGroup(formData: FormData) {
   try {
     await requireAdmin();
     const name = formData.get("name") as string;
-    const photoUrl = formData.get("photoUrl") as string;
+    const photo = formData.get("photo") as File;
+    const uploadedUrl = await uploadImages([photo]);
+    const photoUrl = uploadedUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff&size=500`;
 
     if (!name) return { success: false, error: "Name is required" };
 
     const hospitalGroup = await prisma.hospitalGroup.create({
       data: {
         name,
-        photoUrl: photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff&size=500`
+        photoUrl
       }
     });
 
@@ -116,7 +119,8 @@ export async function updateHospitalGroup(id: string, formData: FormData) {
   try {
     await requireAdmin();
     const name = formData.get("name") as string;
-    const photoUrl = formData.get("photoUrl") as string;
+    const photo = formData.get("photo") as File;
+    const uploadedUrl = await uploadImages([photo]);
 
     if (!name) return { success: false, error: "Name is required" };
 
@@ -124,7 +128,7 @@ export async function updateHospitalGroup(id: string, formData: FormData) {
       where: { id },
       data: {
         name,
-        photoUrl: photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff&size=500`
+        ...(uploadedUrl ? { photoUrl: uploadedUrl } : {})
       }
     });
 
@@ -162,7 +166,8 @@ export async function createClinic(formData: FormData) {
     const city = formData.get("city") as string;
     const email = formData.get("email") as string;
     const phone = formData.get("phone") as string;
-    const photoUrl = formData.get("photoUrl") as string;
+    const photo = formData.get("photo") as File;
+    const uploadedUrl = await uploadImages([photo]);
 
     if (!hospitalGroupId || !name || !city) {
       return { success: false, error: "Hospital Group, Branch Name, and City are required" };
@@ -175,7 +180,7 @@ export async function createClinic(formData: FormData) {
         city,
         email: email || "info@clinic.com",
         phone: phone || "+971 800 7777",
-        photoUrl: photoUrl || null
+        photoUrl: uploadedUrl || null
       }
     });
 
@@ -197,7 +202,8 @@ export async function updateClinic(id: string, formData: FormData) {
     const city = formData.get("city") as string;
     const email = formData.get("email") as string;
     const phone = formData.get("phone") as string;
-    const photoUrl = formData.get("photoUrl") as string;
+    const photo = formData.get("photo") as File;
+    const uploadedUrl = await uploadImages([photo]);
 
     if (!hospitalGroupId || !name || !city) {
       return { success: false, error: "Hospital Group, Branch Name, and City are required" };
@@ -211,7 +217,7 @@ export async function updateClinic(id: string, formData: FormData) {
         city,
         email: email || "info@clinic.com",
         phone: phone || "+971 800 7777",
-        photoUrl: photoUrl || null
+        ...(uploadedUrl ? { photoUrl: uploadedUrl } : {})
       }
     });
 
