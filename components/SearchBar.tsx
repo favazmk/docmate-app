@@ -43,15 +43,18 @@ export default function SearchBar({ doctors = [] }: SearchBarProps) {
     if (!selectedSpecialty) return [];
     const filtered = doctors.filter(d => d.specialty === selectedSpecialty);
     const list = filtered.map(d => d.city);
-    return Array.from(new Set(list)).sort();
+    const unique = Array.from(new Set(list)).sort();
+    return ["All Cities", ...unique];
   }, [selectedSpecialty, doctors]);
 
   // Get doctors based on selected specialty and location
   const availableDoctors = useMemo(() => {
     if (!selectedSpecialty || !selectedLocation) return [];
-    return doctors.filter(
-      d => d.specialty === selectedSpecialty && d.city === selectedLocation
-    ).sort((a, b) => a.name.localeCompare(b.name));
+    return doctors.filter(d => {
+      const matchesSpecialty = d.specialty === selectedSpecialty;
+      if (selectedLocation === "All Cities") return matchesSpecialty;
+      return matchesSpecialty && d.city === selectedLocation;
+    }).sort((a, b) => a.name.localeCompare(b.name));
   }, [selectedSpecialty, selectedLocation, doctors]);
 
   // Handle cascading resets
@@ -75,7 +78,9 @@ export default function SearchBar({ doctors = [] }: SearchBarProps) {
       } else {
         const params = new URLSearchParams();
         if (selectedSpecialty) params.set("specialty", selectedSpecialty);
-        if (selectedLocation) params.set("city", selectedLocation);
+        if (selectedLocation && selectedLocation !== "All Cities") {
+          params.set("city", selectedLocation);
+        }
         router.push(`/search?${params.toString()}`);
       }
     } else {
