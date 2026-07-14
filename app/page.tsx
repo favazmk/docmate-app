@@ -111,7 +111,7 @@ export default async function Home() {
         {/* Background Image for Desktop */}
         <div className="hidden md:block absolute inset-0 z-0">
           <Image 
-            src="/hero_desktop.png" 
+            src="/hero_desktop.webp" 
             alt="Medical Clinic Dubai" 
             fill 
             priority
@@ -123,7 +123,7 @@ export default async function Home() {
         {/* Background Image for Mobile */}
         <div className="block md:hidden absolute inset-0 z-0">
           <Image 
-            src="/hero_mobile.png" 
+            src="/hero_mobile.webp" 
             alt="Medical Clinic Dubai Mobile" 
             fill 
             priority
