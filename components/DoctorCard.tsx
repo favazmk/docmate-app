@@ -95,15 +95,11 @@ export default function DoctorCard({
           </div>
 
           {/* Pricing & CTA */}
-          <div className="mt-auto pt-4 border-t border-gray-border flex items-center justify-between gap-3">
-            <div className="flex flex-col">
-              <span className="text-[10px] text-text-light uppercase tracking-wider font-bold">Consultation</span>
-              <span className="text-sm font-extrabold text-text-dark">AED {fee}</span>
-            </div>
+          <div className="mt-auto pt-4 border-t border-gray-border">
             <Link 
               href={`/book/${slug}`} 
               onClick={(e) => e.stopPropagation()}
-              className={`${buttonVariants({ size: "sm" })} bg-blue-primary hover:bg-blue-hover text-white rounded-xl h-10 px-5 font-bold shadow-md shadow-blue-primary/10 transition-all`}
+              className={`${buttonVariants({ size: "sm" })} bg-blue-primary hover:bg-blue-hover text-white rounded-xl h-10 w-full font-bold shadow-md shadow-blue-primary/10 transition-all flex items-center justify-center`}
             >
               Book Now
             </Link>
@@ -176,11 +172,7 @@ export default function DoctorCard({
           </span>
         </div>
 
-        {/* Consultation Fee */}
-        <div className="flex flex-col md:items-end mt-4 md:mt-0">
-          <span className="text-[10px] text-text-light uppercase tracking-wider font-bold">Consultation Fee</span>
-          <span className="text-lg font-extrabold text-text-dark">AED {fee}</span>
-        </div>
+
 
         {/* Actions */}
         <div className="w-full flex gap-3 mt-4 md:mt-0">

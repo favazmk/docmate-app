@@ -466,12 +466,7 @@ export default function DoctorsClient({
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="flex flex-col gap-2">
-                    <label className="text-sm font-semibold text-text-dark">Consultation Fee (AED) *</label>
-                    <input required name="fee" value={fee} onChange={(e) => setFee(parseInt(e.target.value) || 0)} type="number" placeholder="250" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" />
-                  </div>
-                </div>
+                <input type="hidden" name="fee" value={fee} />
 
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-semibold text-text-dark">Qualifications (one per line) *</label>
