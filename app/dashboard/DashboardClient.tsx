@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { User, CalendarCheck, Settings, LogOut, CheckCircle2 } from "lucide-react";
+import { CalendarCheck, LogOut, CheckCircle2 } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import Image from "next/image";
 import { signOut } from "next-auth/react";
@@ -21,7 +21,6 @@ export default function DashboardClient({ appointments, userName }: { appointmen
           <h1 className="font-bold text-text-dark text-lg">Hello, {userName || "Patient"}</h1>
           <nav className="hidden md:flex items-center gap-6">
             <Link href="/dashboard" className="text-sm font-bold text-blue-primary border-b-2 border-blue-primary h-16 flex items-center">Appointments</Link>
-            <Link href="/dashboard/profile" className="text-sm font-medium text-text-mid hover:text-text-dark h-16 flex items-center">Profile Settings</Link>
           </nav>
         </div>
       </div>
@@ -33,12 +32,6 @@ export default function DashboardClient({ appointments, userName }: { appointmen
           <div className="bg-white border border-gray-border rounded-2xl p-4 shadow-sm flex flex-col gap-2">
             <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-light text-blue-primary font-semibold text-sm">
               <CalendarCheck className="w-5 h-5" /> My Appointments
-            </Link>
-            <Link href="/dashboard/profile" className="flex items-center gap-3 px-4 py-3 rounded-xl text-text-mid hover:bg-gray-50 hover:text-text-dark font-medium text-sm transition-colors">
-              <User className="w-5 h-5" /> Profile Settings
-            </Link>
-            <Link href="/dashboard/settings" className="flex items-center gap-3 px-4 py-3 rounded-xl text-text-mid hover:bg-gray-50 hover:text-text-dark font-medium text-sm transition-colors">
-              <Settings className="w-5 h-5" /> Preferences
             </Link>
             <div className="h-px bg-gray-border my-2"></div>
             <button onClick={() => signOut({ callbackUrl: '/login' })} className="flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 font-medium text-sm transition-colors text-left w-full">
