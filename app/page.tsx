@@ -14,6 +14,7 @@ export default async function Home() {
   let dbDoctors: any[] = [];
   let searchBarDoctors: { slug: string; name: string; specialty: string; city: string }[] = [];
   let specialtiesWithCounts: { specialty: string; _count: { id: number } }[] = [];
+  let hospitalGroups: any[] = [];
   let totalActiveDoctors = 0;
   let totalSpecialtiesCount = 0;
 
@@ -59,6 +60,36 @@ export default async function Home() {
       distinct: ['specialty']
     });
     totalSpecialtiesCount = distinctSpecialties.length;
+
+    // Fetch hospital groups with clinics and count of doctors
+    const rawHospitals = await prisma.hospitalGroup.findMany({
+      include: {
+        clinics: {
+          include: {
+            _count: {
+              select: { doctors: true }
+            }
+          }
+        }
+      }
+    });
+
+    hospitalGroups = rawHospitals.map(h => {
+      const doctorCount = h.clinics.reduce((sum, c) => sum + c._count.doctors, 0);
+      const branchCount = h.clinics.length;
+      return {
+        id: h.id,
+        name: h.name,
+        photoUrl: h.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(h.name)}&background=2200CC&color=fff`,
+        branchCount,
+        doctorCount,
+        clinics: h.clinics.map(c => ({
+          id: c.id,
+          name: c.name,
+          city: c.city
+        }))
+      };
+    });
 
   } catch (e) {
     console.error("Error fetching homepage DB data:", e);
@@ -147,7 +178,7 @@ export default async function Home() {
 
       {/* Search Bar Wrapper */}
       <div className="px-4">
-        <SearchBar doctors={searchBarDoctors} />
+        <SearchBar doctors={searchBarDoctors} hospitalGroups={hospitalGroups} />
       </div>
 
       {/* Trust Strip */}
@@ -211,8 +242,42 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Discover by Hospital Group */}
+      <section id="hospitals" className="py-20 px-4 bg-white border-t border-gray-border/50">
+        <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
+          <div className="bg-blue-light text-blue-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4 border border-blue-primary/10">
+            Discover hospital wise
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-text-dark mb-12 tracking-tight">
+            Top Hospital Groups & Healthcare Networks
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full text-left">
+            {hospitalGroups.map((h) => (
+              <Link
+                key={h.id}
+                href={`/search?hospitalGroupId=${h.id}`}
+                className="bg-white border border-gray-border rounded-2xl p-6 flex items-center gap-5 hover:border-blue-primary hover:shadow-lg transition-all duration-300 group cursor-pointer"
+              >
+                <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-gray-border bg-gray-50 flex items-center justify-center shrink-0">
+                  <Image src={h.photoUrl} alt={h.name} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                </div>
+                <div className="flex flex-col">
+                  <h3 className="font-extrabold text-text-dark text-lg group-hover:text-blue-primary transition-colors">
+                    {h.name}
+                  </h3>
+                  <p className="text-xs font-medium text-text-mid mt-1">
+                    {h.branchCount} {h.branchCount === 1 ? "branch" : "branches"} • {h.doctorCount} {h.doctorCount === 1 ? "doctor" : "doctors"}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Browse by City */}
-      <section id="cities" className="py-20 px-4 bg-white">
+      <section id="cities" className="py-20 px-4 bg-gray-bg border-t border-gray-border/50">
         <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
           <div className="bg-blue-light text-blue-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4 border border-blue-primary/10">
             Available across the UAE

@@ -1,11 +1,28 @@
 "use client";
 
-import { Check, ChevronDown } from "lucide-react";
+import { Check } from "lucide-react";
 import { Button } from "./ui/button";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import CustomDropdown from "./ui/CustomDropdown";
 
-export default function FilterSidebar() {
+interface HospitalGroupOption {
+  id: string;
+  name: string;
+}
+
+interface ClinicOption {
+  id: string;
+  name: string;
+  city: string;
+  hospitalGroupId?: string;
+}
+
+interface FilterSidebarProps {
+  hospitalGroups?: HospitalGroupOption[];
+  clinics?: ClinicOption[];
+}
+
+export default function FilterSidebar({ hospitalGroups = [], clinics = [] }: FilterSidebarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -13,8 +30,9 @@ export default function FilterSidebar() {
   const currentSpecialty = searchParams.get("specialty") || "";
   const currentArea = searchParams.get("city") || "";
   const currentGender = searchParams.get("gender") || "Any";
-  const currentInsurances = searchParams.getAll("insurance");
   const currentLanguages = searchParams.getAll("language");
+  const currentHospitalGroupId = searchParams.get("hospitalGroupId") || "";
+  const currentClinicId = searchParams.get("clinicId") || "";
 
   const updateParam = (key: string, value: string | null, isArray: boolean = false) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -37,6 +55,17 @@ export default function FilterSidebar() {
       }
     }
     
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
+  const handleHospitalGroupChange = (val: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (val) {
+      params.set("hospitalGroupId", val);
+    } else {
+      params.delete("hospitalGroupId");
+    }
+    params.delete("clinicId"); // Clear clinic branch when group changes
     router.push(`${pathname}?${params.toString()}`);
   };
 
@@ -74,8 +103,10 @@ export default function FilterSidebar() {
     "Mirdif",
     "Nad Al Sheba"
   ];
-  const insurances = ["Daman", "AXA", "Bupa", "Tawuniya", "MetLife"];
   const languages = ["English", "Arabic", "French", "Hindi", "Urdu"];
+
+  // Filter clinics belonging to selected hospital group
+  const filteredClinics = clinics.filter(c => !currentHospitalGroupId || c.hospitalGroupId === currentHospitalGroupId);
 
   return (
     <div className="w-full bg-white border border-gray-border rounded-xl p-5 flex flex-col gap-6">
@@ -95,7 +126,7 @@ export default function FilterSidebar() {
       </div>
 
       <div className="flex flex-col gap-3">
-        <h4 className="font-semibold text-text-dark text-sm uppercase tracking-wider">Area</h4>
+        <h4 className="font-semibold text-text-dark text-sm uppercase tracking-wider">Area / City</h4>
         <CustomDropdown
           value={currentArea}
           onChange={(val) => updateParam("city", val)}
@@ -103,6 +134,30 @@ export default function FilterSidebar() {
           placeholder="All Areas"
         />
       </div>
+
+      {hospitalGroups.length > 0 && (
+        <div className="flex flex-col gap-3">
+          <h4 className="font-semibold text-text-dark text-sm uppercase tracking-wider">Hospital Group</h4>
+          <CustomDropdown
+            value={currentHospitalGroupId}
+            onChange={handleHospitalGroupChange}
+            options={hospitalGroups.map(h => ({ value: h.id, label: h.name }))}
+            placeholder="All Hospital Groups"
+          />
+        </div>
+      )}
+
+      {filteredClinics.length > 0 && (
+        <div className="flex flex-col gap-3">
+          <h4 className="font-semibold text-text-dark text-sm uppercase tracking-wider">Clinic Branch</h4>
+          <CustomDropdown
+            value={currentClinicId}
+            onChange={(val) => updateParam("clinicId", val)}
+            options={filteredClinics.map(c => ({ value: c.id, label: `${c.name} (${c.city})` }))}
+            placeholder="All Branches"
+          />
+        </div>
+      )}
 
       <div className="flex flex-col gap-3">
         <h4 className="font-semibold text-text-dark text-sm uppercase tracking-wider">Gender</h4>
@@ -121,7 +176,6 @@ export default function FilterSidebar() {
         </div>
       </div>
 
-
       <div className="flex flex-col gap-3">
         <h4 className="font-semibold text-text-dark text-sm uppercase tracking-wider">Languages</h4>
         <div className="flex flex-col gap-2">
@@ -138,8 +192,6 @@ export default function FilterSidebar() {
           })}
         </div>
       </div>
-
-
     </div>
   );
 }

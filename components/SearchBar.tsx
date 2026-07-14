@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, MapPin, User, Stethoscope } from "lucide-react";
+import { Search, MapPin, User, Stethoscope, Building2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
 import CustomDropdown from "./ui/CustomDropdown";
@@ -13,20 +13,38 @@ interface DoctorData {
   city: string;
 }
 
-interface SearchBarProps {
-  doctors?: DoctorData[];
+interface ClinicData {
+  id: string;
+  name: string;
+  city: string;
 }
 
-export default function SearchBar({ doctors = [] }: SearchBarProps) {
+interface HospitalGroupData {
+  id: string;
+  name: string;
+  clinics: ClinicData[];
+}
+
+interface SearchBarProps {
+  doctors?: DoctorData[];
+  hospitalGroups?: HospitalGroupData[];
+}
+
+export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchBarProps) {
   const router = useRouter();
   
-  // Tab selector
-  const [activeTab, setActiveTab] = useState<"cascading" | "keyword">("cascading");
+  // Tab selector: cascading, hospital, keyword
+  const [activeTab, setActiveTab] = useState<"cascading" | "hospital" | "keyword">("cascading");
 
   // Cascading fields
   const [selectedSpecialty, setSelectedSpecialty] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("");
   const [selectedDoctorSlug, setSelectedDoctorSlug] = useState("");
+
+  // Hospital Cascading fields
+  const [selectedHospitalGroupId, setSelectedHospitalGroupId] = useState("");
+  const [selectedClinicId, setSelectedClinicId] = useState("");
+  const [selectedHospitalSpecialty, setSelectedHospitalSpecialty] = useState("");
 
   // Keyword fields
   const [keywordQuery, setKeywordQuery] = useState("");
@@ -57,6 +75,20 @@ export default function SearchBar({ doctors = [] }: SearchBarProps) {
     }).sort((a, b) => a.name.localeCompare(b.name));
   }, [selectedSpecialty, selectedLocation, doctors]);
 
+  // Hospital Group options list
+  const hospitalGroupsList = useMemo(() => {
+    return hospitalGroups.map(h => ({ value: h.id, label: h.name }));
+  }, [hospitalGroups]);
+
+  // Clinics options list based on selected Hospital Group
+  const clinicsList = useMemo(() => {
+    if (!selectedHospitalGroupId) return [];
+    const hg = hospitalGroups.find(h => h.id === selectedHospitalGroupId);
+    if (!hg) return [];
+    const list = hg.clinics.map(c => ({ value: c.id, label: `${c.name} (${c.city})` }));
+    return [{ value: "all", label: "All Clinic Branches" }, ...list];
+  }, [selectedHospitalGroupId, hospitalGroups]);
+
   // Handle cascading resets
   const handleSpecialtyChange = (val: string) => {
     setSelectedSpecialty(val);
@@ -67,6 +99,17 @@ export default function SearchBar({ doctors = [] }: SearchBarProps) {
   const handleLocationChange = (val: string) => {
     setSelectedLocation(val);
     setSelectedDoctorSlug("");
+  };
+
+  const handleHospitalGroupChange = (val: string) => {
+    setSelectedHospitalGroupId(val);
+    setSelectedClinicId("");
+    setSelectedHospitalSpecialty("");
+  };
+
+  const handleClinicChange = (val: string) => {
+    setSelectedClinicId(val);
+    setSelectedHospitalSpecialty("");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -83,6 +126,12 @@ export default function SearchBar({ doctors = [] }: SearchBarProps) {
         }
         router.push(`/search?${params.toString()}`);
       }
+    } else if (activeTab === "hospital") {
+      const params = new URLSearchParams();
+      if (selectedHospitalGroupId) params.set("hospitalGroupId", selectedHospitalGroupId);
+      if (selectedClinicId && selectedClinicId !== "all") params.set("clinicId", selectedClinicId);
+      if (selectedHospitalSpecialty) params.set("specialty", selectedHospitalSpecialty);
+      router.push(`/search?${params.toString()}`);
     } else {
       const params = new URLSearchParams();
       if (keywordQuery.trim()) {
@@ -109,6 +158,22 @@ export default function SearchBar({ doctors = [] }: SearchBarProps) {
         return `Search ${selectedSpecialty} Doctors`;
       }
       return "Search All Doctors";
+    } else if (activeTab === "hospital") {
+      if (selectedHospitalGroupId) {
+        const hg = hospitalGroups.find(h => h.id === selectedHospitalGroupId);
+        const clinic = hg?.clinics.find(c => c.id === selectedClinicId);
+        
+        let targetText = hg?.name || "Hospital Group";
+        if (clinic && selectedClinicId !== "all") {
+          targetText = clinic.name;
+        }
+        
+        if (selectedHospitalSpecialty) {
+          return `Search ${selectedHospitalSpecialty} in ${targetText}`;
+        }
+        return `Search Doctors in ${targetText}`;
+      }
+      return "Search by Hospital & Clinic";
     } else {
       const cleanKeyword = keywordQuery.trim();
       if (cleanKeyword && keywordCity) {
@@ -129,11 +194,11 @@ export default function SearchBar({ doctors = [] }: SearchBarProps) {
       
       {/* Centered Switch Tabs */}
       <div className="flex justify-center mb-6">
-        <div className="flex bg-gray-100 p-1 rounded-xl border border-gray-border/20 w-fit">
+        <div className="flex bg-gray-100 p-1 rounded-xl border border-gray-border/20 w-fit gap-1">
           <button
             type="button"
             onClick={() => setActiveTab("cascading")}
-            className={`py-1.5 px-5 text-xs font-bold rounded-lg transition-all ${
+            className={`py-1.5 px-4 text-xs font-bold rounded-lg transition-all ${
               activeTab === "cascading" 
                 ? "bg-white text-blue-primary shadow-sm font-extrabold" 
                 : "text-text-mid hover:text-text-dark"
@@ -143,14 +208,25 @@ export default function SearchBar({ doctors = [] }: SearchBarProps) {
           </button>
           <button
             type="button"
+            onClick={() => setActiveTab("hospital")}
+            className={`py-1.5 px-4 text-xs font-bold rounded-lg transition-all ${
+              activeTab === "hospital" 
+                ? "bg-white text-blue-primary shadow-sm font-extrabold" 
+                : "text-text-mid hover:text-text-dark"
+            }`}
+          >
+            Find by Hospital & Clinic
+          </button>
+          <button
+            type="button"
             onClick={() => setActiveTab("keyword")}
-            className={`py-1.5 px-5 text-xs font-bold rounded-lg transition-all ${
+            className={`py-1.5 px-4 text-xs font-bold rounded-lg transition-all ${
               activeTab === "keyword" 
                 ? "bg-white text-blue-primary shadow-sm font-extrabold" 
                 : "text-text-mid hover:text-text-dark"
             }`}
           >
-            Search by Details
+            Search by Name
           </button>
         </div>
       </div>
@@ -187,6 +263,40 @@ export default function SearchBar({ doctors = [] }: SearchBarProps) {
             disabled={!selectedSpecialty || !selectedLocation}
             icon={<User className="w-4 h-4" />}
             labelPrefix="Available Doctor"
+          />
+        </div>
+      ) : activeTab === "hospital" ? (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-5">
+          {/* Dropdown 1: Hospital Group */}
+          <CustomDropdown
+            value={selectedHospitalGroupId}
+            onChange={handleHospitalGroupChange}
+            options={hospitalGroupsList}
+            placeholder="Select Hospital Group"
+            icon={<Building2 className="w-4 h-4" />}
+            labelPrefix="Hospital Group"
+          />
+
+          {/* Dropdown 2: Clinic Branch */}
+          <CustomDropdown
+            value={selectedClinicId}
+            onChange={handleClinicChange}
+            options={clinicsList}
+            placeholder="Select Clinic Branch"
+            disabled={!selectedHospitalGroupId}
+            icon={<MapPin className="w-4 h-4" />}
+            labelPrefix="Clinic Branch"
+          />
+
+          {/* Dropdown 3: Specialty */}
+          <CustomDropdown
+            value={selectedHospitalSpecialty}
+            onChange={setSelectedHospitalSpecialty}
+            options={specialties}
+            placeholder="Select Specialty"
+            disabled={!selectedHospitalGroupId}
+            icon={<Stethoscope className="w-4 h-4" />}
+            labelPrefix="Specialty"
           />
         </div>
       ) : (

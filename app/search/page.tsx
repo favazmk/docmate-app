@@ -18,6 +18,8 @@ export default async function SearchResultsPage({
   const gender = typeof searchParams.gender === "string" ? searchParams.gender : undefined;
   const languages = typeof searchParams.language === "string" ? [searchParams.language] : (searchParams.language || []);
   const query = typeof searchParams.query === "string" ? searchParams.query : undefined;
+  const hospitalGroupId = typeof searchParams.hospitalGroupId === "string" ? searchParams.hospitalGroupId : undefined;
+  const clinicId = typeof searchParams.clinicId === "string" ? searchParams.clinicId : undefined;
 
   // Build query where filter dynamically using AND combinations
   const andClauses: any[] = [{ status: "Active" }];
@@ -45,6 +47,20 @@ export default async function SearchResultsPage({
       OR: languages.map(lang => ({
         languages: { contains: lang }
       }))
+    });
+  }
+
+  if (hospitalGroupId && hospitalGroupId.trim() !== "") {
+    andClauses.push({
+      clinic: {
+        hospitalGroupId: hospitalGroupId.trim()
+      }
+    });
+  }
+
+  if (clinicId && clinicId.trim() !== "") {
+    andClauses.push({
+      clinicId: clinicId.trim()
     });
   }
 
@@ -80,6 +96,14 @@ export default async function SearchResultsPage({
         }
       }
     }
+  });
+
+  const allHospitalGroups = await prisma.hospitalGroup.findMany({
+    select: { id: true, name: true }
+  });
+
+  const allClinics = await prisma.clinic.findMany({
+    select: { id: true, name: true, city: true }
   });
 
   const doctors = dbDoctors.map(d => ({
@@ -129,7 +153,7 @@ export default async function SearchResultsPage({
                 </SheetTrigger>
               <SheetContent side="bottom" className="h-[85vh] p-0 rounded-t-2xl">
                 <div className="h-full overflow-y-auto p-4 pb-20">
-                  <FilterSidebar />
+                  <FilterSidebar hospitalGroups={allHospitalGroups} clinics={allClinics} />
                 </div>
               </SheetContent>
             </Sheet>
@@ -141,7 +165,7 @@ export default async function SearchResultsPage({
           {/* Desktop Sidebar */}
           <div className="hidden md:block w-72 shrink-0">
             <div className="sticky top-8">
-              <FilterSidebar />
+              <FilterSidebar hospitalGroups={allHospitalGroups} clinics={allClinics} />
             </div>
           </div>
 
