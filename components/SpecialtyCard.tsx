@@ -25,7 +25,7 @@ const colorMap: Record<string, { bg: string; text: string; border: string }> = {
 export default function SpecialtyCard({ name, count, icon: Icon, href, isViewAll }: SpecialtyCardProps) {
   if (isViewAll) {
     return (
-      <Link href={href} className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border border-blue-primary bg-blue-light text-blue-primary hover:bg-blue-primary hover:text-white transition-colors h-full">
+      <Link href={href} className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border border-blue-primary bg-blue-light text-blue-primary hover:bg-blue-primary hover:text-white transition-all duration-300 hover:scale-[1.03] hover:shadow-lg hover:shadow-blue-primary/15 h-full">
         <span className="font-bold text-sm tracking-wide">View all {count} specialties</span>
       </Link>
     );
@@ -40,12 +40,12 @@ export default function SpecialtyCard({ name, count, icon: Icon, href, isViewAll
   return (
     <Link
       href={href}
-      className={`flex flex-col items-center justify-center p-6 rounded-2xl border ${colors.border} ${colors.bg} transition-all duration-300 group text-center shadow-sm hover:shadow-md hover:-translate-y-0.5`}
+      className={`flex flex-col items-center justify-center p-6 rounded-2xl border ${colors.border} ${colors.bg} transition-all duration-300 group text-center shadow-sm hover:shadow-lg hover:-translate-y-1 hover:scale-[1.02]`}
     >
-      <div className={`w-14 h-14 rounded-full bg-white flex items-center justify-center mb-3.5 shadow-sm ${colors.text} group-hover:scale-105 transition-transform`}>
+      <div className={`w-14 h-14 rounded-full bg-white flex items-center justify-center mb-3.5 shadow-sm ${colors.text} group-hover:scale-110 group-hover:shadow-md transition-all duration-300`}>
         <Icon className="w-6 h-6" />
       </div>
-      <h3 className="font-bold text-text-dark text-sm leading-tight">{name}</h3>
+      <h3 className="font-bold text-text-dark text-sm leading-tight group-hover:translate-y-[-2px] transition-transform duration-300">{name}</h3>
     </Link>
   );
 }

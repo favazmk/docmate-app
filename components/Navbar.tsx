@@ -17,7 +17,16 @@ export default function Navbar() {
   const pathname = usePathname();
   const [activeHash, setActiveHash] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { data: session, status } = useSession();
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 12);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   useEffect(() => {
     setActiveHash(window.location.hash);
     const handleHashChange = () => {
@@ -98,7 +107,13 @@ export default function Navbar() {
   if (pathname?.startsWith("/admin")) return null;
 
   return (
-    <header className="h-[56px] bg-white border-b border-gray-border sticky top-0 z-50">
+    <header
+      className={`h-[56px] sticky top-0 z-50 border-b transition-all duration-300 ${
+        scrolled
+          ? "bg-white/70 backdrop-blur-xl border-gray-border/60 shadow-[0_4px_24px_rgba(26,18,100,0.06)]"
+          : "bg-white border-gray-border"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 w-full h-full flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center">
