@@ -2,7 +2,7 @@ export const dynamic = "force-static";
 
 export default function TermsAndConditionsPage() {
   return (
-    <div className="bg-gray-bg min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto bg-white rounded-3xl border border-gray-border p-8 md:p-12 shadow-sm">
         <h1 className="text-3xl font-extrabold text-text-dark mb-2">Terms and Conditions</h1>
         <p className="text-sm text-text-light mb-8">Last Updated: July 4, 2026</p>

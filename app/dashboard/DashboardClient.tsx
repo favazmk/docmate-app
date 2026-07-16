@@ -13,7 +13,7 @@ export default function DashboardClient({ appointments, userName }: { appointmen
   const pastAppointments = appointments.filter(a => a.status === 'COMPLETED' || a.status === 'CANCELLED');
 
   return (
-    <div className="bg-gray-bg min-h-screen">
+    <div className="min-h-screen">
       
       {/* Dashboard Nav */}
       <div className="bg-white border-b border-gray-border">

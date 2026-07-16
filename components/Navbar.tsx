@@ -106,25 +106,34 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-6">
-          {navLinks.map((link) => {
-            const isActive = checkActive(link.href);
-            return (
-              <Link 
-                key={link.label} 
-                href={link.href} 
-                className={`text-sm font-medium transition-colors ${isActive ? "text-blue-primary font-bold border-b-2 border-blue-primary pb-1" : "text-text-mid hover:text-blue-primary"}`}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
-          <div className="w-px h-6 bg-gray-border mx-2"></div>
+        <div className="hidden md:flex flex-1 justify-center">
+          <nav className="flex items-center bg-white rounded-full p-1.5 shadow-md border border-gray-border">
+            {navLinks.map((link) => {
+              const isActive = checkActive(link.href);
+              return (
+                <Link 
+                  key={link.label} 
+                  href={link.href} 
+                  className={`text-sm font-medium transition-all px-5 py-2 rounded-full ${
+                    isActive 
+                      ? "bg-blue-primary text-white font-bold shadow-sm" 
+                      : "text-text-mid hover:text-blue-primary"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* Desktop Actions */}
+        <div className="hidden md:flex items-center gap-6">
           <Link 
             href="/list-your-clinic" 
             className={`text-sm font-medium transition-colors ${
               pathname === "/list-your-clinic"
-                ? "text-blue-primary font-bold border-b-2 border-blue-primary pb-1"
+                ? "text-blue-primary font-bold"
                 : "text-blue-primary hover:text-blue-hover"
             }`}
           >
@@ -132,17 +141,17 @@ export default function Navbar() {
           </Link>
           
           {status === "loading" ? (
-            <div className="h-10 w-24 bg-gray-100 animate-pulse rounded-lg"></div>
+            <div className="h-10 w-24 bg-gray-100 animate-pulse rounded-full"></div>
           ) : session ? (
             <Link href="/dashboard">
-              <Button className="bg-blue-primary hover:bg-blue-hover text-white rounded-lg">Profile</Button>
+              <Button className="bg-blue-primary hover:bg-blue-hover text-white rounded-full">Profile</Button>
             </Link>
           ) : (
             <Link href="/login">
-              <Button className="bg-blue-primary hover:bg-blue-hover text-white rounded-lg">Sign In</Button>
+              <Button className="bg-blue-primary hover:bg-blue-hover text-white rounded-full">Sign In</Button>
             </Link>
           )}
-        </nav>
+        </div>
 
         {/* Mobile Nav */}
         <div className="md:hidden">

@@ -61,7 +61,7 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
   }));
 
   return (
-    <div className="bg-gray-bg min-h-screen py-8 px-4">
+    <div className="min-h-screen py-8 px-4">
       <div className="max-w-6xl mx-auto">
         
         {/* Breadcrumb */}

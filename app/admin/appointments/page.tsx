@@ -25,7 +25,7 @@ export default async function AdminAppointmentsPage() {
   });
 
   return (
-    <div className="bg-gray-bg min-h-screen flex">
+    <div className="min-h-screen flex">
       {/* Admin Sidebar */}
       <AdminSidebar />
 

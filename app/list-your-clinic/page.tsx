@@ -116,7 +116,7 @@ export default function ListYourClinicPage() {
       </section>
 
       {/* Registration Form */}
-      <section id="clinic-form" className="py-20 px-4 bg-gray-bg border-t border-gray-border">
+      <section id="clinic-form" className="py-20 px-4 bg-transparent border-t border-gray-border">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-text-dark mb-4">Request an Invitation</h2>

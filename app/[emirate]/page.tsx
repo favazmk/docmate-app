@@ -18,7 +18,7 @@ export default function EmirateLandingPage({ params }: { params: { emirate: stri
   const specialties = ["Cardiology", "Dermatology", "Pediatrics", "Gynecology", "Neurology", "Orthopedics"];
 
   return (
-    <div className="bg-gray-bg min-h-screen py-12 px-4">
+    <div className="min-h-screen py-12 px-4">
       <div className="max-w-7xl mx-auto">
         
         {/* Breadcrumb */}

@@ -40,7 +40,7 @@ export default function BlogPage() {
   const categories = ["All", "Dental Health", "Cardiology", "Dermatology", "Pediatrics", "Nutrition"];
 
   return (
-    <div className="bg-gray-bg min-h-screen py-12 px-4">
+    <div className="min-h-screen py-12 px-4">
       <div className="max-w-7xl mx-auto flex flex-col items-center">
         
         {/* Header */}

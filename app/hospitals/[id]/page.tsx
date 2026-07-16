@@ -28,7 +28,7 @@ export default async function HospitalProfilePage({ params }: { params: { id: st
   const totalDoctors = hospital.clinics.reduce((sum, c) => sum + c.doctors.length, 0);
 
   return (
-    <div className="bg-gray-bg min-h-screen pb-20">
+    <div className="min-h-screen pb-20">
       {/* Header / Hero Section */}
       <div className="bg-white border-b border-gray-border py-8 md:py-12 px-4 shadow-sm">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8">

@@ -122,7 +122,7 @@ export default async function SearchResultsPage({
   }));
 
   return (
-    <div className="bg-gray-bg min-h-screen py-8 px-4">
+    <div className="min-h-screen py-8 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
           <div>

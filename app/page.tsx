@@ -219,7 +219,7 @@ export default async function Home() {
       </section>
 
       {/* Featured Doctors */}
-      <section className="py-20 px-4 bg-gray-bg">
+      <section className="py-20 px-4 bg-transparent">
         <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
           <div className="bg-blue-light text-blue-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4 border border-blue-primary/10">
             Top rated
@@ -277,7 +277,7 @@ export default async function Home() {
       </section>
 
       {/* Browse by City */}
-      <section id="cities" className="py-20 px-4 bg-gray-bg border-t border-gray-border/50">
+      <section id="cities" className="py-20 px-4 bg-transparent border-t border-gray-border/50">
         <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
           <div className="bg-blue-light text-blue-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4 border border-blue-primary/10">
             Available across the UAE
@@ -291,7 +291,7 @@ export default async function Home() {
       </section>
 
       {/* How it works */}
-      <section className="py-20 px-4 bg-gray-bg">
+      <section className="py-20 px-4 bg-transparent">
         <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
           <div className="bg-blue-light text-blue-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4 border border-blue-primary/10">
             Simple process

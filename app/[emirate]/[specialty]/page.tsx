@@ -76,7 +76,7 @@ export default async function SpecialtyCityPage({
   }));
 
   return (
-    <div className="bg-gray-bg min-h-screen py-8 px-4">
+    <div className="min-h-screen py-8 px-4">
       <div className="max-w-7xl mx-auto">
         
         {/* Breadcrumb */}

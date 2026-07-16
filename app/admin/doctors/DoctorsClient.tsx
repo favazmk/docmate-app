@@ -225,7 +225,7 @@ export default function DoctorsClient({
   const newAppointmentsCount = appointmentCount;
 
   return (
-    <div className="bg-gray-bg min-h-screen flex">
+    <div className="min-h-screen flex">
       {/* Admin Sidebar */}
       <AdminSidebar />
 

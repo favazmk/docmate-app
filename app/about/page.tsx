@@ -82,7 +82,7 @@ export default function AboutPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 px-4 bg-gray-bg border-t border-gray-border text-center">
+      <section className="py-20 px-4 bg-transparent border-t border-gray-border text-center">
         <div className="max-w-2xl mx-auto flex flex-col items-center">
           <h2 className="text-3xl font-bold text-text-dark mb-6">Ready to take control of your health?</h2>
           <p className="text-text-mid text-lg mb-8">

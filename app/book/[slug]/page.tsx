@@ -32,7 +32,7 @@ export default async function BookingFlowPage({ params }: { params: { slug: stri
   } : undefined;
 
   return (
-    <div className="bg-gray-bg min-h-screen py-8 px-4">
+    <div className="min-h-screen py-8 px-4">
       <BookingWizard doctor={doctor} user={user} />
     </div>
   );
