@@ -207,7 +207,7 @@ export default async function Home() {
 
           <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-4">
             {specialties.map((s, i) => (
-              <div key={i} className={`reveal reveal-delay-${i + 1}`}>
+              <div key={i} className="stagger-child">
                 <SpecialtyCard {...s} />
               </div>
             ))}
@@ -228,7 +228,7 @@ export default async function Home() {
 
           <div className="mb-10 grid w-full grid-cols-1 gap-6 text-left md:grid-cols-2 lg:grid-cols-4">
             {featuredDoctors.map((d, i) => (
-              <div key={i} className={`reveal reveal-delay-${i + 1}`}>
+              <div key={i} className="stagger-child">
                 <DoctorCard {...d} variant="grid" />
               </div>
             ))}
@@ -255,7 +255,7 @@ export default async function Home() {
 
           <div className="grid w-full grid-cols-1 gap-6 text-left sm:grid-cols-2 lg:grid-cols-3">
             {hospitalGroups.map((h, i) => (
-              <div key={h.id} className={`reveal reveal-delay-${i + 1}`}>
+              <div key={h.id} className="stagger-child">
                 <Link
                   href={`/hospitals/${h.id}`}
                   className="group flex cursor-pointer items-center gap-5 rounded-2xl border border-white/50 bg-white/40 p-6 shadow-[0_18px_40px_rgba(26,18,100,0.05)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-blue-primary/30 hover:bg-white/55 hover:shadow-[0_22px_44px_rgba(26,18,100,0.1)]"
@@ -305,21 +305,21 @@ export default async function Home() {
           </h2>
 
           <div className="grid w-full max-w-5xl grid-cols-1 gap-8 md:grid-cols-3">
-            <div className="reveal reveal-delay-1 rounded-[1.75rem] border border-white/50 bg-white/40 p-8 shadow-[0_18px_40px_rgba(26,18,100,0.05)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/55 hover:shadow-xl">
+            <div className="stagger-child rounded-[1.75rem] border border-white/50 bg-white/40 p-8 shadow-[0_18px_40px_rgba(26,18,100,0.05)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/55 hover:shadow-xl">
               <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-primary text-2xl font-bold text-white shadow-lg shadow-blue-primary/30 transition-transform duration-300 hover:scale-110">
                 1
               </div>
               <h3 className="mb-3 text-xl font-bold text-text-dark">Search</h3>
               <p className="text-text-mid">Find the right doctor by specialty, location, or spoken languages.</p>
             </div>
-            <div className="reveal reveal-delay-2 rounded-[1.75rem] border border-white/50 bg-white/40 p-8 shadow-[0_18px_40px_rgba(26,18,100,0.05)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/55 hover:shadow-xl">
+            <div className="stagger-child rounded-[1.75rem] border border-white/50 bg-white/40 p-8 shadow-[0_18px_40px_rgba(26,18,100,0.05)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/55 hover:shadow-xl">
               <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-primary text-2xl font-bold text-white shadow-lg shadow-blue-primary/30 transition-transform duration-300 hover:scale-110">
                 2
               </div>
               <h3 className="mb-3 text-xl font-bold text-text-dark">Choose a slot</h3>
               <p className="text-text-mid">View real-time availability and select a time that works best for you.</p>
             </div>
-            <div className="reveal reveal-delay-3 rounded-[1.75rem] border border-white/50 bg-white/40 p-8 shadow-[0_18px_40px_rgba(26,18,100,0.05)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/55 hover:shadow-xl">
+            <div className="stagger-child rounded-[1.75rem] border border-white/50 bg-white/40 p-8 shadow-[0_18px_40px_rgba(26,18,100,0.05)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/55 hover:shadow-xl">
               <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-primary text-2xl font-bold text-white shadow-lg shadow-blue-primary/30 transition-transform duration-300 hover:scale-110">
                 3
               </div>
