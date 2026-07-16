@@ -10,9 +10,9 @@ interface CountryCardProps {
 
 export default function CountryCard({ flag, name, cities, href }: CountryCardProps) {
   return (
-    <Link href={href} className="group flex items-center justify-between p-6 rounded-xl border border-gray-border bg-white hover:border-blue-primary hover:bg-blue-light transition-all duration-300 hover:shadow-lg hover:shadow-blue-primary/6 hover:-translate-y-0.5">
+    <Link href={href} className="group flex items-center justify-between p-6 rounded-xl border border-white/50 bg-white/35 backdrop-blur-xl hover:border-blue-primary/30 hover:bg-white/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-primary/6 hover:-translate-y-0.5">
       <div className="flex items-center gap-4">
-        <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-blue-light text-blue-primary font-bold text-sm group-hover:scale-110 group-hover:bg-blue-primary group-hover:text-white transition-all duration-300">
+        <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-blue-light/60 text-blue-primary font-bold text-sm group-hover:scale-110 group-hover:bg-blue-primary group-hover:text-white transition-all duration-300">
           {flag}
         </div>
         <div className="flex flex-col">

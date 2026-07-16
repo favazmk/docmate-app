@@ -110,8 +110,8 @@ export default function Navbar() {
     <header
       className={`h-[56px] sticky top-0 z-50 border-b transition-all duration-300 ${
         scrolled
-          ? "bg-white/70 backdrop-blur-xl border-gray-border/60 shadow-[0_4px_24px_rgba(26,18,100,0.06)]"
-          : "bg-white border-gray-border"
+          ? "bg-white/35 backdrop-blur-2xl border-white/40 shadow-[0_4px_24px_rgba(26,18,100,0.06)]"
+          : "bg-white/50 backdrop-blur-xl border-white/50"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 w-full h-full flex items-center justify-between">
@@ -122,7 +122,7 @@ export default function Navbar() {
 
         {/* Desktop Nav */}
         <div className="hidden md:flex flex-1 justify-center">
-          <nav className="flex items-center bg-white rounded-full p-1.5 shadow-md border border-gray-border">
+          <nav className="flex items-center bg-white/30 backdrop-blur-xl rounded-full p-1.5 shadow-md border border-white/40">
             {navLinks.map((link) => {
               const isActive = checkActive(link.href);
               return (
@@ -132,7 +132,7 @@ export default function Navbar() {
                   className={`text-sm font-medium transition-all px-5 py-2 rounded-full ${
                     isActive 
                       ? "bg-blue-primary text-white font-bold shadow-sm" 
-                      : "text-text-mid hover:text-blue-primary"
+                      : "text-text-mid hover:text-blue-primary hover:bg-white/30"
                   }`}
                 >
                   {link.label}

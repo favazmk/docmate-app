@@ -190,18 +190,18 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-5 md:p-6 shadow-[0_12px_40px_rgb(0,0,0,0.08)] border border-gray-border w-full max-w-4xl mx-auto -mt-16 md:-mt-24 relative z-10">
+    <form onSubmit={handleSubmit} className="bg-white/45 backdrop-blur-2xl rounded-3xl p-5 md:p-6 shadow-[0_12px_40px_rgba(26,18,100,0.06)] border border-white/50 w-full max-w-4xl mx-auto -mt-16 md:-mt-24 relative z-10">
       
       {/* Centered Switch Tabs */}
       <div className="flex justify-center mb-6">
-        <div className="flex bg-gray-100 p-1 rounded-xl border border-gray-border/20 w-fit gap-1">
+        <div className="flex bg-white/30 backdrop-blur-lg p-1 rounded-xl border border-white/40 w-fit gap-1">
           <button
             type="button"
             onClick={() => setActiveTab("cascading")}
-            className={`py-1.5 px-4 text-xs font-bold rounded-lg transition-all ${
+              className={`py-1.5 px-4 text-xs font-bold rounded-lg transition-all ${
               activeTab === "cascading" 
-                ? "bg-white text-blue-primary shadow-sm font-extrabold" 
-                : "text-text-mid hover:text-text-dark"
+                ? "bg-white/70 backdrop-blur-sm text-blue-primary shadow-sm font-extrabold" 
+                : "text-text-mid hover:text-text-dark hover:bg-white/30"
             }`}
           >
             Quick Booking Wizard
@@ -211,8 +211,8 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
             onClick={() => setActiveTab("hospital")}
             className={`py-1.5 px-4 text-xs font-bold rounded-lg transition-all ${
               activeTab === "hospital" 
-                ? "bg-white text-blue-primary shadow-sm font-extrabold" 
-                : "text-text-mid hover:text-text-dark"
+                ? "bg-white/70 backdrop-blur-sm text-blue-primary shadow-sm font-extrabold" 
+                : "text-text-mid hover:text-text-dark hover:bg-white/30"
             }`}
           >
             Find by Hospital & Clinic
@@ -222,8 +222,8 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
             onClick={() => setActiveTab("keyword")}
             className={`py-1.5 px-4 text-xs font-bold rounded-lg transition-all ${
               activeTab === "keyword" 
-                ? "bg-white text-blue-primary shadow-sm font-extrabold" 
-                : "text-text-mid hover:text-text-dark"
+                ? "bg-white/70 backdrop-blur-sm text-blue-primary shadow-sm font-extrabold" 
+                : "text-text-mid hover:text-text-dark hover:bg-white/30"
             }`}
           >
             Search by Name
@@ -309,7 +309,7 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
               placeholder="Search by doctor name, specialty, clinic..."
               value={keywordQuery}
               onChange={(e) => setKeywordQuery(e.target.value)}
-              className="bg-gray-bg border border-gray-border rounded-xl h-[50px] pl-11 pr-4 w-full text-sm font-semibold focus:outline-none focus:border-blue-primary focus:ring-1 focus:ring-blue-primary/30"
+              className="bg-white/30 backdrop-blur-sm border border-white/40 rounded-xl h-[50px] pl-11 pr-4 w-full text-sm font-semibold focus:outline-none focus:border-blue-primary focus:ring-1 focus:ring-blue-primary/30 placeholder:text-text-light"
             />
           </div>
 

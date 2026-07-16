@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ScrollRevealInit from "@/components/ScrollRevealInit";
+import AmbientBlobs from "@/components/AmbientBlobs";
 
 import { Providers } from "@/components/Providers";
 
@@ -24,6 +25,7 @@ export default function RootLayout({
     <html lang="en" className={cn("font-sans", inter.variable)}>
       <body className="antialiased min-h-screen flex flex-col">
         <Providers>
+          <AmbientBlobs />
           <ScrollRevealInit />
           <Navbar />
           <main className="flex-grow">{children}</main>
