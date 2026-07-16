@@ -47,11 +47,11 @@ export default function DoctorCard({
     return (
       <div 
         onClick={() => router.push(`/doctors/${slug}`)}
-        className="bg-white/40 backdrop-blur-xl border border-white/50 rounded-2xl flex flex-col hover:border-blue-primary/40 hover:bg-white/55 hover:shadow-xl hover:shadow-blue-primary/8 transition-all duration-300 cursor-pointer overflow-hidden group h-full card-hover"
+        className="bg-white/85 border border-gray-border/60 rounded-2xl flex flex-col hover:border-blue-primary/40 hover:shadow-xl hover:shadow-blue-primary/8 transition-[border-color,box-shadow,transform] duration-300 cursor-pointer overflow-hidden group h-full card-hover"
       >
         {/* Large Image Container */}
         <div className="relative w-full h-64 bg-gray-bg border-b border-gray-border">
-          <Image src={firstPhoto} alt={name} fill className="object-cover group-hover:scale-[1.02] transition-transform duration-500" />
+          <Image src={firstPhoto} alt={name} fill sizes="(max-width: 768px) 100vw, 25vw" className="object-cover group-hover:scale-[1.02] transition-transform duration-500" />
           <div className="absolute top-4 left-4">
             <span className="bg-blue-primary text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm">
               Featured
@@ -116,11 +116,11 @@ export default function DoctorCard({
   return (
     <div 
       onClick={() => router.push(`/doctors/${slug}`)}
-      className="bg-white/40 backdrop-blur-xl border border-white/50 rounded-2xl p-6 flex flex-col md:flex-row gap-6 hover:border-blue-primary/40 hover:bg-white/55 hover:shadow-xl hover:shadow-blue-primary/8 transition-all duration-300 cursor-pointer card-hover"
+      className="bg-white/85 border border-gray-border/60 rounded-2xl p-6 flex flex-col md:flex-row gap-6 hover:border-blue-primary/40 hover:shadow-xl hover:shadow-blue-primary/8 transition-[border-color,box-shadow,transform] duration-300 cursor-pointer card-hover"
     >
       {/* Left Column - Doctor Photo */}
       <div className="relative w-full md:w-40 h-44 rounded-2xl overflow-hidden shrink-0 bg-gray-50 border border-gray-border">
-        <Image src={firstPhoto} alt={name} fill className="object-cover" />
+        <Image src={firstPhoto} alt={name} fill sizes="(max-width: 768px) 100vw, 160px" className="object-cover" />
       </div>
 
       {/* Middle Column - Doctor Details */}

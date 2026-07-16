@@ -190,18 +190,18 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white/45 backdrop-blur-2xl rounded-3xl p-5 md:p-6 shadow-[0_12px_40px_rgba(26,18,100,0.06)] border border-white/50 w-full max-w-4xl mx-auto -mt-16 md:-mt-24 relative z-10">
+    <form onSubmit={handleSubmit} className="bg-white/90 rounded-3xl p-5 md:p-6 shadow-[0_12px_40px_rgba(26,18,100,0.06)] border border-gray-border/60 w-full max-w-4xl mx-auto -mt-16 md:-mt-24 relative z-10">
       
       {/* Centered Switch Tabs */}
       <div className="flex justify-center mb-6">
-        <div className="flex bg-white/30 backdrop-blur-lg p-1 rounded-xl border border-white/40 w-fit gap-1">
+        <div className="flex bg-gray-100/80 p-1 rounded-xl border border-gray-border/40 w-fit gap-1">
           <button
             type="button"
             onClick={() => setActiveTab("cascading")}
               className={`py-1.5 px-4 text-xs font-bold rounded-lg transition-all ${
               activeTab === "cascading" 
-                ? "bg-white/70 backdrop-blur-sm text-blue-primary shadow-sm font-extrabold" 
-                : "text-text-mid hover:text-text-dark hover:bg-white/30"
+                ? "bg-white text-blue-primary shadow-sm font-extrabold" 
+                : "text-text-mid hover:text-text-dark hover:bg-white/50"
             }`}
           >
             Quick Booking Wizard
@@ -209,10 +209,10 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
           <button
             type="button"
             onClick={() => setActiveTab("hospital")}
-            className={`py-1.5 px-4 text-xs font-bold rounded-lg transition-all ${
+            className={`py-1.5 px-4 text-xs font-bold rounded-lg transition-colors ${
               activeTab === "hospital" 
-                ? "bg-white/70 backdrop-blur-sm text-blue-primary shadow-sm font-extrabold" 
-                : "text-text-mid hover:text-text-dark hover:bg-white/30"
+                ? "bg-white text-blue-primary shadow-sm font-extrabold" 
+                : "text-text-mid hover:text-text-dark hover:bg-white/50"
             }`}
           >
             Find by Hospital & Clinic
@@ -220,10 +220,10 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
           <button
             type="button"
             onClick={() => setActiveTab("keyword")}
-            className={`py-1.5 px-4 text-xs font-bold rounded-lg transition-all ${
+            className={`py-1.5 px-4 text-xs font-bold rounded-lg transition-colors ${
               activeTab === "keyword" 
-                ? "bg-white/70 backdrop-blur-sm text-blue-primary shadow-sm font-extrabold" 
-                : "text-text-mid hover:text-text-dark hover:bg-white/30"
+                ? "bg-white text-blue-primary shadow-sm font-extrabold" 
+                : "text-text-mid hover:text-text-dark hover:bg-white/50"
             }`}
           >
             Search by Name
@@ -309,7 +309,7 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
               placeholder="Search by doctor name, specialty, clinic..."
               value={keywordQuery}
               onChange={(e) => setKeywordQuery(e.target.value)}
-              className="bg-white/30 backdrop-blur-sm border border-white/40 rounded-xl h-[50px] pl-11 pr-4 w-full text-sm font-semibold focus:outline-none focus:border-blue-primary focus:ring-1 focus:ring-blue-primary/30 placeholder:text-text-light"
+              className="bg-gray-100/60 border border-gray-border/40 rounded-xl h-[50px] pl-11 pr-4 w-full text-sm font-semibold focus:outline-none focus:border-blue-primary focus:ring-1 focus:ring-blue-primary/30 placeholder:text-text-light"
             />
           </div>
 
@@ -329,7 +329,7 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
       
       <Button 
         type="submit" 
-        className="w-full bg-blue-primary hover:bg-blue-hover text-white rounded-xl h-12 text-base font-bold shadow-md shadow-blue-primary/10 transition-all flex items-center justify-center gap-2"
+        className="w-full bg-blue-primary hover:bg-blue-hover text-white rounded-xl h-12 text-base font-bold shadow-md shadow-blue-primary/10 transition-[background-color,box-shadow] flex items-center justify-center gap-2"
       >
         <Search className="w-5 h-5" />
         {getButtonText()}

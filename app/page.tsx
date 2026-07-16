@@ -179,7 +179,7 @@ export default async function Home() {
         <SearchBar doctors={searchBarDoctors} hospitalGroups={hospitalGroups} />
       </AnimatedSection>
 
-      <AnimatedSection animation="reveal" delay={100} className="mx-4 mt-12 rounded-[2rem] border border-white/50 bg-white/35 px-4 py-6 shadow-[0_20px_60px_rgba(26,18,100,0.05)] backdrop-blur-2xl">
+      <AnimatedSection animation="reveal" delay={100} className="mx-4 mt-12 rounded-[2rem] border border-gray-border/50 bg-white/85 px-4 py-6 shadow-[0_20px_60px_rgba(26,18,100,0.05)]">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-6 md:gap-12">
           <div className="flex items-center gap-2 text-sm font-medium text-blue-primary transition-transform duration-200 hover:scale-105">
             <BadgeCheck className="h-5 w-5" /> {totalActiveDoctors} verified doctors
@@ -198,7 +198,7 @@ export default async function Home() {
 
       <section id="specialties" className="px-4 py-20">
         <AnimatedSection animation="reveal" className="premium-section relative z-10 mx-auto flex max-w-7xl flex-col items-center rounded-[2rem] px-6 py-14 text-center md:px-10">
-          <div className="mb-4 rounded-full border border-blue-primary/15 bg-blue-primary/8 backdrop-blur-sm px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-primary">
+          <div className="mb-4 rounded-full border border-blue-primary/15 bg-blue-primary/8 px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-primary">
             Browse by specialty
           </div>
           <h2 className="mb-12 text-3xl font-bold tracking-tight text-text-dark md:text-4xl">
@@ -218,7 +218,7 @@ export default async function Home() {
       <section className="bg-transparent px-4 py-20">
         <div className="mx-auto flex max-w-7xl flex-col items-center text-center">
           <AnimatedSection animation="reveal">
-            <div className="mb-4 rounded-full border border-blue-primary/15 bg-blue-primary/8 backdrop-blur-sm px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-primary">
+            <div className="mb-4 rounded-full border border-blue-primary/15 bg-blue-primary/8 px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-primary">
               Top rated
             </div>
             <h2 className="mb-12 text-3xl font-bold tracking-tight text-text-dark md:text-4xl">
@@ -236,7 +236,7 @@ export default async function Home() {
 
           <AnimatedSection animation="reveal" delay={300}>
             <Link href="/search">
-              <Button variant="outline" className="h-12 rounded-xl border-2 border-blue-primary bg-white/75 px-8 font-semibold text-blue-primary backdrop-blur-sm hover:bg-blue-light hover:shadow-lg hover:shadow-blue-primary/10 hover:-translate-y-0.5 transition-all duration-300">
+              <Button variant="outline" className="h-12 rounded-xl border-2 border-blue-primary bg-white/90 px-8 font-semibold text-blue-primary hover:bg-blue-light hover:shadow-lg hover:shadow-blue-primary/10 hover:-translate-y-0.5 transition-[background-color,box-shadow,transform] duration-300">
                 View all doctors
               </Button>
             </Link>
@@ -246,7 +246,7 @@ export default async function Home() {
 
       <section id="hospitals" className="px-4 py-20">
         <AnimatedSection animation="reveal" className="premium-section relative z-10 mx-auto flex max-w-7xl flex-col items-center rounded-[2rem] px-6 py-14 text-center md:px-10">
-          <div className="mb-4 rounded-full border border-blue-primary/15 bg-blue-primary/8 backdrop-blur-sm px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-primary">
+          <div className="mb-4 rounded-full border border-blue-primary/15 bg-blue-primary/8 px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-primary">
             Discover hospital wise
           </div>
           <h2 className="mb-12 text-3xl font-bold tracking-tight text-text-dark md:text-4xl">
@@ -258,7 +258,7 @@ export default async function Home() {
               <div key={h.id} className="stagger-child">
                 <Link
                   href={`/hospitals/${h.id}`}
-                  className="group flex cursor-pointer items-center gap-5 rounded-2xl border border-white/50 bg-white/40 p-6 shadow-[0_18px_40px_rgba(26,18,100,0.05)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-blue-primary/30 hover:bg-white/55 hover:shadow-[0_22px_44px_rgba(26,18,100,0.1)]"
+                  className="group flex cursor-pointer items-center gap-5 rounded-2xl border border-gray-border/50 bg-white/85 p-6 shadow-[0_18px_40px_rgba(26,18,100,0.05)] transition-[border-color,box-shadow,transform,background-color] duration-300 hover:-translate-y-1 hover:border-blue-primary/30 hover:shadow-[0_22px_44px_rgba(26,18,100,0.1)]"
                 >
                   <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-gray-border bg-gray-50">
                     <Image src={h.photoUrl} alt={h.name} fill className="object-cover transition-transform duration-500 group-hover:scale-110" />
@@ -281,7 +281,7 @@ export default async function Home() {
       <section id="cities" className="border-t border-gray-border/50 bg-transparent px-4 py-20">
         <div className="mx-auto flex max-w-7xl flex-col items-center text-center">
           <AnimatedSection animation="reveal">
-            <div className="mb-4 rounded-full border border-blue-primary/15 bg-blue-primary/8 backdrop-blur-sm px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-primary">
+            <div className="mb-4 rounded-full border border-blue-primary/15 bg-blue-primary/8 px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-primary">
               Available across the UAE
             </div>
             <h2 className="mb-12 text-3xl font-bold tracking-tight text-text-dark md:text-4xl">
@@ -297,7 +297,7 @@ export default async function Home() {
 
       <section className="px-4 py-20">
         <AnimatedSection animation="reveal" className="premium-section relative z-10 mx-auto flex max-w-7xl flex-col items-center rounded-[2rem] px-6 py-14 text-center md:px-10">
-          <div className="mb-4 rounded-full border border-blue-primary/15 bg-blue-primary/8 backdrop-blur-sm px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-primary">
+          <div className="mb-4 rounded-full border border-blue-primary/15 bg-blue-primary/8 px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-primary">
             Simple process
           </div>
           <h2 className="mb-16 text-3xl font-bold tracking-tight text-text-dark md:text-4xl">
@@ -305,21 +305,21 @@ export default async function Home() {
           </h2>
 
           <div className="grid w-full max-w-5xl grid-cols-1 gap-8 md:grid-cols-3">
-            <div className="stagger-child rounded-[1.75rem] border border-white/50 bg-white/40 p-8 shadow-[0_18px_40px_rgba(26,18,100,0.05)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/55 hover:shadow-xl">
+            <div className="stagger-child rounded-[1.75rem] border border-gray-border/50 bg-white/85 p-8 shadow-[0_18px_40px_rgba(26,18,100,0.05)] transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-1 hover:shadow-xl">
               <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-primary text-2xl font-bold text-white shadow-lg shadow-blue-primary/30 transition-transform duration-300 hover:scale-110">
                 1
               </div>
               <h3 className="mb-3 text-xl font-bold text-text-dark">Search</h3>
               <p className="text-text-mid">Find the right doctor by specialty, location, or spoken languages.</p>
             </div>
-            <div className="stagger-child rounded-[1.75rem] border border-white/50 bg-white/40 p-8 shadow-[0_18px_40px_rgba(26,18,100,0.05)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/55 hover:shadow-xl">
+            <div className="stagger-child rounded-[1.75rem] border border-gray-border/50 bg-white/85 p-8 shadow-[0_18px_40px_rgba(26,18,100,0.05)] transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-1 hover:shadow-xl">
               <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-primary text-2xl font-bold text-white shadow-lg shadow-blue-primary/30 transition-transform duration-300 hover:scale-110">
                 2
               </div>
               <h3 className="mb-3 text-xl font-bold text-text-dark">Choose a slot</h3>
               <p className="text-text-mid">View real-time availability and select a time that works best for you.</p>
             </div>
-            <div className="stagger-child rounded-[1.75rem] border border-white/50 bg-white/40 p-8 shadow-[0_18px_40px_rgba(26,18,100,0.05)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/55 hover:shadow-xl">
+            <div className="stagger-child rounded-[1.75rem] border border-gray-border/50 bg-white/85 p-8 shadow-[0_18px_40px_rgba(26,18,100,0.05)] transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-1 hover:shadow-xl">
               <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-primary text-2xl font-bold text-white shadow-lg shadow-blue-primary/30 transition-transform duration-300 hover:scale-110">
                 3
               </div>
