@@ -80,7 +80,7 @@ export default async function Home() {
       return {
         id: h.id,
         name: h.name,
-        photoUrl: h.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(h.name)}&background=2200CC&color=fff`,
+        photoUrl: h.photoUrl ? h.photoUrl.split(",")[0].trim() : `https://ui-avatars.com/api/?name=${encodeURIComponent(h.name)}&background=2200CC&color=fff`,
         branchCount,
         doctorCount,
         clinics: h.clinics.map((c) => ({
@@ -119,7 +119,6 @@ export default async function Home() {
     rating: d.rating,
     reviews: d.reviews,
     city: d.city,
-    countryFlag: "AE",
     languages: d.languages.split(",").map((s: string) => s.trim()),
     fee: d.fee,
     currency: "AED",

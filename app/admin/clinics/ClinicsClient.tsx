@@ -7,6 +7,7 @@ import { Plus, Pencil, Trash2, CheckCircle2, X, Building, MapPin, Phone, Mail } 
 import { Button } from "@/components/ui/button";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminHeader from "@/components/AdminHeader";
+import PhotoUploader from "@/components/admin/PhotoUploader";
 import { createClinic, updateClinic, deleteClinic } from "@/app/actions/admin";
 
 interface ClinicData {
@@ -16,6 +17,7 @@ interface ClinicData {
   email: string;
   phone: string;
   photoUrl: string | null;
+  aboutUs: string | null;
   hospitalGroup: {
     id: string;
     name: string;
@@ -285,17 +287,23 @@ export default function ClinicsClient({ clinics, hospitalGroups }: ClinicsClient
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-semibold text-text-dark">Photo</label>
-                <input
-                  name="photo"
-                  type="file"
-                  accept="image/*"
-                  className="bg-gray-bg border border-gray-border rounded-xl h-11 p-3 text-sm font-medium focus:outline-none focus:border-blue-primary"
-                />
-                {editingClinic?.photoUrl && (
-                  <p className="text-xs text-text-mid mt-1">Current Photo: <a href={editingClinic.photoUrl} target="_blank" className="text-blue-primary underline">View Photo</a></p>
-                )}
+                <label className="text-sm font-semibold text-text-dark">About Us</label>
+                <textarea
+                  name="aboutUs"
+                  defaultValue={editingClinic?.aboutUs || ""}
+                  rows={4}
+                  placeholder="A short description of this branch, shown publicly on its profile page..."
+                  className="bg-gray-bg border border-gray-border rounded-xl p-4 text-sm font-medium focus:outline-none focus:border-blue-primary resize-none"
+                ></textarea>
               </div>
+
+              <PhotoUploader
+                key={editingClinic?.id ?? "new"}
+                existingPhotoUrl={editingClinic?.photoUrl}
+                fileFieldName="photos"
+                keptUrlsFieldName="existingPhotos"
+                label="Branch Photos"
+              />
 
               <div className="flex justify-end gap-3 pt-4 border-t border-gray-border mt-4">
                 <Button type="button" onClick={() => setIsAddModalOpen(false)} variant="outline" className="h-11 px-6 rounded-xl font-bold border-gray-border hover:bg-gray-200">

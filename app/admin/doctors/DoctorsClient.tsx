@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import CustomDropdown from "@/components/ui/CustomDropdown";
 import Image from "next/image";
-import { Users, Activity, Calendar, Search, Plus, X, Upload, CheckCircle2, Bell, Pause, Play, Pencil, Trash2 } from "lucide-react";
+import { Users, Activity, Calendar, Search, Plus, X, Upload, CheckCircle2, Bell, Pause, Play, Pencil, Trash2, AlertTriangle, Info, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createDoctor, updateDoctor, deleteDoctor, toggleDoctorStatus } from "@/app/actions/doctors";
 import { useRouter } from "next/navigation";
@@ -520,7 +520,7 @@ export default function DoctorsClient({
         <div className="fixed inset-0 z-55 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-3xl border border-gray-border shadow-2xl w-full max-w-md p-6 text-center flex flex-col items-center animate-in zoom-in-95 duration-200">
             <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-4 ${confirmModal.isDanger ? "bg-red-50 text-red-600" : "bg-blue-light text-blue-primary"}`}>
-              {confirmModal.isDanger ? <span className="text-2xl font-bold">⚠️</span> : <span className="text-2xl font-bold">ℹ️</span>}
+              {confirmModal.isDanger ? <AlertTriangle className="w-7 h-7" /> : <Info className="w-7 h-7" />}
             </div>
             <h3 className="text-lg font-bold text-text-dark mb-2">{confirmModal.title}</h3>
             <p className="text-sm text-text-mid mb-6 leading-relaxed">{confirmModal.description}</p>
@@ -552,7 +552,7 @@ export default function DoctorsClient({
         <div className="fixed inset-0 z-55 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-3xl border border-gray-border shadow-2xl w-full max-w-md p-6 text-center flex flex-col items-center animate-in zoom-in-95 duration-200">
             <div className="w-14 h-14 bg-red-50 text-red-600 rounded-full flex items-center justify-center mb-4">
-              <span className="text-2xl font-bold">❌</span>
+              <XCircle className="w-7 h-7" />
             </div>
             <h3 className="text-lg font-bold text-text-dark mb-2">{alertModal.title}</h3>
             <p className="text-sm text-text-mid mb-6 leading-relaxed">{alertModal.description}</p>

@@ -33,7 +33,6 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
     rating: dbDoctor.rating,
     reviews: dbDoctor.reviews,
     city: dbDoctor.city,
-    countryFlag: "🇦🇪",
     languages: dbDoctor.languages.split(",").map(lang => lang.trim()),
     fee: dbDoctor.fee,
     currency: "AED",
@@ -105,7 +104,7 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
                     <span className="text-text-light underline cursor-help hover:text-blue-primary">({doctor.reviews} reviews)</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span>{doctor.countryFlag}</span>
+                    <MapPin className="w-4 h-4 text-blue-primary" />
                     <span className="font-semibold text-text-dark">{doctor.city}</span>
                   </div>
                   <div className="flex items-center gap-2 font-medium bg-blue-light text-blue-primary px-3 py-1 rounded-full">

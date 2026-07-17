@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { BadgeCheck, Star, MapPin, Stethoscope, Globe2 } from "lucide-react";
+import { BadgeCheck, Star, MapPin, Stethoscope, Building2 } from "lucide-react";
 import { buttonVariants } from "./ui/button";
 import { Badge } from "./ui/badge";
 
@@ -14,7 +14,6 @@ interface DoctorCardProps {
   rating: number;
   reviews: number;
   city: string;
-  countryFlag?: string;
   languages: string[];
   photoUrl: string;
   isVerified: boolean;
@@ -30,7 +29,6 @@ export default function DoctorCard({
   rating,
   reviews,
   city,
-  countryFlag = "🇦🇪",
   languages,
   photoUrl,
   isVerified,
@@ -72,8 +70,8 @@ export default function DoctorCard({
 
           {/* Clinic & City details */}
           {clinicName && (
-            <p className="text-xs font-bold text-text-mid mb-1 line-clamp-1">
-              🏢 {clinicName}
+            <p className="text-xs font-bold text-text-mid mb-1 line-clamp-1 flex items-center gap-1">
+              <Building2 className="w-3.5 h-3.5 shrink-0" /> {clinicName}
             </p>
           )}
 
@@ -141,7 +139,7 @@ export default function DoctorCard({
 
         {clinicName && (
           <div className="text-sm font-semibold text-text-dark flex items-center gap-1.5">
-            <span className="text-lg">🏢</span>
+            <Building2 className="w-4 h-4 text-blue-primary shrink-0" />
             <span>{clinicName}</span>
           </div>
         )}

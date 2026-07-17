@@ -1,7 +1,7 @@
 import FilterSidebar from "@/components/FilterSidebar";
 import DoctorCard from "@/components/DoctorCard";
 import SortDropdown from "@/components/SortDropdown";
-import { SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal, SearchX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import prisma from "@/lib/prisma";
@@ -113,7 +113,6 @@ export default async function SearchResultsPage({
     rating: d.rating,
     reviews: d.reviews,
     city: d.city,
-    countryFlag: "🇦🇪",
     languages: d.languages.split(",").map(lang => lang.trim()),
     photoUrl: d.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(d.name)}&background=2200CC&color=fff`,
     isVerified: true,
@@ -173,7 +172,7 @@ export default async function SearchResultsPage({
           <div className="flex-1 flex flex-col gap-6">
             {doctors.length === 0 ? (
               <div className="bg-white border border-gray-border rounded-xl p-12 text-center flex flex-col items-center gap-4">
-                <span className="text-4xl">🔍</span>
+                <SearchX className="w-10 h-10 text-text-light" />
                 <h3 className="font-bold text-text-dark text-lg">No Doctors Found</h3>
                 <p className="text-text-mid max-w-sm text-sm">We couldn't find any active doctors matching your search query. Try broadening your criteria or search parameters!</p>
               </div>

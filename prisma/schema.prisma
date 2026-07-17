@@ -49,6 +49,7 @@ model Clinic {
   email           String        @default("info@clinic.com")
   phone           String        @default("+971 800 7777")
   photoUrl        String?       @db.VarChar(500)
+  aboutUs         String?       @db.Text
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
   doctors         Doctor[]

@@ -7,6 +7,7 @@ import { Plus, Pencil, Trash2, CheckCircle2, X, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminHeader from "@/components/AdminHeader";
+import PhotoUploader from "@/components/admin/PhotoUploader";
 import { createHospitalGroup, updateHospitalGroup, deleteHospitalGroup } from "@/app/actions/admin";
 
 interface HospitalData {
@@ -186,18 +187,13 @@ export default function HospitalsClient({ hospitals }: HospitalsClientProps) {
                 />
               </div>
 
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-semibold text-text-dark">Logo Photo</label>
-                <input
-                  name="photo"
-                  type="file"
-                  accept="image/*"
-                  className="bg-gray-bg border border-gray-border rounded-xl h-12 p-3 text-sm font-medium focus:outline-none focus:border-blue-primary"
-                />
-                {editingHospital?.photoUrl && (
-                  <p className="text-xs text-text-mid mt-1">Current Logo: <a href={editingHospital.photoUrl} target="_blank" className="text-blue-primary underline">View Logo</a></p>
-                )}
-              </div>
+              <PhotoUploader
+                key={editingHospital?.id ?? "new"}
+                existingPhotoUrl={editingHospital?.photoUrl}
+                fileFieldName="photos"
+                keptUrlsFieldName="existingPhotos"
+                label="Hospital Group Photos"
+              />
 
               <div className="flex justify-end gap-3 pt-4 border-t border-gray-border mt-2">
                 <Button type="button" onClick={() => setIsAddModalOpen(false)} variant="outline" className="h-11 px-6 rounded-xl font-bold border-gray-border hover:bg-gray-200">

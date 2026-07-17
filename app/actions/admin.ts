@@ -15,6 +15,14 @@ async function requireAdmin() {
   }
 }
 
+const MAX_PHOTOS = 10;
+
+function mergePhotoUrls(keptUrlsCsv: string, uploadedCsv: string): string {
+  const kept = keptUrlsCsv.split(",").map((s) => s.trim()).filter(Boolean);
+  const uploaded = uploadedCsv.split(",").map((s) => s.trim()).filter(Boolean);
+  return [...kept, ...uploaded].join(",");
+}
+
 // ==========================================
 // SPECIALTY ACTIONS
 // ==========================================
@@ -94,11 +102,18 @@ export async function createHospitalGroup(formData: FormData) {
   try {
     await requireAdmin();
     const name = formData.get("name") as string;
-    const photo = formData.get("photo") as File;
-    const uploadedUrl = await uploadImages([photo]);
-    const photoUrl = uploadedUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff&size=500`;
+    const photos = formData.getAll("photos") as File[];
+    const existingPhotos = (formData.get("existingPhotos") as string) || "";
 
     if (!name) return { success: false, error: "Name is required" };
+
+    if (photos.filter((f) => f && f.size > 0).length + existingPhotos.split(",").filter(Boolean).length > MAX_PHOTOS) {
+      return { success: false, error: `Maximum ${MAX_PHOTOS} photos allowed` };
+    }
+
+    const uploadedUrl = await uploadImages(photos);
+    const merged = mergePhotoUrls(existingPhotos, uploadedUrl);
+    const photoUrl = merged || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff&size=500`;
 
     const hospitalGroup = await prisma.hospitalGroup.create({
       data: {
@@ -119,16 +134,24 @@ export async function updateHospitalGroup(id: string, formData: FormData) {
   try {
     await requireAdmin();
     const name = formData.get("name") as string;
-    const photo = formData.get("photo") as File;
-    const uploadedUrl = await uploadImages([photo]);
+    const photos = formData.getAll("photos") as File[];
+    const existingPhotos = (formData.get("existingPhotos") as string) || "";
+    const photoUploaderTouched = formData.has("existingPhotos");
 
     if (!name) return { success: false, error: "Name is required" };
+
+    if (photos.filter((f) => f && f.size > 0).length + existingPhotos.split(",").filter(Boolean).length > MAX_PHOTOS) {
+      return { success: false, error: `Maximum ${MAX_PHOTOS} photos allowed` };
+    }
+
+    const uploadedUrl = await uploadImages(photos);
+    const merged = mergePhotoUrls(existingPhotos, uploadedUrl);
 
     const hospitalGroup = await prisma.hospitalGroup.update({
       where: { id },
       data: {
         name,
-        ...(uploadedUrl ? { photoUrl: uploadedUrl } : {})
+        ...(photoUploaderTouched ? { photoUrl: merged || null } : {})
       }
     });
 
@@ -166,12 +189,20 @@ export async function createClinic(formData: FormData) {
     const city = formData.get("city") as string;
     const email = formData.get("email") as string;
     const phone = formData.get("phone") as string;
-    const photo = formData.get("photo") as File;
-    const uploadedUrl = await uploadImages([photo]);
+    const aboutUs = formData.get("aboutUs") as string;
+    const photos = formData.getAll("photos") as File[];
+    const existingPhotos = (formData.get("existingPhotos") as string) || "";
 
     if (!hospitalGroupId || !name || !city) {
       return { success: false, error: "Hospital Group, Branch Name, and City are required" };
     }
+
+    if (photos.filter((f) => f && f.size > 0).length + existingPhotos.split(",").filter(Boolean).length > MAX_PHOTOS) {
+      return { success: false, error: `Maximum ${MAX_PHOTOS} photos allowed` };
+    }
+
+    const uploadedUrl = await uploadImages(photos);
+    const merged = mergePhotoUrls(existingPhotos, uploadedUrl);
 
     const clinic = await prisma.clinic.create({
       data: {
@@ -180,7 +211,8 @@ export async function createClinic(formData: FormData) {
         city,
         email: email || "info@clinic.com",
         phone: phone || "+971 800 7777",
-        photoUrl: uploadedUrl || null
+        aboutUs: aboutUs || null,
+        photoUrl: merged || null
       }
     });
 
@@ -202,12 +234,21 @@ export async function updateClinic(id: string, formData: FormData) {
     const city = formData.get("city") as string;
     const email = formData.get("email") as string;
     const phone = formData.get("phone") as string;
-    const photo = formData.get("photo") as File;
-    const uploadedUrl = await uploadImages([photo]);
+    const aboutUs = formData.get("aboutUs") as string;
+    const photos = formData.getAll("photos") as File[];
+    const existingPhotos = (formData.get("existingPhotos") as string) || "";
+    const photoUploaderTouched = formData.has("existingPhotos");
 
     if (!hospitalGroupId || !name || !city) {
       return { success: false, error: "Hospital Group, Branch Name, and City are required" };
     }
+
+    if (photos.filter((f) => f && f.size > 0).length + existingPhotos.split(",").filter(Boolean).length > MAX_PHOTOS) {
+      return { success: false, error: `Maximum ${MAX_PHOTOS} photos allowed` };
+    }
+
+    const uploadedUrl = await uploadImages(photos);
+    const merged = mergePhotoUrls(existingPhotos, uploadedUrl);
 
     const clinic = await prisma.clinic.update({
       where: { id },
@@ -217,7 +258,8 @@ export async function updateClinic(id: string, formData: FormData) {
         city,
         email: email || "info@clinic.com",
         phone: phone || "+971 800 7777",
-        ...(uploadedUrl ? { photoUrl: uploadedUrl } : {})
+        aboutUs: aboutUs || null,
+        ...(photoUploaderTouched ? { photoUrl: merged || null } : {})
       }
     });
 
