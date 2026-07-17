@@ -101,7 +101,7 @@ export default function CustomDropdown({
 
       {/* Floating Menu List */}
       {isOpen && !disabled && (
-        <div className="absolute left-0 right-0 mt-2 bg-white border border-gray-border rounded-xl shadow-[0_12px_32px_rgba(0,0,0,0.12)] z-[99] max-h-60 overflow-y-auto py-1.5 animate-in fade-in-50 slide-in-from-top-1 duration-150">
+        <div className="absolute left-0 right-0 mt-2 bg-white border border-gray-border rounded-xl shadow-[0_12px_32px_rgba(0,0,0,0.12)] z-[9999] max-h-60 overflow-y-auto py-1.5 animate-in fade-in-50 slide-in-from-top-1 duration-150">
           {/* Default Option if not value */}
           <div
             onClick={() => handleSelect("")}

@@ -175,8 +175,8 @@ export default async function Home() {
         </div>
       </section>
 
-      <AnimatedSection animation="reveal-scale" className="px-4">
-        <SearchBar doctors={searchBarDoctors} hospitalGroups={hospitalGroups} />
+      <AnimatedSection animation="reveal-scale" className="px-4 relative z-20">
+        <SearchBar doctors={searchBarDoctors} />
       </AnimatedSection>
 
       <AnimatedSection animation="reveal" delay={100} className="mx-4 mt-12 rounded-[2rem] border border-gray-border/50 bg-white/85 px-4 py-6 shadow-[0_20px_60px_rgba(26,18,100,0.05)]">
