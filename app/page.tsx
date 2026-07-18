@@ -178,6 +178,23 @@ export default async function Home() {
         <SearchBar doctors={searchBarDoctors} />
       </AnimatedSection>
 
+      <AnimatedSection animation="reveal" delay={100} className="mx-4 my-10 flex justify-center">
+        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 rounded-full border border-blue-primary/15 bg-white/80 px-6 py-3.5 text-caption font-medium text-blue-primary shadow-sm backdrop-blur-md md:gap-x-12 md:px-10">
+          <div className="flex items-center gap-2 transition-transform duration-200 hover:scale-105">
+            <BadgeCheck className="h-4 w-4" /> {totalActiveDoctors} verified doctors
+          </div>
+          <div className="flex items-center gap-2 transition-transform duration-200 hover:scale-105">
+            <Globe className="h-4 w-4" /> Dubai, Sharjah & Abu Dhabi
+          </div>
+          <div className="flex items-center gap-2 transition-transform duration-200 hover:scale-105">
+            <Zap className="h-4 w-4" /> Instant confirmation
+          </div>
+          <div className="flex items-center gap-2 transition-transform duration-200 hover:scale-105">
+            <Star className="h-4 w-4" /> 4.8/5 patient rating
+          </div>
+        </div>
+      </AnimatedSection>
+
       <section id="specialties" className="relative overflow-hidden px-4 py-20">
         <div className="absolute inset-0 -z-10 bg-[#0F172A]">
           <Image src="/specialties_bg.webp" alt="" fill sizes="100vw" className="hidden object-cover opacity-85 md:block" />
@@ -201,21 +218,6 @@ export default async function Home() {
                 <SpecialtyCard {...s} />
               </div>
             ))}
-          </div>
-
-          <div className="mt-14 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 rounded-full border border-white/15 bg-white/10 px-6 py-3.5 text-caption font-medium text-blue-100 backdrop-blur-md md:gap-x-12 md:px-10">
-            <div className="flex items-center gap-2 transition-transform duration-200 hover:scale-105">
-              <BadgeCheck className="h-4 w-4 text-blue-200" /> {totalActiveDoctors} verified doctors
-            </div>
-            <div className="flex items-center gap-2 transition-transform duration-200 hover:scale-105">
-              <Globe className="h-4 w-4 text-blue-200" /> Dubai, Sharjah & Abu Dhabi
-            </div>
-            <div className="flex items-center gap-2 transition-transform duration-200 hover:scale-105">
-              <Zap className="h-4 w-4 text-blue-200" /> Instant confirmation
-            </div>
-            <div className="flex items-center gap-2 transition-transform duration-200 hover:scale-105">
-              <Star className="h-4 w-4 text-blue-200" /> 4.8/5 patient rating
-            </div>
           </div>
         </AnimatedSection>
       </section>
