@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { CheckCircle2, HeartPulse, ShieldCheck, Users, Building2, MapPin, Target, Compass, Zap } from "lucide-react";
+import { CheckCircle2, HeartPulse, ShieldCheck, Users, Building2, MapPin, Compass, Zap } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
@@ -85,33 +85,20 @@ export default async function AboutPage() {
         <div className="max-w-6xl mx-auto">
           <div className="mx-auto mb-14 max-w-2xl text-center">
             <span className="mb-4 inline-block rounded-full border border-blue-primary/15 bg-blue-primary/8 px-3 py-1 text-caption font-bold uppercase tracking-[0.06em] text-blue-primary">
-              Why we exist
+              Looking ahead
             </span>
             <h2 className="text-3xl md:text-4xl font-bold text-text-dark leading-tight">
-              Mission &amp; Vision
+              Our Vision
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="rounded-2xl border border-gray-border bg-white p-8 shadow-sm transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-1 hover:border-blue-primary/30 hover:shadow-lg hover:shadow-blue-primary/8">
-              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-primary text-white">
-                <Target className="h-7 w-7" />
-              </div>
-              <h3 className="mb-3 text-xl font-bold text-text-dark">Our Mission</h3>
-              <p className="text-text-mid leading-relaxed">
-                To make quality healthcare in the UAE transparent, accessible, and a few taps away — connecting patients with verified specialists without the friction of phone calls, long hold times, or guesswork.
-              </p>
+          <div className="mx-auto max-w-2xl rounded-2xl border border-gray-border bg-white p-8 text-center shadow-sm md:p-10">
+            <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-primary text-white">
+              <Compass className="h-7 w-7" />
             </div>
-
-            <div className="rounded-2xl border border-gray-border bg-white p-8 shadow-sm transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-1 hover:border-blue-primary/30 hover:shadow-lg hover:shadow-blue-primary/8">
-              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-primary text-white">
-                <Compass className="h-7 w-7" />
-              </div>
-              <h3 className="mb-3 text-xl font-bold text-text-dark">Our Vision</h3>
-              <p className="text-text-mid leading-relaxed">
-                To become the most trusted digital front door to healthcare across the UAE — where finding and booking the right doctor is as simple as booking a table, for every patient and every clinic we serve.
-              </p>
-            </div>
+            <p className="text-lg leading-relaxed text-text-mid">
+              To become the most trusted digital front door to healthcare across the UAE — where finding and booking the right doctor is as simple as booking a table, for every patient and every clinic we serve.
+            </p>
           </div>
         </div>
       </section>
@@ -139,7 +126,7 @@ export default async function AboutPage() {
             </ul>
           </div>
           <div className="w-full md:w-1/2 relative h-[400px] md:h-[500px] rounded-3xl overflow-hidden shadow-2xl">
-            <Image src="/cta_doctors_bg.webp" alt="Docmate verified doctors" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover object-top" />
+            <Image src="/cta_doctors_bg.webp" alt="Docmate verified doctors" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover object-[right_top]" />
           </div>
         </div>
       </section>
