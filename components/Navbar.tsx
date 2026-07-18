@@ -37,7 +37,7 @@ export default function Navbar() {
     // Scroll spy for homepage sections
     let observer: IntersectionObserver;
     if (pathname === "/") {
-      const sections = ["specialties", "areas"];
+      const sections = ["specialties", "cities"];
       const elements = sections.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
       
       const observerOptions = {

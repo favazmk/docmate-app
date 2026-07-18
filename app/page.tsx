@@ -128,9 +128,9 @@ export default async function Home() {
   }));
 
   const topCities = [
-    { flag: "DXB", name: "Dubai", cities: "Dubai's top hospitals & clinics", href: "/search?city=Dubai" },
-    { flag: "AUH", name: "Abu Dhabi", cities: "Capital healthcare & medical centers", href: "/search?city=Abu%20Dhabi" },
-    { flag: "SHJ", name: "Sharjah", cities: "Family-focused clinics & polyclinics", href: "/search?city=Sharjah" },
+    { flag: "DXB", name: "Dubai", cities: "Dubai's top hospitals & clinics", href: "/search?city=Dubai", image: "/city_dubai.webp" },
+    { flag: "AUH", name: "Abu Dhabi", cities: "Capital healthcare & medical centers", href: "/search?city=Abu%20Dhabi", image: "/city_abudhabi.webp" },
+    { flag: "SHJ", name: "Sharjah", cities: "Family-focused clinics & polyclinics", href: "/search?city=Sharjah", image: "/city_sharjah.webp" },
   ];
 
   return (
@@ -162,10 +162,10 @@ export default async function Home() {
         <HeroOrbs />
 
         <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center text-center">
-          <span className="hero-badge mb-4 rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.28em] text-blue-200 backdrop-blur-md">
+          <span className="hero-badge mb-4 rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-caption font-medium uppercase tracking-[0.06em] text-blue-200 backdrop-blur-md">
             Dubai's #1 doctor booking platform
           </span>
-          <h1 className="hero-title mb-6 text-4xl font-semibold leading-tight tracking-tight text-white md:text-5xl lg:text-6xl">
+          <h1 className="hero-title mb-6 text-display font-bold text-white">
             Find and Book the <span className="hero-title-delay text-blue-200">Best Doctors</span> Near You
           </h1>
           <p className="hero-subtitle mx-auto mb-8 max-w-2xl text-lg font-medium text-slate-200 md:text-xl lg:mx-0">
@@ -178,31 +178,22 @@ export default async function Home() {
         <SearchBar doctors={searchBarDoctors} />
       </AnimatedSection>
 
-      <AnimatedSection animation="reveal" delay={100} className="mx-4 mt-12 rounded-[2rem] border border-gray-border/50 bg-white/85 px-4 py-6 shadow-[0_20px_60px_rgba(26,18,100,0.05)]">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-6 md:gap-12">
-          <div className="flex items-center gap-2 text-sm font-medium text-blue-primary transition-transform duration-200 hover:scale-105">
-            <BadgeCheck className="h-5 w-5" /> {totalActiveDoctors} verified doctors
-          </div>
-          <div className="flex items-center gap-2 text-sm font-medium text-blue-primary transition-transform duration-200 hover:scale-105">
-            <Globe className="h-5 w-5" /> Dubai, Sharjah & Abu Dhabi
-          </div>
-          <div className="flex items-center gap-2 text-sm font-medium text-blue-primary transition-transform duration-200 hover:scale-105">
-            <Zap className="h-5 w-5" /> Instant confirmation
-          </div>
-          <div className="flex items-center gap-2 text-sm font-medium text-blue-primary transition-transform duration-200 hover:scale-105">
-            <Star className="h-5 w-5" /> 4.8/5 patient rating
-          </div>
+      <section id="specialties" className="relative overflow-hidden px-4 py-20">
+        <div className="absolute inset-0 -z-10 bg-[#0F172A]">
+          <Image src="/specialties_bg.webp" alt="" fill sizes="100vw" className="hidden object-cover opacity-85 md:block" />
+          <Image src="/specialties_bg_mob.webp" alt="" fill sizes="100vw" className="block object-cover opacity-85 md:hidden" />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-900/20 via-slate-900/35 to-slate-900/55" />
         </div>
-      </AnimatedSection>
-
-      <section id="specialties" className="px-4 py-20">
-        <AnimatedSection animation="reveal" className="premium-section relative z-10 mx-auto flex max-w-7xl flex-col items-center rounded-[2rem] px-6 py-14 text-center md:px-10">
-          <div className="mb-4 rounded-full border border-blue-primary/15 bg-blue-primary/8 px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-primary">
+        <AnimatedSection animation="reveal" className="relative z-10 mx-auto flex max-w-7xl flex-col items-center text-center">
+          <div className="mb-4 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-caption font-bold uppercase tracking-[0.06em] text-blue-200 backdrop-blur-md">
             Browse by specialty
           </div>
-          <h2 className="mb-12 text-3xl font-bold tracking-tight text-text-dark md:text-4xl">
+          <h2 className="mb-3 text-heading font-bold text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)]">
             What are you looking for?
           </h2>
+          <p className="mb-12 max-w-xl text-slate-200">
+            Search doctors by specialty across Dubai, Sharjah and Abu Dhabi.
+          </p>
 
           <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-4">
             {specialties.map((s, i) => (
@@ -211,18 +202,33 @@ export default async function Home() {
               </div>
             ))}
           </div>
+
+          <div className="mt-14 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 rounded-full border border-white/15 bg-white/10 px-6 py-3.5 text-caption font-medium text-blue-100 backdrop-blur-md md:gap-x-12 md:px-10">
+            <div className="flex items-center gap-2 transition-transform duration-200 hover:scale-105">
+              <BadgeCheck className="h-4 w-4 text-blue-200" /> {totalActiveDoctors} verified doctors
+            </div>
+            <div className="flex items-center gap-2 transition-transform duration-200 hover:scale-105">
+              <Globe className="h-4 w-4 text-blue-200" /> Dubai, Sharjah & Abu Dhabi
+            </div>
+            <div className="flex items-center gap-2 transition-transform duration-200 hover:scale-105">
+              <Zap className="h-4 w-4 text-blue-200" /> Instant confirmation
+            </div>
+            <div className="flex items-center gap-2 transition-transform duration-200 hover:scale-105">
+              <Star className="h-4 w-4 text-blue-200" /> 4.8/5 patient rating
+            </div>
+          </div>
         </AnimatedSection>
       </section>
 
       <section className="bg-transparent px-4 py-20">
         <div className="mx-auto flex max-w-7xl flex-col items-center text-center">
           <AnimatedSection animation="reveal">
-            <div className="mb-4 rounded-full border border-blue-primary/15 bg-blue-primary/8 px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-primary">
-              Top rated
-            </div>
-            <h2 className="mb-12 text-3xl font-bold tracking-tight text-text-dark md:text-4xl">
+            <h2 className="mb-3 text-heading font-bold text-text-dark">
               Featured doctors
             </h2>
+            <p className="mx-auto mb-12 max-w-xl text-text-mid">
+              A closer look at some of our highest-rated, verified specialists.
+            </p>
           </AnimatedSection>
 
           <div className="mb-10 grid w-full grid-cols-1 gap-6 text-left md:grid-cols-2 lg:grid-cols-4">
@@ -243,27 +249,32 @@ export default async function Home() {
         </div>
       </section>
 
-      <section id="hospitals" className="px-4 py-20">
-        <AnimatedSection animation="reveal" className="premium-section relative z-10 mx-auto flex max-w-7xl flex-col items-center rounded-[2rem] px-6 py-14 text-center md:px-10">
-          <div className="mb-4 rounded-full border border-blue-primary/15 bg-blue-primary/8 px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-primary">
-            Discover hospital wise
-          </div>
-          <h2 className="mb-12 text-3xl font-bold tracking-tight text-text-dark md:text-4xl">
+      <section id="hospitals" className="relative overflow-hidden px-4 py-20">
+        <div className="absolute inset-0 -z-10 bg-[#0F172A]">
+          <Image src="/hospitals_bg.webp" alt="" fill sizes="100vw" className="hidden object-cover opacity-85 md:block" />
+          <Image src="/hospitals_bg_mob.webp" alt="" fill sizes="100vw" className="block object-cover opacity-85 md:hidden" />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-900/20 via-slate-900/35 to-slate-900/55" />
+        </div>
+        <AnimatedSection animation="reveal" className="relative z-10 mx-auto flex max-w-7xl flex-col items-center rounded-2xl px-6 py-14 text-center md:px-10">
+          <h2 className="mb-3 text-heading font-bold text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)]">
             Top Hospital Groups & Healthcare Networks
           </h2>
+          <p className="mb-12 max-w-xl text-slate-200">
+            Trusted networks with multiple branches across the UAE.
+          </p>
 
           <div className="grid w-full grid-cols-1 gap-6 text-left sm:grid-cols-2 lg:grid-cols-3">
             {hospitalGroups.map((h, i) => (
               <div key={h.id} className="stagger-child">
                 <Link
                   href={`/hospitals/${h.id}`}
-                  className="group flex cursor-pointer items-center gap-5 rounded-2xl border border-gray-border/50 bg-white/85 p-6 shadow-[0_18px_40px_rgba(26,18,100,0.05)] transition-[border-color,box-shadow,transform,background-color] duration-300 hover:-translate-y-1 hover:border-blue-primary/30 hover:shadow-[0_22px_44px_rgba(26,18,100,0.1)]"
+                  className="group flex cursor-pointer items-center gap-5 rounded-2xl border border-white/40 bg-white/45 p-6 backdrop-blur-md transition-[border-color,box-shadow,transform,background-color] duration-300 hover:-translate-y-1 hover:border-blue-primary/30 hover:bg-white/60 hover:shadow-lg hover:shadow-blue-primary/8"
                 >
                   <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-gray-border bg-gray-50">
                     <Image src={h.photoUrl} alt={h.name} fill className="object-cover transition-transform duration-500 group-hover:scale-110" />
                   </div>
                   <div className="flex flex-col">
-                    <h3 className="text-lg font-extrabold text-text-dark transition-colors duration-300 group-hover:text-blue-primary">
+                    <h3 className="text-subheading font-bold text-text-dark transition-colors duration-300 group-hover:text-blue-primary">
                       {h.name}
                     </h3>
                     <p className="mt-1 text-xs font-medium text-text-mid">
@@ -280,46 +291,45 @@ export default async function Home() {
       <section id="cities" className="border-t border-gray-border/50 bg-transparent px-4 py-20">
         <div className="mx-auto flex max-w-7xl flex-col items-center text-center">
           <AnimatedSection animation="reveal">
-            <div className="mb-4 rounded-full border border-blue-primary/15 bg-blue-primary/8 px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-primary">
-              Available across the UAE
-            </div>
-            <h2 className="mb-12 text-3xl font-bold tracking-tight text-text-dark md:text-4xl">
+            <h2 className="mb-12 text-heading font-bold text-text-dark">
               Top Cities in the UAE
             </h2>
           </AnimatedSection>
 
-          <AnimatedSection animation="reveal" delay={150}>
+          <AnimatedSection animation="reveal" delay={150} className="w-full">
             <CitiesGrid areas={topCities} />
           </AnimatedSection>
         </div>
       </section>
 
-      <section className="px-4 py-20">
-        <AnimatedSection animation="reveal" className="premium-section relative z-10 mx-auto flex max-w-7xl flex-col items-center rounded-[2rem] px-6 py-14 text-center md:px-10">
-          <div className="mb-4 rounded-full border border-blue-primary/15 bg-blue-primary/8 px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-primary">
-            Simple process
-          </div>
-          <h2 className="mb-16 text-3xl font-bold tracking-tight text-text-dark md:text-4xl">
+      <section className="relative overflow-hidden px-4 py-20">
+        <div className="absolute inset-0 -z-10 bg-[#0F172A]">
+          <Image src="/steps_bg.webp" alt="" fill sizes="100vw" className="hidden object-cover opacity-85 md:block" />
+          <Image src="/steps_bg_mob.webp" alt="" fill sizes="100vw" className="block object-cover opacity-85 md:hidden" />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-900/20 via-slate-900/35 to-slate-900/55" />
+        </div>
+        <AnimatedSection animation="reveal" className="relative z-10 mx-auto flex max-w-7xl flex-col items-center text-center">
+          <h2 className="mb-16 text-heading font-bold text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)]">
             Book in 3 steps
           </h2>
 
           <div className="grid w-full max-w-5xl grid-cols-1 gap-8 md:grid-cols-3">
-            <div className="stagger-child rounded-[1.75rem] border border-gray-border/50 bg-white/85 p-8 shadow-[0_18px_40px_rgba(26,18,100,0.05)] transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-1 hover:shadow-xl">
-              <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-primary text-2xl font-bold text-white shadow-lg shadow-blue-primary/30 transition-transform duration-300 hover:scale-110">
+            <div className="stagger-child rounded-2xl border border-white/40 bg-white/45 p-8 backdrop-blur-md transition-[border-color,box-shadow,transform,background-color] duration-300 hover:-translate-y-1 hover:bg-white/60 hover:shadow-lg hover:shadow-blue-primary/8">
+              <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-primary text-2xl font-bold text-white transition-transform duration-300 hover:scale-105">
                 1
               </div>
               <h3 className="mb-3 text-xl font-bold text-text-dark">Search</h3>
               <p className="text-text-mid">Find the right doctor by specialty, location, or spoken languages.</p>
             </div>
-            <div className="stagger-child rounded-[1.75rem] border border-gray-border/50 bg-white/85 p-8 shadow-[0_18px_40px_rgba(26,18,100,0.05)] transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-1 hover:shadow-xl">
-              <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-primary text-2xl font-bold text-white shadow-lg shadow-blue-primary/30 transition-transform duration-300 hover:scale-110">
+            <div className="stagger-child rounded-2xl border border-white/40 bg-white/45 p-8 backdrop-blur-md transition-[border-color,box-shadow,transform,background-color] duration-300 hover:-translate-y-1 hover:bg-white/60 hover:shadow-lg hover:shadow-blue-primary/8">
+              <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-primary text-2xl font-bold text-white transition-transform duration-300 hover:scale-105">
                 2
               </div>
               <h3 className="mb-3 text-xl font-bold text-text-dark">Choose a slot</h3>
               <p className="text-text-mid">View real-time availability and select a time that works best for you.</p>
             </div>
-            <div className="stagger-child rounded-[1.75rem] border border-gray-border/50 bg-white/85 p-8 shadow-[0_18px_40px_rgba(26,18,100,0.05)] transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-1 hover:shadow-xl">
-              <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-primary text-2xl font-bold text-white shadow-lg shadow-blue-primary/30 transition-transform duration-300 hover:scale-110">
+            <div className="stagger-child rounded-2xl border border-white/40 bg-white/45 p-8 backdrop-blur-md transition-[border-color,box-shadow,transform,background-color] duration-300 hover:-translate-y-1 hover:bg-white/60 hover:shadow-lg hover:shadow-blue-primary/8">
+              <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-primary text-2xl font-bold text-white transition-transform duration-300 hover:scale-105">
                 3
               </div>
               <h3 className="mb-3 text-xl font-bold text-text-dark">Confirm</h3>
@@ -331,11 +341,13 @@ export default async function Home() {
 
       <section className="px-4 py-20">
         <AnimatedSection animation="reveal-scale">
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-primary via-[#2a1d7a] to-blue-mid p-8 shadow-[0_26px_80px_rgba(26,18,100,0.24)] md:p-16 gradient-animate glow-pulse">
+          <div className="relative overflow-hidden rounded-2xl bg-[#0F172A] p-8 shadow-[0_12px_32px_rgba(26,18,100,0.18)] md:p-16 lg:py-32">
+            <Image src="/cta_doctors_bg.webp" alt="" fill sizes="100vw" className="object-cover object-top opacity-70 lg:object-[center_25%]" />
+            <div className="absolute inset-0 bg-gradient-to-b from-slate-900/35 via-slate-900/55 to-slate-900/78" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.15),transparent_22%),radial-gradient(circle_at_bottom_left,rgba(235,235,224,0.12),transparent_28%)]" />
             <div className="relative z-10 mx-auto flex max-w-7xl flex-col items-center justify-between gap-8 md:flex-row">
               <div className="flex max-w-xl flex-col text-center md:text-left">
-                <h2 className="mb-4 text-3xl font-bold tracking-tight text-white md:text-4xl">
+                <h2 className="mb-4 text-heading font-bold text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)]">
                   Are you a doctor or clinic?
                 </h2>
                 <p className="text-lg text-white/75">

@@ -45,3 +45,7 @@ next-env.d.ts
 /lib/generated/prisma
 smtp_payload.json
 auth_payload.json
+
+# local tooling
+/.claude
+/.impeccable

@@ -59,11 +59,11 @@ export default function DoctorCard({
 
         {/* Card Content */}
         <div className="p-5 flex flex-col flex-1">
-          <span className="text-xs font-bold text-blue-primary uppercase tracking-wide mb-1.5 flex items-center gap-1">
+          <span className="text-caption font-bold text-blue-primary uppercase tracking-[0.06em] mb-1.5 flex items-center gap-1">
             <Stethoscope className="w-3.5 h-3.5" /> {specialty}
           </span>
-          
-          <h3 className="font-extrabold text-text-dark text-lg hover:text-blue-primary flex items-center gap-1.5 transition-colors mb-1.5">
+
+          <h3 className="font-bold text-text-dark text-subheading hover:text-blue-primary flex items-center gap-1.5 transition-colors mb-1.5">
             {name}
             {isVerified && <BadgeCheck className="w-5 h-5 text-green-badge shrink-0" />}
           </h3>
@@ -124,13 +124,13 @@ export default function DoctorCard({
       {/* Middle Column - Doctor Details */}
       <div className="flex-grow flex flex-col gap-2">
         <div className="flex flex-col">
-          <span className="text-xs font-bold text-blue-primary uppercase tracking-wide flex items-center gap-1 mb-1">
+          <span className="text-caption font-bold text-blue-primary uppercase tracking-[0.06em] flex items-center gap-1 mb-1">
             <Stethoscope className="w-3.5 h-3.5" /> {specialty}
           </span>
-          <Link 
-            href={`/doctors/${slug}`} 
+          <Link
+            href={`/doctors/${slug}`}
             onClick={(e) => e.stopPropagation()}
-            className="font-extrabold text-text-dark text-xl hover:text-blue-primary flex items-center gap-1.5 transition-colors"
+            className="font-bold text-text-dark text-subheading hover:text-blue-primary flex items-center gap-1.5 transition-colors"
           >
             {name}
             {isVerified && <BadgeCheck className="w-5 h-5 text-green-badge shrink-0" />}

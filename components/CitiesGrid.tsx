@@ -10,6 +10,7 @@ interface Area {
   name: string;
   cities: string;
   href: string;
+  image: string;
 }
 
 export default function CitiesGrid({ areas }: { areas: Area[] }) {
@@ -20,14 +21,14 @@ export default function CitiesGrid({ areas }: { areas: Area[] }) {
       {/* Desktop view: always show all */}
       <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-6 w-full text-left">
         {areas.map((area, i) => (
-          <CountryCard key={i} flag={area.flag} name={area.name} cities={area.cities} href={area.href} />
+          <CountryCard key={i} flag={area.flag} name={area.name} cities={area.cities} href={area.href} image={area.image} />
         ))}
       </div>
 
       {/* Mobile view: conditional rendering */}
       <div className="grid md:hidden grid-cols-1 gap-4 w-full text-left">
         {(expanded ? areas : areas.slice(0, 3)).map((area, i) => (
-          <CountryCard key={i} flag={area.flag} name={area.name} cities={area.cities} href={area.href} />
+          <CountryCard key={i} flag={area.flag} name={area.name} cities={area.cities} href={area.href} image={area.image} />
         ))}
       </div>
 

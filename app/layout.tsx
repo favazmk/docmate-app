@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Public_Sans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
@@ -8,7 +8,7 @@ import ScrollRevealInit from "@/components/ScrollRevealInit";
 
 import { Providers } from "@/components/Providers";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const publicSans = Public_Sans({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: "Doc Mate | Doctor appointments made easy",
@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("font-sans", inter.variable)}>
+    <html lang="en" className={cn("font-sans", publicSans.variable)}>
       <body className="antialiased min-h-screen flex flex-col">
         <Providers>
           <ScrollRevealInit />

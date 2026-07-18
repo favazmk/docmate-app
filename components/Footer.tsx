@@ -25,16 +25,16 @@ export default function Footer() {
 
           {/* Platform Links */}
           <div className="flex flex-col gap-3">
-            <h4 className="text-white/80 font-semibold mb-2">Platform</h4>
+            <h3 className="text-white/80 font-semibold mb-2">Platform</h3>
             <Link href="/search" className="text-white/50 hover:text-white transition-colors text-sm">Find a doctor</Link>
             <Link href="/#specialties" className="text-white/50 hover:text-white transition-colors text-sm">Specialties</Link>
-            <Link href="/#areas" className="text-white/50 hover:text-white transition-colors text-sm">Top areas in Dubai</Link>
+            <Link href="/#cities" className="text-white/50 hover:text-white transition-colors text-sm">Top areas in Dubai</Link>
             <Link href="/blog" className="text-white/50 hover:text-white transition-colors text-sm">Health blog</Link>
           </div>
 
           {/* Company Links */}
           <div className="flex flex-col gap-3">
-            <h4 className="text-white/80 font-semibold mb-2">Company</h4>
+            <h3 className="text-white/80 font-semibold mb-2">Company</h3>
             <Link href="/about" className="text-white/50 hover:text-white transition-colors text-sm">About us</Link>
             <Link href="/list-your-clinic" className="text-white/50 hover:text-white transition-colors text-sm">List your clinic</Link>
             <Link href="/contact" className="text-white/50 hover:text-white transition-colors text-sm">Contact</Link>

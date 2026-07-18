@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import defaultTheme from "tailwindcss/defaultTheme";
 
 const config: Config = {
   content: [
@@ -8,6 +9,16 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-sans)", ...defaultTheme.fontFamily.sans],
+      },
+      fontSize: {
+        caption: ["0.75rem", { lineHeight: "1.4" }],
+        secondary: ["0.875rem", { lineHeight: "1.5" }],
+        subheading: ["1.25rem", { lineHeight: "1.3" }],
+        heading: ["clamp(1.75rem, 1.4rem + 1.8vw, 2.5rem)", { lineHeight: "1.15", letterSpacing: "-0.02em" }],
+        display: ["clamp(2.25rem, 1.6rem + 3.2vw, 4rem)", { lineHeight: "1.1", letterSpacing: "-0.03em" }],
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
