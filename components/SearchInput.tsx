@@ -33,7 +33,7 @@ export default function SearchInput({ initialValue = "", doctors = [], hospitalG
   const searchParams = useSearchParams();
   const [value, setValue] = useState(initialValue);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     setValue(initialValue);
