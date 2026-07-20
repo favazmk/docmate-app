@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { Building2, ArrowLeft, Stethoscope } from "lucide-react";
+import { Building2, ArrowLeft, Users } from "lucide-react";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
-import ClinicBranchList from "@/components/ClinicBranchList";
+import HospitalTabs from "@/components/HospitalTabs";
 import PhotoGallery from "@/components/PhotoGallery";
+import ExpandableText from "@/components/ExpandableText";
 
 export const dynamic = "force-dynamic";
 
@@ -55,9 +56,21 @@ export default async function HospitalProfilePage({ params }: { params: { id: st
         photoUrl: doc.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(doc.name)}&background=2200CC&color=fff`,
         isVerified: true,
         fee: doc.fee,
+        clinicName: `${hospital.name} - ${clinic.name}`,
       })),
     };
   });
+
+  // Flatten all doctors and remove duplicates (some doctors might work at multiple clinics)
+  const allDoctorsMap = new Map();
+  clinics.forEach(c => {
+    c.doctors.forEach(d => {
+      if (!allDoctorsMap.has(d.slug)) {
+        allDoctorsMap.set(d.slug, d);
+      }
+    });
+  });
+  const allDoctors = Array.from(allDoctorsMap.values());
 
   return (
     <div className="min-h-screen pb-20">
@@ -65,14 +78,6 @@ export default async function HospitalProfilePage({ params }: { params: { id: st
       <div className="bg-white border-b border-gray-border py-8 md:py-12 px-4 shadow-sm">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8">
           
-          {/* Logo / photo gallery */}
-          <PhotoGallery
-            photoUrls={hospital.photoUrl ? hospital.photoUrl.split(",").map((s) => s.trim()).filter(Boolean) : []}
-            name={hospital.name}
-            size="hero"
-            fallbackIcon={<Building2 className="w-12 h-12 text-gray-400" />}
-          />
-
           <div className="flex-1 text-center md:text-left flex flex-col justify-center">
             <Link href="/" className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-primary hover:underline mb-3 uppercase tracking-wider">
               <ArrowLeft className="w-4 h-4" /> Back to Home
@@ -85,20 +90,33 @@ export default async function HospitalProfilePage({ params }: { params: { id: st
                 <Building2 className="w-3.5 h-3.5" /> {hospital.clinics.length} {hospital.clinics.length === 1 ? "Branch" : "Branches"}
               </span>
               <span className="flex items-center gap-1.5 bg-green-badge-bg text-green-badge px-3.5 py-1.5 rounded-full text-xs font-bold">
-                <Stethoscope className="w-3.5 h-3.5" /> {totalDoctors} Affiliated {totalDoctors === 1 ? "Doctor" : "Doctors"}
+                <Users className="w-3.5 h-3.5" /> {allDoctors.length} Affiliated Doctors
               </span>
             </div>
+            
+            {hospital.aboutUs && (
+              <div className="mt-6 text-sm text-text-mid font-medium leading-relaxed max-w-2xl text-left mx-auto md:mx-0">
+                <ExpandableText text={hospital.aboutUs} maxLength={200} />
+              </div>
+            )}
           </div>
+
+          {/* Logo / photo gallery */}
+          <div className="flex-1 flex justify-center md:justify-end w-full">
+            <PhotoGallery
+              photoUrls={hospital.photoUrl ? hospital.photoUrl.split(",").map((s) => s.trim()).filter(Boolean) : []}
+              name={hospital.name}
+              size="branch"
+              fallbackIcon={<Building2 className="w-12 h-12 text-gray-400" />}
+            />
+          </div>
+
         </div>
       </div>
 
       {/* Branches Container */}
       <div className="max-w-7xl mx-auto px-4 py-10 flex flex-col gap-8">
-        <h2 className="text-2xl font-bold text-text-dark border-b border-gray-border pb-3">
-          Our Clinics & Medical Branches
-        </h2>
-
-        <ClinicBranchList clinics={clinics} hospitalName={hospital.name} />
+        <HospitalTabs clinics={clinics} allDoctors={allDoctors} hospitalName={hospital.name} />
       </div>
     </div>
   );

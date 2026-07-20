@@ -92,16 +92,9 @@ export default function FilterSidebar({ hospitalGroups = [], clinics = [] }: Fil
     "Urology"
   ];
   const areas = [
-    "Al Barsha",
-    "Al Qusais",
-    "Bur Dubai",
-    "Business Bay",
-    "Deira",
-    "Dubai Healthcare City",
-    "Dubai Marina",
-    "Jumeirah",
-    "Mirdif",
-    "Nad Al Sheba"
+    "Dubai",
+    "Abu Dhabi",
+    "Sharjah"
   ];
   const languages = ["English", "Arabic", "French", "Hindi", "Urdu"];
 
@@ -126,12 +119,12 @@ export default function FilterSidebar({ hospitalGroups = [], clinics = [] }: Fil
       </div>
 
       <div className="flex flex-col gap-3">
-        <h4 className="font-semibold text-text-dark text-sm uppercase tracking-wider">Area / City</h4>
+        <h4 className="font-semibold text-text-dark text-sm uppercase tracking-wider">Emirate</h4>
         <CustomDropdown
           value={currentArea}
           onChange={(val) => updateParam("city", val)}
           options={areas}
-          placeholder="All Areas"
+          placeholder="All Emirates"
         />
       </div>
 

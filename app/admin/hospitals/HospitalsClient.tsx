@@ -14,6 +14,7 @@ interface HospitalData {
   id: string;
   name: string;
   photoUrl: string | null;
+  aboutUs: string | null;
 }
 
 interface HospitalsClientProps {
@@ -30,6 +31,7 @@ export default function HospitalsClient({ hospitals }: HospitalsClientProps) {
   // Form fields
   const [name, setName] = useState("");
   const [photoUrl, setPhotoUrl] = useState("");
+  const [aboutUs, setAboutUs] = useState("");
 
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
@@ -40,6 +42,7 @@ export default function HospitalsClient({ hospitals }: HospitalsClientProps) {
     setEditingHospital(null);
     setName("");
     setPhotoUrl("");
+    setAboutUs("");
     setErrorMsg("");
     setIsAddModalOpen(true);
   };
@@ -47,6 +50,7 @@ export default function HospitalsClient({ hospitals }: HospitalsClientProps) {
   const handleOpenEdit = (h: HospitalData) => {
     setEditingHospital(h);
     setName(h.name);
+    setAboutUs(h.aboutUs || "");
     setErrorMsg("");
     setIsAddModalOpen(true);
   };
@@ -185,6 +189,18 @@ export default function HospitalsClient({ hospitals }: HospitalsClientProps) {
                   onChange={(e) => setName(e.target.value)}
                   className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary"
                 />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-semibold text-text-dark">About Us</label>
+                <textarea
+                  name="aboutUs"
+                  value={aboutUs}
+                  onChange={(e) => setAboutUs(e.target.value)}
+                  rows={4}
+                  placeholder="A short description of this hospital network..."
+                  className="bg-gray-bg border border-gray-border rounded-xl p-4 text-sm font-medium focus:outline-none focus:border-blue-primary resize-none"
+                ></textarea>
               </div>
 
               <PhotoUploader

@@ -157,13 +157,24 @@ export default function DoctorCard({
             </Badge>
           ))}
         </div>
+        
+        {/* Profile Action */}
+        <div className="mt-2">
+          <Link 
+            href={`/doctors/${slug}`}
+            onClick={(e) => e.stopPropagation()}
+            className="inline-flex items-center justify-center px-5 py-2 bg-blue-50 text-blue-primary hover:bg-blue-100 transition-colors rounded-xl text-xs font-bold border border-blue-primary/20"
+          >
+            View Profile
+          </Link>
+        </div>
       </div>
 
       {/* Right Column - Ratings, Fee & Booking */}
       <div className="w-full md:w-52 shrink-0 flex flex-col items-start md:items-end justify-between border-t md:border-t-0 md:border-l border-gray-border pt-4 md:pt-0 md:pl-6">
         {/* Rating Block */}
-        <div className="flex flex-col md:items-end gap-1.5" title="Ratings are read-only placeholder">
-          <div className="flex items-center gap-1.5">
+        <div className="flex flex-col items-center gap-1.5 w-full" title="Ratings are read-only placeholder">
+          <div className="flex items-center justify-center gap-1.5">
             <Star className="w-4 h-4 text-star-color fill-star-color" />
             <span className="text-base font-bold text-text-dark">{rating.toFixed(1)}</span>
             <span className="text-xs text-text-light">({reviews} reviews)</span>
@@ -175,19 +186,19 @@ export default function DoctorCard({
 
 
 
-        {/* Actions */}
-        <div className="w-full flex gap-3 mt-4 md:mt-0">
-          <Link 
-            href={`/doctors/${slug}`}
-            onClick={(e) => e.stopPropagation()}
-            className={`${buttonVariants({ size: "sm", variant: "outline" })} flex-1 border-gray-border text-text-dark hover:bg-gray-bg rounded-xl h-10 text-xs font-bold`}
-          >
-            Profile
-          </Link>
+        {/* Actions & Working Hours */}
+        <div className="w-full flex flex-col gap-3 mt-4 md:mt-0">
+          <div className="bg-gray-50 border border-gray-border rounded-xl py-2.5 flex flex-col items-center justify-center gap-0.5">
+            <span className="text-[11px] uppercase tracking-wider font-bold text-text-light flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              Sat - Thu
+            </span>
+            <span className="text-xs font-bold text-text-dark">09:00 AM - 05:00 PM</span>
+          </div>
           <Link 
             href={`/book/${slug}`} 
             onClick={(e) => e.stopPropagation()}
-            className={`${buttonVariants({ size: "sm" })} flex-1 bg-blue-primary hover:bg-blue-hover text-white rounded-xl h-10 text-xs font-bold shadow-md shadow-blue-primary/10`}
+            className={`${buttonVariants({ size: "sm" })} w-full bg-blue-primary hover:bg-blue-hover text-white rounded-xl h-11 text-sm font-bold shadow-md shadow-blue-primary/10 flex items-center justify-center`}
           >
             Book Now
           </Link>

@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import { Building2, Phone, Mail, Star } from "lucide-react";
-import DoctorCard from "./DoctorCard";
 import PhotoGallery from "./PhotoGallery";
+import ExpandableText from "./ExpandableText";
 import { DOCMATE_PHONE } from "@/lib/constants";
 
 export interface ClinicDoctor {
@@ -40,7 +39,6 @@ export default function ClinicBranchCard({
   clinic: ClinicBranch;
   hospitalName: string;
 }) {
-  const [activeTab, setActiveTab] = useState<"doctors" | "about">("doctors");
   const avatarUrl = clinic.photoUrls[0];
 
   return (
@@ -79,14 +77,14 @@ export default function ClinicBranchCard({
           )}
 
           <div className="flex flex-col gap-2 text-xs md:text-sm text-text-dark font-semibold">
-            <div className="flex items-center gap-2 bg-gray-bg border border-gray-border px-4 py-2 rounded-xl">
+            <a href={`tel:${DOCMATE_PHONE.replace(/\s+/g, '')}`} className="flex items-center gap-2 bg-gray-bg border border-gray-border px-4 py-2 rounded-xl hover:bg-blue-50 transition-colors">
               <Phone className="w-4 h-4 text-blue-primary shrink-0" />
               <span>{DOCMATE_PHONE}</span>
-            </div>
-            <div className="flex items-center gap-2 bg-gray-bg border border-gray-border px-4 py-2 rounded-xl">
+            </a>
+            <a href={`mailto:${clinic.email}`} title={clinic.email} className="flex items-center gap-2 bg-gray-bg border border-gray-border px-4 py-2 rounded-xl min-w-0 hover:bg-blue-50 transition-colors">
               <Mail className="w-4 h-4 text-blue-primary shrink-0" />
-              <span>{clinic.email}</span>
-            </div>
+              <span className="truncate">{clinic.email}</span>
+            </a>
           </div>
         </div>
 
@@ -101,59 +99,13 @@ export default function ClinicBranchCard({
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex flex-col gap-5">
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => setActiveTab("doctors")}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition-colors ${
-              activeTab === "doctors" ? "bg-blue-primary text-white" : "bg-gray-bg text-text-mid hover:bg-gray-200"
-            }`}
-          >
-            Doctors
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("about")}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition-colors ${
-              activeTab === "about" ? "bg-blue-primary text-white" : "bg-gray-bg text-text-mid hover:bg-gray-200"
-            }`}
-          >
-            About Us
-          </button>
+      {/* About Us */}
+      {clinic.aboutUs && (
+        <div className="flex flex-col gap-2 pt-2 border-t border-gray-border lg:border-none lg:pt-0">
+          <h4 className="text-xs font-extrabold text-text-light uppercase tracking-wider">About This Branch</h4>
+          <ExpandableText text={clinic.aboutUs} maxLength={200} />
         </div>
-
-        {activeTab === "doctors" ? (
-          <div>
-            <h4 className="text-xs font-extrabold text-text-light uppercase tracking-wider mb-5">
-              Doctors at this branch ({clinic.doctors.length})
-            </h4>
-
-            {clinic.doctors.length === 0 ? (
-              <p className="text-sm text-text-light font-medium italic">
-                No active doctors registered under this clinic branch.
-              </p>
-            ) : (
-              <div className="flex flex-col gap-5">
-                {clinic.doctors.map((doc) => (
-                  <DoctorCard key={doc.slug} {...doc} variant="row" />
-                ))}
-              </div>
-            )}
-          </div>
-        ) : (
-          <div>
-            {clinic.aboutUs ? (
-              <p className="text-sm text-text-dark leading-relaxed whitespace-pre-line">{clinic.aboutUs}</p>
-            ) : (
-              <p className="text-sm text-text-light font-medium italic">
-                No description added yet.
-              </p>
-            )}
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
 }

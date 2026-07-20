@@ -102,6 +102,7 @@ export async function createHospitalGroup(formData: FormData) {
   try {
     await requireAdmin();
     const name = formData.get("name") as string;
+    const aboutUs = formData.get("aboutUs") as string;
     const photos = formData.getAll("photos") as File[];
     const existingPhotos = (formData.get("existingPhotos") as string) || "";
 
@@ -118,6 +119,7 @@ export async function createHospitalGroup(formData: FormData) {
     const hospitalGroup = await prisma.hospitalGroup.create({
       data: {
         name,
+        aboutUs,
         photoUrl
       }
     });
@@ -134,6 +136,7 @@ export async function updateHospitalGroup(id: string, formData: FormData) {
   try {
     await requireAdmin();
     const name = formData.get("name") as string;
+    const aboutUs = formData.get("aboutUs") as string;
     const photos = formData.getAll("photos") as File[];
     const existingPhotos = (formData.get("existingPhotos") as string) || "";
     const photoUploaderTouched = formData.has("existingPhotos");
@@ -151,6 +154,7 @@ export async function updateHospitalGroup(id: string, formData: FormData) {
       where: { id },
       data: {
         name,
+        aboutUs,
         ...(photoUploaderTouched ? { photoUrl: merged || null } : {})
       }
     });

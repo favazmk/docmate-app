@@ -27,7 +27,7 @@ const SIZE_CLASSES = {
   branch: {
     main: "w-full sm:w-72 h-52 rounded-2xl",
     thumb: "w-16 h-16 rounded-xl",
-    defaultMaxThumbnails: 4,
+    defaultMaxThumbnails: 6,
     layout: "side",
   },
 } as const;
@@ -51,32 +51,38 @@ export default function PhotoGallery({
     );
   }
 
+  // Filter out the active photo so we don't show it twice
+  const remainingPhotos = photoUrls.filter(url => url !== activePhoto);
+
   // Reserve the last thumbnail slot for a "+N" overflow tile once there isn't
   // room to show every photo as its own plain thumbnail.
-  const fitsWithoutOverflow = photoUrls.length <= limit - 1;
-  const normalThumbCount = fitsWithoutOverflow ? photoUrls.length : Math.max(0, limit - 2);
-  const visibleThumbnails = photoUrls.slice(0, normalThumbCount + (fitsWithoutOverflow ? 0 : 1));
-  const overflowCount = photoUrls.length - normalThumbCount;
+  const fitsWithoutOverflow = remainingPhotos.length <= limit;
+  const normalThumbCount = fitsWithoutOverflow ? remainingPhotos.length : Math.max(0, limit - 1);
+  const visibleThumbnails = remainingPhotos.slice(0, normalThumbCount + (fitsWithoutOverflow ? 0 : 1));
+  const overflowCount = remainingPhotos.length - normalThumbCount;
 
   const isSide = classes.layout === "side";
+  
+  // If exactly 3 images, show 2 large thumbnails (3 big total). Otherwise show 1 large thumbnail (2 big total).
+  const numLargeThumbnails = photoUrls.length === 3 ? 2 : 1;
 
   return (
-    <div className={`flex ${isSide ? "flex-row" : "flex-col"} gap-2 shrink-0`}>
-      <div className={`relative ${classes.main} overflow-hidden border border-gray-border bg-gray-50`}>
+    <div className={`flex ${isSide ? "flex-row w-full" : "flex-col shrink-0"} gap-2`}>
+      <div className={`relative ${classes.main} overflow-hidden border border-gray-border bg-gray-50 shrink-0`}>
         <Image src={activePhoto} alt={name} fill className="object-cover" />
       </div>
 
-      {photoUrls.length > 1 && (
-        <div className={`flex ${isSide ? "flex-col" : "flex-row"} gap-1.5`}>
+      {remainingPhotos.length > 0 && (
+        <div className={`flex ${isSide ? "flex-row flex-wrap content-start flex-1" : "flex-row"} gap-2`}>
           {visibleThumbnails.map((url, i) => {
             const isOverflowTile = !fitsWithoutOverflow && i === visibleThumbnails.length - 1;
 
             return (
               <button
                 type="button"
-                key={i}
+                key={url}
                 onClick={() => setActivePhoto(url)}
-                className={`relative ${classes.thumb} overflow-hidden border-2 shrink-0 transition-all ${
+                className={`relative ${isSide && i < numLargeThumbnails ? classes.main : classes.thumb} overflow-hidden border-2 shrink-0 transition-all ${
                   activePhoto === url ? "border-blue-primary scale-105" : "border-gray-border hover:border-text-mid"
                 }`}
               >

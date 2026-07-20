@@ -6,7 +6,7 @@ import CitiesGrid from "@/components/CitiesGrid";
 import DoctorCard from "@/components/DoctorCard";
 import AnimatedSection from "@/components/AnimatedSection";
 import HeroOrbs from "@/components/HeroOrbs";
-import { BadgeCheck, Globe, Zap, Star, Activity, Heart, Eye, Bone, Baby, Brain, Stethoscope } from "lucide-react";
+import { BadgeCheck, Globe, Zap, Star, Activity, Heart, Eye, Bone, Baby, Brain, Stethoscope, Building2 } from "lucide-react";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 export const dynamic = "force-dynamic";
@@ -108,8 +108,6 @@ export default async function Home() {
     { name: "Orthopedics", count: getSpecialtyCount("Orthopedics"), icon: Bone, href: "/search?specialty=Orthopedics" },
     { name: "Pediatrics", count: getSpecialtyCount("Pediatrics"), icon: Baby, href: "/search?specialty=Pediatrics" },
     { name: "Neurology", count: getSpecialtyCount("Neurology"), icon: Brain, href: "/search?specialty=Neurology" },
-    { name: "Pulmonology", count: getSpecialtyCount("Pulmonology"), icon: Stethoscope, href: "/search?specialty=Pulmonology" },
-    { name: "View All", count: totalSpecialtiesCount, icon: Activity, href: "/search", isViewAll: true },
   ];
 
   const featuredDoctors = dbDoctors.map((d) => ({
@@ -175,7 +173,7 @@ export default async function Home() {
       </section>
 
       <AnimatedSection animation="reveal-scale" className="px-4 relative z-20">
-        <SearchBar doctors={searchBarDoctors} />
+        <SearchBar doctors={searchBarDoctors} hospitalGroups={hospitalGroups} />
       </AnimatedSection>
 
       <AnimatedSection animation="reveal" delay={100} className="mx-4 my-10 flex justify-center">
@@ -212,13 +210,21 @@ export default async function Home() {
             Search doctors by specialty across Dubai, Sharjah and Abu Dhabi.
           </p>
 
-          <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-4">
+          <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-3 mb-10">
             {specialties.map((s, i) => (
               <div key={i} className="stagger-child">
                 <SpecialtyCard {...s} />
               </div>
             ))}
           </div>
+
+          <AnimatedSection animation="reveal" delay={300}>
+            <Link href="/search">
+              <Button variant="outline" className="h-12 rounded-xl border-2 border-white/20 bg-white/10 px-8 font-semibold text-white hover:bg-white/20 hover:border-white/30 backdrop-blur-md hover:shadow-lg hover:-translate-y-0.5 transition-[background-color,box-shadow,transform,border-color] duration-300">
+                View all specialties
+              </Button>
+            </Link>
+          </AnimatedSection>
         </AnimatedSection>
       </section>
 
@@ -265,28 +271,37 @@ export default async function Home() {
             Trusted networks with multiple branches across the UAE.
           </p>
 
-          <div className="grid w-full grid-cols-1 gap-6 text-left sm:grid-cols-2 lg:grid-cols-3">
-            {hospitalGroups.map((h, i) => (
-              <div key={h.id} className="stagger-child">
+          <div className="grid w-full grid-cols-1 gap-6 text-left sm:grid-cols-2 lg:grid-cols-4 mb-10">
+            {hospitalGroups.slice(0, 4).map((h, i) => (
+              <div key={h.id} className="stagger-child h-full">
                 <Link
                   href={`/hospitals/${h.id}`}
-                  className="group flex cursor-pointer items-center gap-5 rounded-2xl border border-white/40 bg-white/45 p-6 backdrop-blur-md transition-[border-color,box-shadow,transform,background-color] duration-300 hover:-translate-y-1 hover:border-blue-primary/30 hover:bg-white/60 hover:shadow-lg hover:shadow-blue-primary/8"
+                  className="bg-white/85 border border-gray-border/60 rounded-2xl flex flex-col hover:border-blue-primary/40 hover:shadow-xl hover:shadow-blue-primary/8 transition-[border-color,box-shadow,transform] duration-300 cursor-pointer overflow-hidden group h-full"
                 >
-                  <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-gray-border bg-gray-50">
-                    <Image src={h.photoUrl} alt={h.name} fill className="object-cover transition-transform duration-500 group-hover:scale-110" />
+                  <div className="relative w-full h-48 bg-gray-bg border-b border-gray-border">
+                    <Image src={h.photoUrl} alt={h.name} fill className="object-cover group-hover:scale-[1.02] transition-transform duration-500" />
                   </div>
-                  <div className="flex flex-col">
-                    <h3 className="text-subheading font-bold text-text-dark transition-colors duration-300 group-hover:text-blue-primary">
+                  <div className="p-5 flex flex-col flex-1">
+                    <h3 className="font-bold text-text-dark text-lg hover:text-blue-primary transition-colors mb-3 line-clamp-2">
                       {h.name}
                     </h3>
-                    <p className="mt-1 text-xs font-medium text-text-mid">
-                      {h.branchCount} {h.branchCount === 1 ? "branch" : "branches"} • {h.doctorCount} {h.doctorCount === 1 ? "doctor" : "doctors"}
-                    </p>
+                    <div className="mt-auto text-sm font-semibold text-text-mid flex items-center gap-1.5">
+                      <Building2 className="w-4 h-4 text-blue-primary" />
+                      <span>{h.branchCount} {h.branchCount === 1 ? "branch" : "branches"} • {h.doctorCount} {h.doctorCount === 1 ? "doctor" : "doctors"}</span>
+                    </div>
                   </div>
                 </Link>
               </div>
             ))}
           </div>
+
+          <AnimatedSection animation="reveal" delay={300}>
+            <Link href="/hospitals">
+              <Button variant="outline" className="h-12 rounded-xl border-2 border-white/20 bg-white/10 px-8 font-semibold text-white hover:bg-white/20 hover:border-white/30 backdrop-blur-md hover:shadow-lg hover:-translate-y-0.5 transition-[background-color,box-shadow,transform,border-color] duration-300">
+                View all hospitals
+              </Button>
+            </Link>
+          </AnimatedSection>
         </AnimatedSection>
       </section>
 

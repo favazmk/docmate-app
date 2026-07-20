@@ -99,7 +99,17 @@ export default async function SearchResultsPage({
   });
 
   const allHospitalGroups = await prisma.hospitalGroup.findMany({
-    select: { id: true, name: true }
+    select: { 
+      id: true, 
+      name: true,
+      clinics: {
+        select: {
+          id: true,
+          name: true,
+          city: true
+        }
+      }
+    }
   });
 
   const allClinics = await prisma.clinic.findMany({
@@ -140,7 +150,7 @@ export default async function SearchResultsPage({
           </div>
           
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-            <SearchInput initialValue={query} />
+            <SearchInput initialValue={query} doctors={doctors} hospitalGroups={allHospitalGroups} />
             <div className="flex items-center gap-3 w-full sm:w-auto">
               <SortDropdown />
 
