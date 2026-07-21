@@ -90,6 +90,9 @@ export default function Navbar() {
         /^\/[a-zA-Z]{2}(\/|$)/.test(pathname)
       );
     }
+    if (href === "/") {
+      return pathname === "/" && activeHash === "";
+    }
     if (href === "/blog") {
       return pathname === "/blog" || pathname.startsWith("/blog/");
     }
