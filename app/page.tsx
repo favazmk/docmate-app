@@ -356,7 +356,7 @@ export default async function Home() {
           
           <div className="mt-12 flex justify-center">
             <Link href="/search">
-              <Button variant="outline" className="h-14 rounded-full border-2 border-blue-primary bg-white/90 px-10 font-bold text-lg text-blue-primary hover:bg-blue-light hover:shadow-lg hover:shadow-blue-primary/10 hover:-translate-y-0.5 transition-[background-color,box-shadow,transform] duration-300">
+              <Button variant="outline" className="h-12 rounded-xl border-2 border-white/20 bg-white/10 px-8 font-semibold text-white hover:bg-white/20 hover:border-white/30 backdrop-blur-md hover:shadow-lg hover:-translate-y-0.5 transition-[background-color,box-shadow,transform,border-color] duration-300">
                 Book Now
               </Button>
             </Link>
