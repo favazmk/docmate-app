@@ -97,8 +97,10 @@ export default function Navbar() {
   };
 
   const navLinks = [
+    { label: "Home", href: "/" },
     { label: "About Us", href: "/about" },
     { label: "Find doctors", href: "/search" },
+    { label: "Hospitals", href: "/hospitals" },
     { label: "Specialties", href: "/#specialties" },
     { label: "Cities", href: "/#cities" },
     { label: "Blog", href: "/blog" },

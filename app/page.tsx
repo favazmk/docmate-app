@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import SearchBar from "@/components/SearchBar";
 import SpecialtyCard from "@/components/SpecialtyCard";
 import Image from "next/image";
@@ -352,6 +352,12 @@ export default async function Home() {
               <h3 className="mb-3 text-xl font-bold text-text-dark">Confirm</h3>
               <p className="text-text-mid">Enter your details and instantly receive your booking confirmation.</p>
             </div>
+          </div>
+          
+          <div className="mt-12 flex justify-center">
+            <Link href="/search" className={`${buttonVariants()} bg-blue-primary hover:bg-blue-hover text-white h-14 px-10 rounded-full font-bold shadow-lg shadow-blue-primary/20 text-lg`}>
+              Book Now
+            </Link>
           </div>
         </AnimatedSection>
       </section>
