@@ -17,6 +17,8 @@ enum AppointmentStatus {
   PENDING
   CONFIRMED
   CANCELLED
+  COMPLETED
+  RESCHEDULED
 }
 
 model User {
@@ -24,8 +26,15 @@ model User {
   name         String
   email        String        @unique
   password     String?       // Optional for passwordless logins
-  phone        String?
-  role         Role          @default(PATIENT)
+  phone             String?
+  photoUrl          String?       @db.VarChar(500)
+  age               Int?
+  height            String?
+  weight            String?
+  bloodGroup        String?
+  insuranceProvider String?
+  healthConditions  String?       @db.Text
+  role              Role          @default(PATIENT)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   appointments Appointment[]
@@ -90,6 +99,8 @@ model Doctor {
   bio            String        @db.Text
   qualifications String?       @db.Text
   status         String        @default("Active") // Active, Pending
+  availableDays  String        @default("Mon - Fri")
+  availableTime  String        @default("09:00 AM - 05:00 PM")
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   appointments   Appointment[]

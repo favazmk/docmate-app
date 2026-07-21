@@ -127,7 +127,9 @@ export default async function SearchResultsPage({
     photoUrl: d.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(d.name)}&background=2200CC&color=fff`,
     isVerified: true,
     clinicName: d.clinic ? `${d.clinic.hospitalGroup.name} - ${d.clinic.name}` : d.affiliation,
-    fee: d.fee
+    fee: d.fee,
+    availableDays: d.availableDays || undefined,
+    availableTime: d.availableTime || undefined
   }));
 
   return (

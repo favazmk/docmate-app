@@ -40,6 +40,8 @@ export default async function Home() {
         name: true,
         specialty: true,
         city: true,
+        availableDays: true,
+        availableTime: true,
       },
     });
 
@@ -124,6 +126,8 @@ export default async function Home() {
     photoUrl: d.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(d.name)}&background=2200CC&color=fff`,
     isVerified: true,
     clinicName: d.clinic ? `${d.clinic.hospitalGroup.name} - ${d.clinic.name}` : d.affiliation,
+    availableDays: d.availableDays || undefined,
+    availableTime: d.availableTime || undefined,
   }));
 
   const topCities = [
@@ -162,7 +166,7 @@ export default async function Home() {
 
         <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center text-center">
           <span className="hero-badge mb-4 rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-caption font-medium uppercase tracking-[0.06em] text-blue-200 backdrop-blur-md">
-            Dubai's #1 doctor booking platform
+            Dubai's leading doctor booking platform
           </span>
           <h1 className="hero-title mb-6 text-display font-bold text-white">
             Find and Book the <span className="hero-title-delay text-blue-200">Best Doctors</span> Near You
@@ -363,7 +367,7 @@ export default async function Home() {
         <AnimatedSection animation="reveal-scale">
           <div className="relative overflow-hidden rounded-2xl bg-[#0F172A] p-8 shadow-[0_12px_32px_rgba(26,18,100,0.18)] md:p-16 lg:py-32">
             <Image src="/cta_doctors_bg.webp" alt="" fill sizes="100vw" className="object-cover object-top opacity-70 lg:object-[center_25%]" />
-            <div className="absolute inset-0 bg-gradient-to-b from-slate-900/35 via-slate-900/55 to-slate-900/78" />
+            <div className="absolute inset-0 bg-slate-900/40" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.15),transparent_22%),radial-gradient(circle_at_bottom_left,rgba(235,235,224,0.12),transparent_28%)]" />
             <div className="relative z-10 mx-auto flex max-w-7xl flex-col items-center justify-between gap-8 md:flex-row">
               <div className="flex max-w-xl flex-col text-center md:text-left">

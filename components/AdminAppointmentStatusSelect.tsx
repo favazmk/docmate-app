@@ -32,6 +32,8 @@ export default function AdminAppointmentStatusSelect({ appointmentId, initialSta
   const statusColor = 
     status === 'CONFIRMED' ? 'bg-green-badge-bg text-green-badge' :
     status === 'PENDING' ? 'bg-orange-50 text-orange-600' :
+    status === 'COMPLETED' ? 'bg-blue-50 text-blue-600' :
+    status === 'RESCHEDULED' ? 'bg-purple-50 text-purple-600' :
     'bg-red-50 text-red-600';
 
   return (
@@ -45,6 +47,8 @@ export default function AdminAppointmentStatusSelect({ appointmentId, initialSta
         <option value="PENDING" className="bg-white text-text-dark">PENDING</option>
         <option value="CONFIRMED" className="bg-white text-text-dark">CONFIRMED</option>
         <option value="CANCELLED" className="bg-white text-text-dark">CANCELLED</option>
+        <option value="COMPLETED" className="bg-white text-text-dark">COMPLETED</option>
+        <option value="RESCHEDULED" className="bg-white text-text-dark">RESCHEDULED</option>
       </select>
       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-current opacity-70">
         <svg className="fill-current h-3 w-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>

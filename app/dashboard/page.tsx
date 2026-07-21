@@ -12,20 +12,24 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  // Fetch user appointments
-  const appointments = await prisma.appointment.findMany({
-    where: {
-      user: {
-        email: session.user.email,
-      }
-    },
+  // Fetch user profile and appointments
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
     include: {
-      doctor: true,
+      appointments: {
+        include: {
+          doctor: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      },
     },
-    orderBy: {
-      createdAt: 'desc'
-    }
   });
 
-  return <DashboardClient appointments={appointments} userName={session.user.name || null} />;
+  if (!user) {
+    redirect("/login");
+  }
+
+  return <DashboardClient appointments={user.appointments} user={user} />;
 }

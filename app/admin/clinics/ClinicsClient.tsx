@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Plus, Pencil, Trash2, CheckCircle2, X, Building, MapPin, Phone, Mail, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import CustomDropdown from "@/components/ui/CustomDropdown";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminHeader from "@/components/AdminHeader";
 import PhotoUploader from "@/components/admin/PhotoUploader";
@@ -41,6 +42,24 @@ export default function ClinicsClient({ clinics, hospitalGroups }: ClinicsClient
   const [editingClinic, setEditingClinic] = useState<ClinicData | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const action = searchParams?.get("action");
+    const initHospitalId = searchParams?.get("hospitalId");
+    
+    if (action === "add" && !isAddModalOpen) {
+      setEditingClinic(null);
+      setErrorMsg("");
+      if (initHospitalId) {
+        setHospitalGroupId(initHospitalId);
+      } else {
+        setHospitalGroupId(hospitalGroups[0]?.id || "");
+      }
+      setIsAddModalOpen(true);
+      router.replace("/admin/clinics", { scroll: false });
+    }
+  }, [searchParams, router, isAddModalOpen, hospitalGroups]);
 
   // Form fields
   const [name, setName] = useState("");
@@ -139,13 +158,14 @@ export default function ClinicsClient({ clinics, hospitalGroups }: ClinicsClient
                     <th className="px-6 py-4">Hospital Group</th>
                     <th className="px-6 py-4">City</th>
                     <th className="px-6 py-4">Contact Info</th>
+                    <th className="px-6 py-4">Add Doctors</th>
                     <th className="px-6 py-4">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-border">
                   {clinics.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-8 text-center text-text-mid font-medium">No clinic branches found. Add one to get started!</td>
+                      <td colSpan={6} className="px-6 py-8 text-center text-text-mid font-medium">No clinic branches found. Add one to get started!</td>
                     </tr>
                   ) : (
                     clinics.map((c) => (
@@ -175,14 +195,16 @@ export default function ClinicsClient({ clinics, hospitalGroups }: ClinicsClient
                           <span className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> {c.phone}</span>
                         </td>
                         <td className="px-6 py-4">
+                          <Link
+                            href={`/admin/doctors?action=add&clinicId=${c.id}`}
+                            className="inline-flex items-center gap-2 bg-blue-50 text-blue-600 hover:bg-blue-100 font-semibold px-3 py-1.5 rounded-lg transition-colors text-xs"
+                            title="Add Doctor"
+                          >
+                            <UserPlus className="w-4 h-4" /> Add Doctor
+                          </Link>
+                        </td>
+                        <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <Link
-                              href={`/admin/doctors?action=add&clinicId=${c.id}`}
-                              className="p-1.5 hover:bg-gray-100 rounded-lg text-green-600 flex items-center justify-center"
-                              title="Add Doctor"
-                            >
-                              <UserPlus className="w-4.5 h-4.5" />
-                            </Link>
                             <button
                               onClick={() => handleOpenEdit(c)}
                               className="p-1.5 hover:bg-gray-100 rounded-lg text-blue-primary flex items-center justify-center"
@@ -240,34 +262,30 @@ export default function ClinicsClient({ clinics, hospitalGroups }: ClinicsClient
                 />
               </div>
 
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-1.5 z-50">
                 <label className="text-sm font-semibold text-text-dark">Hospital Group *</label>
-                <select
-                  name="hospitalGroupId"
+                <CustomDropdown
                   value={hospitalGroupId}
-                  onChange={(e) => setHospitalGroupId(e.target.value)}
-                  className="bg-gray-bg border border-gray-border rounded-xl h-11 px-4 text-sm font-medium focus:outline-none"
-                >
-                  {hospitalGroups.map((g) => (
-                    <option key={g.id} value={g.id}>
-                      {g.name}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setHospitalGroupId}
+                  placeholder="Select Hospital Group"
+                  options={hospitalGroups.map(g => ({ value: g.id, label: g.name }))}
+                />
+                <input type="hidden" name="hospitalGroupId" value={hospitalGroupId} required />
               </div>
 
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-1.5 z-40">
                 <label className="text-sm font-semibold text-text-dark">City *</label>
-                <select
-                  name="city"
+                <CustomDropdown
                   value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  className="bg-gray-bg border border-gray-border rounded-xl h-11 px-4 text-sm font-medium focus:outline-none"
-                >
-                  <option value="Dubai">Dubai</option>
-                  <option value="Sharjah">Sharjah</option>
-                  <option value="Abu Dhabi">Abu Dhabi</option>
-                </select>
+                  onChange={setCity}
+                  placeholder="Select City"
+                  options={[
+                    { value: "Dubai", label: "Dubai" },
+                    { value: "Sharjah", label: "Sharjah" },
+                    { value: "Abu Dhabi", label: "Abu Dhabi" }
+                  ]}
+                />
+                <input type="hidden" name="city" value={city} required />
               </div>
 
               <div className="flex flex-col gap-1.5">

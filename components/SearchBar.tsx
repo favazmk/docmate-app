@@ -54,7 +54,18 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
   ];
 
   const filteredSuggestions = useMemo(() => {
-    if (!query.trim()) return [];
+    if (!query.trim()) {
+      const uniqueSpecialties = Array.from(new Set(doctors.map(d => d.specialty).filter(Boolean)));
+      return uniqueSpecialties.map(specialty => ({
+        type: 'specialty',
+        id: specialty,
+        name: specialty,
+        specialty: 'Specialty',
+        city: '',
+        url: `/search?specialty=${encodeURIComponent(specialty)}`,
+        icon: Stethoscope
+      })).slice(0, 10);
+    }
     const lowerQuery = query.toLowerCase();
     
     const suggestions: any[] = [];
@@ -154,10 +165,12 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
           />
           
           {/* Autocomplete Dropdown */}
-          {showSuggestions && query.trim() && filteredSuggestions.length > 0 && (
+          {showSuggestions && filteredSuggestions.length > 0 && (
             <div className="absolute top-[calc(100%+8px)] left-0 w-full bg-white border border-gray-100 shadow-xl rounded-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
               <div className="py-2 max-h-[60vh] overflow-y-auto">
-                <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Suggestions</div>
+                <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  {query.trim() ? "Suggestions" : "Popular Specialties"}
+                </div>
                 {filteredSuggestions.map((suggestion, idx) => (
                   <button
                     key={`${suggestion.type}-${suggestion.id}-${idx}`}

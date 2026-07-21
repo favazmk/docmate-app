@@ -5,7 +5,7 @@ import { ChevronDown } from "lucide-react";
 
 interface Option {
   value: string;
-  label: string;
+  label: React.ReactNode;
 }
 
 interface CustomDropdownProps {

@@ -24,6 +24,7 @@ interface BookingWizardProps {
 
 export default function BookingWizard({ doctor, user }: BookingWizardProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [bookingId, setBookingId] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isConfirmed, setIsConfirmed] = useState(false);
 
@@ -42,6 +43,7 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
   const [email, setEmail] = useState(user?.email || "");
   const [phonePrefix, setPhonePrefix] = useState("+971");
   const [phone, setPhone] = useState("");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [reason, setReason] = useState("");
 
   // Month names helper
@@ -119,6 +121,7 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
       });
 
       if (result.success) {
+        setBookingId(result.appointmentId || "");
         setIsConfirmed(true);
       } else {
         setErrorMsg(result.error || "Something went wrong. Please try again.");
@@ -306,11 +309,44 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
               </div>
 
               {/* Submit Action */}
-              <div className="pt-6 border-t border-gray-border mt-auto">
+              <div className="pt-4 border-t border-gray-border mt-auto flex flex-col gap-3">
+                <div className="flex items-start gap-2.5 px-0.5">
+                  <input 
+                    type="checkbox" 
+                    id="terms" 
+                    required
+                    checked={acceptedTerms}
+                    onChange={(e) => setAcceptedTerms(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-primary focus:ring-blue-primary cursor-pointer accent-blue-primary" 
+                  />
+                  <label htmlFor="terms" className="text-xs text-text-mid font-medium cursor-pointer select-none leading-relaxed">
+                    I agree to DocMate's{" "}
+                    <Link 
+                      href="/terms" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="text-blue-primary hover:underline font-semibold"
+                    >
+                      Terms &amp; Conditions
+                    </Link>{" "}
+                    and{" "}
+                    <Link 
+                      href="/privacy-policy" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="text-blue-primary hover:underline font-semibold"
+                    >
+                      Privacy Policy
+                    </Link>.
+                  </label>
+                </div>
+
                 <Button 
                   type="submit"
-                  disabled={isSubmitting}
-                  className="bg-blue-primary hover:bg-blue-hover text-white h-12 px-8 rounded-xl font-bold text-base w-full shadow-md shadow-blue-primary/20 flex items-center justify-center gap-2"
+                  disabled={isSubmitting || !acceptedTerms}
+                  className="bg-blue-primary hover:bg-blue-hover disabled:opacity-50 disabled:cursor-not-allowed text-white h-12 px-8 rounded-xl font-bold text-base w-full shadow-md shadow-blue-primary/20 flex items-center justify-center gap-2 transition-all"
                 >
                   {isSubmitting ? (
                     <>
@@ -321,6 +357,10 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
                     "Book Appointment"
                   )}
                 </Button>
+                <div className="flex items-center justify-center gap-1.5 mt-3 text-text-light">
+                  <CheckCircle2 className="w-4 h-4 text-green-badge" />
+                  <span className="text-xs font-semibold">Zero Booking Fee</span>
+                </div>
               </div>
             </div>
           </form>
@@ -380,6 +420,19 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
                   </div>
                 </div>
               </div>
+              {bookingId && (
+                <div className="flex items-center gap-3 px-5 py-4 border-t border-gray-border/60">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-blue-primary shadow-sm">
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                    </svg>
+                  </div>
+                  <div>
+                    <span className="block text-xs font-semibold uppercase tracking-wider text-text-light">Booking ID</span>
+                    <span className="block text-sm font-bold leading-tight text-text-dark font-mono bg-blue-50 px-2 py-0.5 rounded text-blue-800 border border-blue-100">{bookingId.substring(0, 8).toUpperCase()}</span>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* What happens next */}

@@ -1,15 +1,19 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import Link from "next/link";
 import CustomDropdown from "@/components/ui/CustomDropdown";
 import Image from "next/image";
 import { Users, Activity, Calendar, Search, Plus, X, Upload, CheckCircle2, Bell, Pause, Play, Pencil, Trash2, AlertTriangle, Info, XCircle } from "lucide-react";
+import * as Icons from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createDoctor, updateDoctor, deleteDoctor, toggleDoctorStatus } from "@/app/actions/doctors";
 import { useRouter, useSearchParams } from "next/navigation";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminHeader from "@/components/AdminHeader";
+
+const AVAILABLE_ICONS = ["Activity", "Heart", "Eye", "Bone", "Baby", "Brain", "Stethoscope", "Sparkles", "User", "Smile"];
+const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 interface SpecialtyData {
   id: string;
@@ -59,8 +63,56 @@ export default function DoctorsClient({
   }, [searchParams, router, isAddModalOpen]);
 
   const [specialtyId, setSpecialtyId] = useState("");
+  const [isAddingNewSpecialty, setIsAddingNewSpecialty] = useState(false);
+  const [newSpecialtyName, setNewSpecialtyName] = useState("");
+  const [newSpecialtyIcon, setNewSpecialtyIcon] = useState("Activity");
   const [clinicId, setClinicId] = useState("");
   const [fee, setFee] = useState(250);
+  const [availableDaysState, setAvailableDaysState] = useState<string[]>(["Mon", "Tue", "Wed", "Thu", "Fri"]);
+  const [startTime, setStartTime] = useState("09:00");
+  const [endTime, setEndTime] = useState("17:00");
+
+  // Helper to parse 12hr "09:00 AM - 05:00 PM" into {start: "09:00", end: "17:00"}
+  const parseTimeRange = (timeStr: string) => {
+    try {
+      const parts = timeStr.split(" - ");
+      if (parts.length !== 2) return { start: "09:00", end: "17:00" };
+      
+      const parse12To24 = (t: string) => {
+        const [time, modifier] = t.split(" ");
+        const [hoursStr, minutes] = time.split(":");
+        let hours = hoursStr;
+        if (hours === "12") {
+          hours = "00";
+        }
+        if (modifier === "PM") {
+          hours = parseInt(hours, 10) + 12 + "";
+        }
+        return `${hours.padStart(2, "0")}:${minutes}`;
+      };
+
+      return { start: parse12To24(parts[0]), end: parse12To24(parts[1]) };
+    } catch {
+      return { start: "09:00", end: "17:00" };
+    }
+  };
+
+  // Helper to convert 24hr "17:00" to 12hr "05:00 PM"
+  const format24To12 = (time24: string) => {
+    if (!time24) return "";
+    const [hours, minutes] = time24.split(":");
+    let h = parseInt(hours, 10);
+    const modifier = h >= 12 ? "PM" : "AM";
+    if (h === 0) h = 12;
+    if (h > 12) h -= 12;
+    return `${h.toString().padStart(2, "0")}:${minutes} ${modifier}`;
+  };
+
+  const handleDayToggle = (day: string) => {
+    setAvailableDaysState(prev => 
+      prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]
+    );
+  };
 
   const specialtyOptions = specialties.map(s => ({
     value: s.id,
@@ -75,12 +127,43 @@ export default function DoctorsClient({
   useEffect(() => {
     if (editingDoctor) {
       setSpecialtyId(editingDoctor.specialtyId || "");
+      setIsAddingNewSpecialty(false);
+      setNewSpecialtyName("");
       setClinicId(editingDoctor.clinicId || "");
       setFee(editingDoctor.fee || 250);
+      
+      if (editingDoctor.availableDays) {
+        if (editingDoctor.availableDays.includes("-") || editingDoctor.availableDays.includes("Every") || editingDoctor.availableDays.includes("Weekend") || editingDoctor.availableDays.includes("Flexible")) {
+          // If it's a legacy string like "Mon - Fri"
+          if (editingDoctor.availableDays === "Mon - Fri") setAvailableDaysState(["Mon", "Tue", "Wed", "Thu", "Fri"]);
+          else if (editingDoctor.availableDays === "Every Day") setAvailableDaysState(WEEKDAYS);
+          else if (editingDoctor.availableDays === "Weekends Only") setAvailableDaysState(["Sat", "Sun"]);
+          else setAvailableDaysState(["Mon", "Tue", "Wed", "Thu", "Fri"]);
+        } else {
+          // New format: comma-separated
+          setAvailableDaysState(editingDoctor.availableDays.split(", "));
+        }
+      } else {
+        setAvailableDaysState(["Mon", "Tue", "Wed", "Thu", "Fri"]);
+      }
+
+      if (editingDoctor.availableTime) {
+        const { start, end } = parseTimeRange(editingDoctor.availableTime);
+        setStartTime(start);
+        setEndTime(end);
+      } else {
+        setStartTime("09:00");
+        setEndTime("17:00");
+      }
     } else {
       setSpecialtyId("");
+      setIsAddingNewSpecialty(false);
+      setNewSpecialtyName("");
       setClinicId("");
       setFee(250);
+      setAvailableDaysState(["Mon", "Tue", "Wed", "Thu", "Fri"]);
+      setStartTime("09:00");
+      setEndTime("17:00");
     }
   }, [editingDoctor, isAddModalOpen]);
 
@@ -275,58 +358,58 @@ export default function DoctorsClient({
             </div>
 
             {/* Status Filter */}
-            <div className="flex flex-col gap-1 min-w-[120px]">
-              <select
+            <div className="flex flex-col gap-1 min-w-[140px]">
+              <CustomDropdown
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="bg-gray-bg border border-gray-border rounded-xl h-11 px-3 text-sm font-medium focus:outline-none focus:border-blue-primary"
-              >
-                <option value="all">All Statuses</option>
-                <option value="Active">Active</option>
-                <option value="Paused">Paused</option>
-              </select>
+                onChange={setStatusFilter}
+                placeholder="All Statuses"
+                options={[
+                  { value: "all", label: "All Statuses" },
+                  { value: "Active", label: "Active" },
+                  { value: "Paused", label: "Paused" }
+                ]}
+              />
             </div>
 
             {/* Specialty Filter */}
-            <div className="flex flex-col gap-1 min-w-[140px]">
-              <select
+            <div className="flex flex-col gap-1 min-w-[160px]">
+              <CustomDropdown
                 value={specialtyFilter}
-                onChange={(e) => setSpecialtyFilter(e.target.value)}
-                className="bg-gray-bg border border-gray-border rounded-xl h-11 px-3 text-sm font-medium focus:outline-none focus:border-blue-primary"
-              >
-                <option value="all">All Specialties</option>
-                {uniqueSpecialties.map((spec) => (
-                  <option key={spec} value={spec}>{spec}</option>
-                ))}
-              </select>
+                onChange={setSpecialtyFilter}
+                placeholder="All Specialties"
+                options={[
+                  { value: "all", label: "All Specialties" },
+                  ...uniqueSpecialties.map((spec) => ({ value: spec, label: spec }))
+                ]}
+              />
             </div>
 
             {/* City Filter */}
-            <div className="flex flex-col gap-1 min-w-[120px]">
-              <select
+            <div className="flex flex-col gap-1 min-w-[140px]">
+              <CustomDropdown
                 value={cityFilter}
-                onChange={(e) => setCityFilter(e.target.value)}
-                className="bg-gray-bg border border-gray-border rounded-xl h-11 px-3 text-sm font-medium focus:outline-none focus:border-blue-primary"
-              >
-                <option value="all">All Cities</option>
-                {uniqueCities.map((city) => (
-                  <option key={city} value={city}>{city}</option>
-                ))}
-              </select>
+                onChange={setCityFilter}
+                placeholder="All Cities"
+                options={[
+                  { value: "all", label: "All Cities" },
+                  ...uniqueCities.map((city) => ({ value: city, label: city }))
+                ]}
+              />
             </div>
 
             {/* Sort Dropdown */}
-            <div className="flex flex-col gap-1 min-w-[160px]">
-              <select
+            <div className="flex flex-col gap-1 min-w-[180px]">
+              <CustomDropdown
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="bg-gray-bg border border-gray-border rounded-xl h-11 px-3 text-sm font-medium focus:outline-none focus:border-blue-primary"
-              >
-                <option value="alphabetical-asc">Name (A → Z)</option>
-                <option value="alphabetical-desc">Name (Z → A)</option>
-                <option value="date-desc">Newest Added</option>
-                <option value="date-asc">Oldest Added</option>
-              </select>
+                onChange={setSortBy}
+                placeholder="Sort By"
+                options={[
+                  { value: "alphabetical-asc", label: "Name (A → Z)" },
+                  { value: "alphabetical-desc", label: "Name (Z → A)" },
+                  { value: "date-desc", label: "Newest Added" },
+                  { value: "date-asc", label: "Oldest Added" }
+                ]}
+              />
             </div>
           </div>
 
@@ -461,14 +544,59 @@ export default function DoctorsClient({
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm font-semibold text-text-dark">Specialty *</label>
-                    <CustomDropdown
-                      value={specialtyId}
-                      onChange={setSpecialtyId}
-                      options={specialtyOptions}
-                      placeholder="Select Specialty"
-                    />
-                    <input type="hidden" name="specialtyId" value={specialtyId} />
+                    <div className="flex items-center justify-between">
+                      <label className="text-sm font-semibold text-text-dark">Specialty *</label>
+                      <button 
+                        type="button" 
+                        onClick={() => { setIsAddingNewSpecialty(!isAddingNewSpecialty); setSpecialtyId(""); setNewSpecialtyName(""); setNewSpecialtyIcon("Activity"); }}
+                        className="text-xs text-blue-primary hover:underline font-medium"
+                      >
+                        {isAddingNewSpecialty ? "Choose Existing" : "+ Add New"}
+                      </button>
+                    </div>
+                    {isAddingNewSpecialty ? (
+                      <div className="flex gap-2">
+                        <input 
+                          required 
+                          name="newSpecialtyName" 
+                          value={newSpecialtyName}
+                          onChange={(e) => setNewSpecialtyName(e.target.value)}
+                          type="text" 
+                          placeholder="Enter new specialty name" 
+                          className="flex-1 bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary" 
+                        />
+                        <div className="w-40">
+                          <CustomDropdown
+                            value={newSpecialtyIcon}
+                            onChange={setNewSpecialtyIcon}
+                            placeholder="Icon"
+                            options={AVAILABLE_ICONS.map(i => {
+                              const IconCmp = (Icons as any)[i] || Icons.Activity;
+                              return {
+                                value: i,
+                                label: (
+                                  <div className="flex items-center gap-2">
+                                    <IconCmp className="w-4 h-4 text-blue-primary" />
+                                    <span>{i}</span>
+                                  </div>
+                                )
+                              };
+                            })}
+                          />
+                          <input type="hidden" name="newSpecialtyIcon" value={newSpecialtyIcon} />
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <CustomDropdown
+                          value={specialtyId}
+                          onChange={setSpecialtyId}
+                          options={specialtyOptions}
+                          placeholder="Select Specialty"
+                        />
+                        <input type="hidden" name="specialtyId" value={specialtyId} />
+                      </>
+                    )}
                   </div>
                   <div className="flex flex-col gap-2">
                     <label className="text-sm font-semibold text-text-dark">Clinic Branch *</label>
@@ -483,6 +611,52 @@ export default function DoctorsClient({
                 </div>
 
                 <input type="hidden" name="fee" value={fee} />
+                <input type="hidden" name="availableDays" value={availableDaysState.length > 0 ? availableDaysState.join(", ") : "Not set"} />
+                <input type="hidden" name="availableTime" value={`${format24To12(startTime)} - ${format24To12(endTime)}`} />
+
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-semibold text-text-dark">Available Days *</label>
+                    <div className="flex flex-wrap gap-3 mt-1">
+                      {WEEKDAYS.map(day => (
+                        <label key={day} className="flex items-center gap-2 cursor-pointer bg-gray-50 border border-gray-border px-3 py-1.5 rounded-lg hover:border-blue-primary transition-colors">
+                          <input 
+                            type="checkbox" 
+                            checked={availableDaysState.includes(day)}
+                            onChange={() => handleDayToggle(day)}
+                            className="w-4 h-4 text-blue-primary rounded focus:ring-blue-primary"
+                          />
+                          <span className="text-sm font-medium text-text-dark">{day}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-semibold text-text-dark">Available Time *</label>
+                    <div className="flex items-center gap-4">
+                      <div className="flex flex-col w-full md:w-1/2">
+                        <span className="text-xs text-text-light mb-1">Start Time</span>
+                        <input 
+                          type="time" 
+                          value={startTime}
+                          onChange={(e) => setStartTime(e.target.value)}
+                          className="bg-gray-bg border border-gray-border rounded-xl h-11 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary cursor-pointer w-full" 
+                        />
+                      </div>
+                      <span className="text-text-light mt-4">-</span>
+                      <div className="flex flex-col w-full md:w-1/2">
+                        <span className="text-xs text-text-light mb-1">End Time</span>
+                        <input 
+                          type="time" 
+                          value={endTime}
+                          onChange={(e) => setEndTime(e.target.value)}
+                          className="bg-gray-bg border border-gray-border rounded-xl h-11 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary cursor-pointer w-full" 
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-semibold text-text-dark">Doctor Photos (Upload one or more)</label>

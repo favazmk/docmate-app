@@ -6,7 +6,7 @@
 
 ## 📸 Screenshots
 
-*Screenshots pending. Please upload screenshots to `/public/assets` and link them here.*
+![Docmate Dashboard](./public/assets/screenshot.png)
 
 ## 📝 Project Description
 

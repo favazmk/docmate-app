@@ -25,11 +25,28 @@ export async function createDoctor(formData: FormData) {
     const qualifications = formData.get("qualifications") as string;
     const feeStr = formData.get("fee") as string;
     const fee = feeStr ? parseInt(feeStr, 10) : 250;
+    const availableDays = formData.get("availableDays") as string;
+    const availableTime = formData.get("availableTime") as string;
+    const newSpecialtyName = formData.get("newSpecialtyName") as string;
+    const newSpecialtyIcon = formData.get("newSpecialtyIcon") as string || "Activity";
     
     // Resolve specialty details
-    const specRecord = await prisma.specialty.findUnique({
-      where: { id: specialtyId }
-    });
+    let specRecord = null;
+    
+    if (newSpecialtyName && newSpecialtyName.trim() !== "") {
+      const nameVal = newSpecialtyName.trim();
+      specRecord = await prisma.specialty.findUnique({ where: { name: nameVal }});
+      if (!specRecord) {
+        specRecord = await prisma.specialty.create({
+          data: { name: nameVal, iconName: "Activity" }
+        });
+      }
+    } else {
+      specRecord = await prisma.specialty.findUnique({
+        where: { id: specialtyId }
+      });
+    }
+    
     if (!specRecord) throw new Error("Specialty is required");
 
     // Resolve clinic details
@@ -65,7 +82,9 @@ export async function createDoctor(formData: FormData) {
         bio: bio || "A dedicated healthcare professional.",
         qualifications: qualifications || "MD, Board Certified Specialist",
         photoUrl,
-        status: "Active"
+        status: "Active",
+        availableDays: availableDays || "Mon - Fri",
+        availableTime: availableTime || "09:00 AM - 05:00 PM",
       }
     });
 
@@ -91,11 +110,29 @@ export async function updateDoctor(id: string, formData: FormData) {
     const qualifications = formData.get("qualifications") as string;
     const feeStr = formData.get("fee") as string;
     const fee = feeStr ? parseInt(feeStr, 10) : 250;
+    const availableDays = formData.get("availableDays") as string;
+    const availableTime = formData.get("availableTime") as string;
+    const newSpecialtyName = formData.get("newSpecialtyName") as string;
+    const newSpecialtyIcon = formData.get("newSpecialtyIcon") as string || "Activity";
 
     // Resolve specialty details
-    const specRecord = await prisma.specialty.findUnique({
-      where: { id: specialtyId }
-    });
+    let specRecord = null;
+    
+    if (newSpecialtyName && newSpecialtyName.trim() !== "") {
+      const nameVal = newSpecialtyName.trim();
+      specRecord = await prisma.specialty.findUnique({ where: { name: nameVal }});
+      if (!specRecord) {
+        specRecord = await prisma.specialty.create({
+          data: { name: nameVal, iconName: "Activity" }
+        });
+      }
+    } else {
+      specRecord = await prisma.specialty.findUnique({
+        where: { id: specialtyId }
+      });
+    }
+    
+    if (!specRecord) throw new Error("Specialty is required");
     if (!specRecord) throw new Error("Specialty is required");
 
     // Resolve clinic details
@@ -124,6 +161,8 @@ export async function updateDoctor(id: string, formData: FormData) {
         affiliation: `${clinicRecord.hospitalGroup.name} - ${clinicRecord.name}`,
         bio: bio || "A dedicated healthcare professional.",
         qualifications: qualifications || "MD, Board Certified Specialist",
+        availableDays: availableDays || "Mon - Fri",
+        availableTime: availableTime || "09:00 AM - 05:00 PM",
         ...(uploadedPhotoUrl ? { photoUrl: uploadedPhotoUrl } : {})
       }
     });

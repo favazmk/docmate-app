@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
 import { Plus, Pencil, Trash2, CheckCircle2, X, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -135,6 +136,13 @@ export default function HospitalsClient({ hospitals }: HospitalsClientProps) {
                         </td>
                         <td className="px-6 py-4 font-bold text-text-dark">{h.name}</td>
                         <td className="px-6 py-4 flex items-center gap-3">
+                          <Link
+                            href={`/admin/clinics?action=add&hospitalId=${h.id}`}
+                            className="p-1.5 hover:bg-gray-100 rounded-lg text-green-600 flex items-center justify-center"
+                            title="Add Clinic Branch"
+                          >
+                            <Building2 className="w-4.5 h-4.5" />
+                          </Link>
                           <button
                             onClick={() => handleOpenEdit(h)}
                             className="p-1.5 hover:bg-gray-100 rounded-lg text-blue-primary"

@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import ClinicsClient from "./ClinicsClient";
+import { Suspense } from "react";
 
 
 export const dynamic = 'force-dynamic';
@@ -24,5 +25,9 @@ export default async function AdminClinicsPage() {
     orderBy: { name: "asc" }
   });
 
-  return <ClinicsClient clinics={clinics} hospitalGroups={hospitalGroups} />;
+  return (
+    <Suspense fallback={<div className="p-8 text-center">Loading...</div>}>
+      <ClinicsClient clinics={clinics} hospitalGroups={hospitalGroups} />
+    </Suspense>
+  );
 }

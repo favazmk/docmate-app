@@ -20,6 +20,8 @@ interface DoctorCardProps {
   clinicName?: string;
   fee?: number;
   variant?: "grid" | "row";
+  availableDays?: string;
+  availableTime?: string;
 }
 
 export default function DoctorCard({
@@ -34,9 +36,24 @@ export default function DoctorCard({
   isVerified,
   clinicName,
   fee = 250,
-  variant = "row"
+  variant = "row",
+  availableDays = "Sat - Thu",
+  availableTime = "09:00 AM - 05:00 PM"
 }: DoctorCardProps) {
   const router = useRouter();
+  
+  // Format long day strings to be more compact if they are 3+ days
+  const formatDays = (days: string) => {
+    if (!days || days === "Not set") return "Sat - Thu"; // Fallback
+    const dayArray = days.split(",").map(d => d.trim());
+    if (dayArray.length > 3) {
+       return `${dayArray[0]} - ${dayArray[dayArray.length - 1]}`;
+    }
+    return days;
+  };
+
+  const displayDays = formatDays(availableDays);
+  const displayTime = availableTime && availableTime !== "Not set" ? availableTime : "09:00 AM - 05:00 PM";
   
   const defaultPlaceholder = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2200CC&color=fff`;
   const firstPhoto = photoUrl ? photoUrl.split(',')[0] : defaultPlaceholder;
@@ -191,9 +208,9 @@ export default function DoctorCard({
           <div className="bg-gray-50 border border-gray-border rounded-xl py-2.5 flex flex-col items-center justify-center gap-0.5">
             <span className="text-[11px] uppercase tracking-wider font-bold text-text-light flex items-center gap-1.5">
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-              Sat - Thu
+              {displayDays}
             </span>
-            <span className="text-xs font-bold text-text-dark">09:00 AM - 05:00 PM</span>
+            <span className="text-xs font-bold text-text-dark">{displayTime}</span>
           </div>
           <Link 
             href={`/book/${slug}`} 

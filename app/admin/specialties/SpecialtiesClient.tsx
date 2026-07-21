@@ -8,6 +8,7 @@ import AdminSidebar from "@/components/AdminSidebar";
 import AdminHeader from "@/components/AdminHeader";
 import { createSpecialty, updateSpecialty, deleteSpecialty } from "@/app/actions/admin";
 import * as Icons from "lucide-react";
+import CustomDropdown from "@/components/ui/CustomDropdown";
 
 interface SpecialtyData {
   id: string;
@@ -193,17 +194,23 @@ export default function SpecialtiesClient({ specialties }: SpecialtiesClientProp
 
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-semibold text-text-dark">Select Icon *</label>
-                <select
+                <CustomDropdown
                   value={iconName}
-                  onChange={(e) => setIconName(e.target.value)}
-                  className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none"
-                >
-                  {AVAILABLE_ICONS.map((ico) => (
-                    <option key={ico} value={ico}>
-                      {ico}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setIconName}
+                  placeholder="Select Icon"
+                  options={AVAILABLE_ICONS.map(ico => {
+                    const IconCmp = (Icons as any)[ico] || Icons.Activity;
+                    return {
+                      value: ico,
+                      label: (
+                        <div className="flex items-center gap-2">
+                          <IconCmp className="w-4 h-4 text-blue-primary" />
+                          <span>{ico}</span>
+                        </div>
+                      )
+                    };
+                  })}
+                />
               </div>
 
               <div className="flex justify-end gap-3 pt-4 border-t border-gray-border mt-2">
