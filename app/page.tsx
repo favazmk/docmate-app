@@ -9,6 +9,7 @@ import HeroOrbs from "@/components/HeroOrbs";
 import { BadgeCheck, Globe, Zap, Star, Activity, Heart, Eye, Bone, Baby, Brain, Stethoscope, Building2 } from "lucide-react";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
+import { cn } from "@/lib/utils";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
@@ -219,10 +220,8 @@ export default async function Home() {
           </div>
 
           <AnimatedSection animation="reveal" delay={300}>
-            <Link href="/search">
-              <Button variant="outline" className="h-12 rounded-xl border-2 border-white/20 bg-white/10 px-8 font-semibold text-white hover:bg-white/20 hover:border-white/30 backdrop-blur-md hover:shadow-lg hover:-translate-y-0.5 transition-[background-color,box-shadow,transform,border-color] duration-300">
-                View all specialties
-              </Button>
+            <Link href="/search" className={cn(buttonVariants({ variant: "outline" }), "h-12 rounded-xl border-2 border-white/20 bg-white/10 px-8 font-semibold text-white hover:bg-white/20 hover:border-white/30 backdrop-blur-md hover:shadow-lg hover:-translate-y-0.5 transition-[background-color,box-shadow,transform,border-color] duration-300")}>
+              View all specialties
             </Link>
           </AnimatedSection>
         </AnimatedSection>
@@ -248,10 +247,8 @@ export default async function Home() {
           </div>
 
           <AnimatedSection animation="reveal" delay={300}>
-            <Link href="/search">
-              <Button variant="outline" className="h-12 rounded-xl border-2 border-blue-primary bg-white/90 px-8 font-semibold text-blue-primary hover:bg-blue-light hover:shadow-lg hover:shadow-blue-primary/10 hover:-translate-y-0.5 transition-[background-color,box-shadow,transform] duration-300">
-                View all doctors
-              </Button>
+            <Link href="/search" className={cn(buttonVariants({ variant: "outline" }), "h-12 rounded-xl border-2 border-blue-primary bg-white/90 px-8 font-semibold text-blue-primary hover:bg-blue-light hover:shadow-lg hover:shadow-blue-primary/10 hover:-translate-y-0.5 transition-[background-color,box-shadow,transform] duration-300")}>
+              View all doctors
             </Link>
           </AnimatedSection>
         </div>
@@ -355,10 +352,8 @@ export default async function Home() {
           </div>
           
           <div className="mt-12 flex justify-center">
-            <Link href="/search">
-              <Button variant="outline" className="h-12 rounded-xl border-2 border-white/20 bg-white/10 px-8 font-semibold text-white hover:bg-white/20 hover:border-white/30 backdrop-blur-md hover:shadow-lg hover:-translate-y-0.5 transition-[background-color,box-shadow,transform,border-color] duration-300">
-                Book Now
-              </Button>
+            <Link href="/search" className={cn(buttonVariants({ variant: "outline" }), "h-12 rounded-xl border-2 border-white/20 bg-white/10 px-8 font-semibold text-white hover:bg-white/20 hover:border-white/30 backdrop-blur-md hover:shadow-lg hover:-translate-y-0.5 transition-[background-color,box-shadow,transform,border-color] duration-300")}>
+              Book Now
             </Link>
           </div>
         </AnimatedSection>
