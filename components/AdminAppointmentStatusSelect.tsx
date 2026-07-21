@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { updateAppointmentStatus } from "@/app/actions/admin";
 
+import { AppointmentStatus } from "@prisma/client";
+
 interface Props {
   appointmentId: string;
-  initialStatus: string;
+  initialStatus: AppointmentStatus | string;
 }
 
 export default function AdminAppointmentStatusSelect({ appointmentId, initialStatus }: Props) {
@@ -13,7 +15,7 @@ export default function AdminAppointmentStatusSelect({ appointmentId, initialSta
   const [isLoading, setIsLoading] = useState(false);
 
   const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newStatus = e.target.value;
+    const newStatus = e.target.value as AppointmentStatus;
     setStatus(newStatus);
     setIsLoading(true);
     try {

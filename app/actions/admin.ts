@@ -7,6 +7,8 @@ import { authOptions } from "@/lib/auth";
 import { uploadImages } from "@/lib/upload";
 
 
+import { AppointmentStatus } from "@prisma/client";
+
 async function requireAdmin() {
   const session = await getServerSession(authOptions);
   if (!session || (session.user as any)?.role !== "ADMIN") {
@@ -14,7 +16,7 @@ async function requireAdmin() {
   }
 }
 
-export async function updateAppointmentStatus(id: string, status: string) {
+export async function updateAppointmentStatus(id: string, status: AppointmentStatus) {
   await requireAdmin();
   await prisma.appointment.update({
     where: { id },
