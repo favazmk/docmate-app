@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
-import { Plus, Pencil, Trash2, CheckCircle2, X, Building, MapPin, Phone, Mail } from "lucide-react";
+import { Plus, Pencil, Trash2, CheckCircle2, X, Building, MapPin, Phone, Mail, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminHeader from "@/components/AdminHeader";
@@ -175,9 +176,16 @@ export default function ClinicsClient({ clinics, hospitalGroups }: ClinicsClient
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
+                            <Link
+                              href={`/admin/doctors?action=add&clinicId=${c.id}`}
+                              className="p-1.5 hover:bg-gray-100 rounded-lg text-green-600 flex items-center justify-center"
+                              title="Add Doctor"
+                            >
+                              <UserPlus className="w-4.5 h-4.5" />
+                            </Link>
                             <button
                               onClick={() => handleOpenEdit(c)}
-                              className="p-1.5 hover:bg-gray-100 rounded-lg text-blue-primary"
+                              className="p-1.5 hover:bg-gray-100 rounded-lg text-blue-primary flex items-center justify-center"
                               title="Edit Branch"
                             >
                               <Pencil className="w-4.5 h-4.5" />

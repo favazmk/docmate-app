@@ -1,10 +1,10 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma";
+import { Suspense } from "react";
 import DoctorsClient from "./DoctorsClient";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
-const prisma = new PrismaClient();
 
 export const dynamic = 'force-dynamic';
 
@@ -40,11 +40,13 @@ export default async function AdminDoctorsPage() {
   const appointmentCount = await prisma.appointment.count();
 
   return (
-    <DoctorsClient
-      doctors={doctors}
-      specialties={specialties}
-      clinics={clinics}
-      appointmentCount={appointmentCount}
-    />
+    <Suspense fallback={<div className="p-8 text-center">Loading...</div>}>
+      <DoctorsClient
+        doctors={doctors}
+        specialties={specialties}
+        clinics={clinics}
+        appointmentCount={appointmentCount}
+      />
+    </Suspense>
   );
 }

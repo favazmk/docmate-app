@@ -26,7 +26,7 @@ export default function BookingWidget({ slug, doctorName, clinicName }: BookingW
         <Link href={`/book/${slug}`} className={`${buttonVariants()} w-full bg-blue-primary hover:bg-blue-hover text-white h-12 rounded-xl font-bold text-base shadow-md shadow-blue-primary/20`}>
           Book Appointment
         </Link>
-        <p className="text-[11px] text-center text-text-light font-medium uppercase tracking-wider">Free online scheduling</p>
+        <p className="text-[11px] text-center text-text-light font-medium uppercase tracking-wider">Zero booking fee</p>
       </div>
 
       <hr className="my-6 border-gray-border" />

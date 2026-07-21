@@ -7,7 +7,7 @@ import Image from "next/image";
 import { Users, Activity, Calendar, Search, Plus, X, Upload, CheckCircle2, Bell, Pause, Play, Pencil, Trash2, AlertTriangle, Info, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createDoctor, updateDoctor, deleteDoctor, toggleDoctorStatus } from "@/app/actions/doctors";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminHeader from "@/components/AdminHeader";
 
@@ -41,6 +41,22 @@ export default function DoctorsClient({
   const [editingDoctor, setEditingDoctor] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const action = searchParams?.get("action");
+    const initClinicId = searchParams?.get("clinicId");
+    
+    if (action === "add" && !isAddModalOpen) {
+      setEditingDoctor(null);
+      setErrorMsg("");
+      if (initClinicId) {
+        setClinicId(initClinicId);
+      }
+      setIsAddModalOpen(true);
+      router.replace("/admin/doctors", { scroll: false });
+    }
+  }, [searchParams, router, isAddModalOpen]);
 
   const [specialtyId, setSpecialtyId] = useState("");
   const [clinicId, setClinicId] = useState("");

@@ -1,10 +1,9 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import HospitalsClient from "./HospitalsClient";
 
-const prisma = new PrismaClient();
 
 export const dynamic = 'force-dynamic';
 

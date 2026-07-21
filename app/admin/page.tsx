@@ -1,14 +1,13 @@
+import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { Users, Calendar, Activity } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
-import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminHeader from "@/components/AdminHeader";
 
-const prisma = new PrismaClient();
 
 export const dynamic = 'force-dynamic';
 
