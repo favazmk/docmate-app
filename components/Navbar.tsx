@@ -106,8 +106,8 @@ export default function Navbar() {
     { label: "Home", href: "/" },
     { label: "About Us", href: "/about" },
     { label: "Find doctors", href: "/search" },
-    { label: "Hospitals", href: "/hospitals" },
     { label: "Specialties", href: "/#specialties" },
+    { label: "Hospitals", href: "/hospitals" },
     { label: "Cities", href: "/#cities" },
     { label: "Blog", href: "/blog" },
   ];

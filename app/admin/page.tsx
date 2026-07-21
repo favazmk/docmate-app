@@ -114,7 +114,6 @@ export default async function AdminDashboardPage() {
                     <th className="px-6 py-4">Doctor</th>
                     <th className="px-6 py-4">Date & Time</th>
                     <th className="px-6 py-4">Status</th>
-                    <th className="px-6 py-4">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-border">
@@ -126,9 +125,6 @@ export default async function AdminDashboardPage() {
                       <td className="px-6 py-4 text-text-mid">{b.date}, {b.time}</td>
                       <td className="px-6 py-4">
                         <AdminAppointmentStatusSelect appointmentId={b.fullId} initialStatus={b.status} />
-                      </td>
-                      <td className="px-6 py-4">
-                        <Link href={`/admin/appointments/${b.fullId}`} className="text-blue-primary hover:underline font-medium">View</Link>
                       </td>
                     </tr>
                   ))}

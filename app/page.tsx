@@ -355,7 +355,7 @@ export default async function Home() {
           </div>
           
           <div className="mt-12 flex justify-center">
-            <Link href="/search" className={`${buttonVariants()} bg-blue-primary hover:bg-blue-hover text-white h-12 px-8 rounded-xl font-bold text-base shadow-lg shadow-blue-primary/20`}>
+            <Link href="/search" className={`${buttonVariants({ variant: "outline" })} h-12 rounded-xl border-2 border-blue-primary bg-white/90 px-8 font-semibold text-blue-primary hover:bg-blue-light hover:shadow-lg hover:shadow-blue-primary/10 hover:-translate-y-0.5 transition-[background-color,box-shadow,transform] duration-300`}>
               Book Now
             </Link>
           </div>
