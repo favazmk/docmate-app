@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminHeader from "@/components/AdminHeader";
-
+import AdminAppointmentStatusSelect from "@/components/AdminAppointmentStatusSelect";
 
 export const dynamic = 'force-dynamic';
 
@@ -64,13 +64,7 @@ export default async function AdminAppointmentsPage() {
                       <td className="px-6 py-4 text-text-mid">{apt.doctor?.name || "Unknown"}</td>
                       <td className="px-6 py-4 text-text-mid">{apt.date}, {apt.timeSlot}</td>
                       <td className="px-6 py-4">
-                        <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider ${
-                          apt.status === 'CONFIRMED' ? 'bg-green-badge-bg text-green-badge' :
-                          apt.status === 'PENDING' ? 'bg-orange-50 text-orange-600' :
-                          'bg-red-50 text-red-600'
-                        }`}>
-                          {apt.status}
-                        </span>
+                        <AdminAppointmentStatusSelect appointmentId={apt.id} initialStatus={apt.status} />
                       </td>
                     </tr>
                   ))}

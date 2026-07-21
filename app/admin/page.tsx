@@ -7,8 +7,7 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminHeader from "@/components/AdminHeader";
-
-
+import AdminAppointmentStatusSelect from "@/components/AdminAppointmentStatusSelect";
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboardPage() {
@@ -37,6 +36,7 @@ export default async function AdminDashboardPage() {
 
   const recentBookings = rawBookings.map(b => ({
     id: b.id.substring(0, 8).toUpperCase(),
+    fullId: b.id,
     patient: b.patientName,
     doctor: b.doctor.name,
     date: b.date,
@@ -125,16 +125,10 @@ export default async function AdminDashboardPage() {
                       <td className="px-6 py-4 text-text-mid font-medium">{b.doctor}</td>
                       <td className="px-6 py-4 text-text-mid">{b.date}, {b.time}</td>
                       <td className="px-6 py-4">
-                        <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider ${
-                          b.status === 'CONFIRMED' ? 'bg-green-badge-bg text-green-badge' :
-                          b.status === 'PENDING' ? 'bg-orange-50 text-orange-600' :
-                          'bg-red-50 text-red-600'
-                        }`}>
-                          {b.status}
-                        </span>
+                        <AdminAppointmentStatusSelect appointmentId={b.fullId} initialStatus={b.status} />
                       </td>
                       <td className="px-6 py-4">
-                        <button className="text-blue-primary hover:underline font-medium">Manage</button>
+                        <Link href={`/admin/appointments/${b.fullId}`} className="text-blue-primary hover:underline font-medium">View</Link>
                       </td>
                     </tr>
                   ))}

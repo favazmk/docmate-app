@@ -14,6 +14,17 @@ async function requireAdmin() {
   }
 }
 
+export async function updateAppointmentStatus(id: string, status: string) {
+  await requireAdmin();
+  await prisma.appointment.update({
+    where: { id },
+    data: { status }
+  });
+  revalidatePath("/admin");
+  revalidatePath("/admin/appointments");
+  return { success: true };
+}
+
 const MAX_PHOTOS = 10;
 
 function mergePhotoUrls(keptUrlsCsv: string, uploadedCsv: string): string {
