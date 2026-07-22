@@ -75,8 +75,8 @@ export default function UserProfileForm({ user }: { user: any }) {
             </div>
           </div>
           
-          <div className="flex items-center gap-4">
-            <Button type="submit" disabled={isUpdating} className="bg-blue-primary hover:bg-blue-hover text-white rounded-xl px-8 font-semibold">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <Button type="submit" disabled={isUpdating} className="bg-blue-primary hover:bg-blue-hover text-white rounded-xl px-8 font-semibold w-full sm:w-auto">
               {isUpdating ? "Saving..." : "Save Profile"}
             </Button>
             {profileMessage && (

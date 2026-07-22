@@ -55,8 +55,8 @@ export default function UserPasswordForm({ user }: { user: any }) {
           <Input name="confirmPassword" type="password" required className="rounded-xl" />
         </div>
         
-        <div className="flex items-center gap-4">
-          <Button type="submit" disabled={isChangingPassword} className="bg-text-dark hover:bg-black text-white rounded-xl px-8 font-semibold">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+          <Button type="submit" disabled={isChangingPassword} className="bg-text-dark hover:bg-black text-white rounded-xl px-8 font-semibold w-full sm:w-auto">
             {isChangingPassword ? "Updating..." : "Update Password"}
           </Button>
           {passwordMessage && (

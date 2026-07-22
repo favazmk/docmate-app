@@ -96,7 +96,7 @@ export default function HospitalsClient({ hospitals }: HospitalsClientProps) {
       <div className="flex-1 flex flex-col min-w-0">
         <AdminHeader title="Hospital Groups Directory" badgeText={hospitals.length} />
 
-        <main className="flex-1 p-6 overflow-y-auto">
+        <main className="flex-1 p-4 md:p-6 overflow-y-auto">
           <div className="flex justify-between items-center mb-6">
             <div>
               <h2 className="text-xl font-bold text-text-dark">Hospital Groups (Networks)</h2>

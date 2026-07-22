@@ -23,24 +23,24 @@ export default function DashboardClient({ appointments, user }: { appointments: 
       
       {/* Dashboard Nav */}
       <div className="bg-white border-b border-gray-border">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center gap-8">
-          <h1 className="font-bold text-text-dark text-lg">Hello, {userName || "Patient"}</h1>
-          <nav className="hidden md:flex items-center gap-6">
+        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between md:justify-start gap-4 md:gap-8">
+          <h1 className="font-bold text-text-dark text-base md:text-lg truncate shrink-0">Hello, {userName || "Patient"}</h1>
+          <nav className="flex items-center gap-2 md:gap-6 overflow-x-auto py-1 no-scrollbar">
             <button 
               onClick={() => setActiveTab('appointments')}
-              className={`text-sm font-bold h-16 flex items-center border-b-2 ${activeTab === 'appointments' ? 'text-blue-primary border-blue-primary' : 'text-text-mid border-transparent hover:text-text-dark'}`}
+              className={`text-xs md:text-sm font-bold h-14 md:h-16 flex items-center border-b-2 whitespace-nowrap px-1 ${activeTab === 'appointments' ? 'text-blue-primary border-blue-primary' : 'text-text-mid border-transparent hover:text-text-dark'}`}
             >
               Appointments
             </button>
             <button 
               onClick={() => setActiveTab('profile')}
-              className={`text-sm font-bold h-16 flex items-center border-b-2 ${activeTab === 'profile' ? 'text-blue-primary border-blue-primary' : 'text-text-mid border-transparent hover:text-text-dark'}`}
+              className={`text-xs md:text-sm font-bold h-14 md:h-16 flex items-center border-b-2 whitespace-nowrap px-1 ${activeTab === 'profile' ? 'text-blue-primary border-blue-primary' : 'text-text-mid border-transparent hover:text-text-dark'}`}
             >
               My Profile
             </button>
             <button 
               onClick={() => setActiveTab('password')}
-              className={`text-sm font-bold h-16 flex items-center border-b-2 ${activeTab === 'password' ? 'text-blue-primary border-blue-primary' : 'text-text-mid border-transparent hover:text-text-dark'}`}
+              className={`text-xs md:text-sm font-bold h-14 md:h-16 flex items-center border-b-2 whitespace-nowrap px-1 ${activeTab === 'password' ? 'text-blue-primary border-blue-primary' : 'text-text-mid border-transparent hover:text-text-dark'}`}
             >
               Change Password
             </button>

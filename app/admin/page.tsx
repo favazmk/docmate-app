@@ -54,48 +54,56 @@ export default async function AdminDashboardPage() {
       <div className="flex-1 flex flex-col min-w-0">
         <AdminHeader title="Admin Overview" />
 
-        <main className="flex-1 p-6 overflow-y-auto">
+        <main className="flex-1 p-4 md:p-6 overflow-y-auto">
           
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white border border-gray-border rounded-2xl p-6 shadow-sm">
-              <div className="flex justify-between items-start mb-4">
-                <div className="w-12 h-12 rounded-xl bg-blue-light text-blue-primary flex items-center justify-center">
-                  <Users className="w-6 h-6" />
+          {/* Stats Cards - Bento Grid on Mobile */}
+          <div className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-8">
+            <div className="bg-white border border-gray-border rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col justify-between">
+              <div className="flex justify-between items-start mb-3 sm:mb-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-light text-blue-primary flex items-center justify-center">
+                  <Users className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
               </div>
-              <h3 className="text-text-light font-medium text-sm mb-1">Total Doctors</h3>
-              <p className="text-3xl font-bold text-text-dark">{totalDoctors}</p>
+              <div>
+                <h3 className="text-text-light font-medium text-xs sm:text-sm mb-1">Total Doctors</h3>
+                <p className="text-2xl sm:text-3xl font-bold text-text-dark">{totalDoctors}</p>
+              </div>
             </div>
             
-            <div className="bg-white border border-gray-border rounded-2xl p-6 shadow-sm">
-              <div className="flex justify-between items-start mb-4">
-                <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
-                  <Calendar className="w-6 h-6" />
+            <div className="bg-white border border-gray-border rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col justify-between">
+              <div className="flex justify-between items-start mb-3 sm:mb-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                  <Calendar className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
               </div>
-              <h3 className="text-text-light font-medium text-sm mb-1">Total Bookings</h3>
-              <p className="text-3xl font-bold text-text-dark">{totalBookings}</p>
+              <div>
+                <h3 className="text-text-light font-medium text-xs sm:text-sm mb-1">Total Bookings</h3>
+                <p className="text-2xl sm:text-3xl font-bold text-text-dark">{totalBookings}</p>
+              </div>
             </div>
 
-            <div className="bg-white border border-gray-border rounded-2xl p-6 shadow-sm">
-              <div className="flex justify-between items-start mb-4">
-                <div className="w-12 h-12 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center">
-                  <Activity className="w-6 h-6" />
+            <div className="bg-white border border-gray-border rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col justify-between">
+              <div className="flex justify-between items-start mb-3 sm:mb-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center">
+                  <Activity className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
               </div>
-              <h3 className="text-text-light font-medium text-sm mb-1">Active Areas</h3>
-              <p className="text-3xl font-bold text-text-dark">{liveEmirates}</p>
+              <div>
+                <h3 className="text-text-light font-medium text-xs sm:text-sm mb-1">Active Areas</h3>
+                <p className="text-2xl sm:text-3xl font-bold text-text-dark">{liveEmirates}</p>
+              </div>
             </div>
 
-            <div className="bg-white border border-gray-border rounded-2xl p-6 shadow-sm">
-              <div className="flex justify-between items-start mb-4">
-                <div className="w-12 h-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center">
-                  <Users className="w-6 h-6" />
+            <div className="bg-white border border-gray-border rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col justify-between">
+              <div className="flex justify-between items-start mb-3 sm:mb-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center">
+                  <Users className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
               </div>
-              <h3 className="text-text-light font-medium text-sm mb-1">Registered Patients</h3>
-              <p className="text-3xl font-bold text-text-dark">{registeredPatients}</p>
+              <div>
+                <h3 className="text-text-light font-medium text-xs sm:text-sm mb-1">Registered Patients</h3>
+                <p className="text-2xl sm:text-3xl font-bold text-text-dark">{registeredPatients}</p>
+              </div>
             </div>
           </div>
 

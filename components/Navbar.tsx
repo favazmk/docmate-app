@@ -37,7 +37,7 @@ export default function Navbar() {
     // Scroll spy for homepage sections
     let observer: IntersectionObserver;
     if (pathname === "/") {
-      const sections = ["hospitals", "specialties", "cities"];
+      const sections = ["hospitals", "specialties"];
       const elements = sections.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
       
       const observerOptions = {
@@ -108,7 +108,6 @@ export default function Navbar() {
     { label: "Specialties", href: "/#specialties" },
     { label: "Find doctors", href: "/search" },
     { label: "Hospitals", href: "/hospitals" },
-    { label: "Cities", href: "/#cities" },
     { label: "Blog", href: "/blog" },
   ];
 
