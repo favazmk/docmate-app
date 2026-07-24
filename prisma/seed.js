@@ -58,7 +58,7 @@ async function main() {
     groupsMap[g.name] = created;
   }
 
-  // 3. Seed Clinic Branches across Dubai, Sharjah, Abu Dhabi
+  // 3. Seed Clinic Branches across Dubai, Sharjah, Ajman
   console.log("Seeding Clinic Branches...");
   const branches = [
     // King's College branches
@@ -80,9 +80,9 @@ async function main() {
     },
     {
       group: "King's College Hospital London",
-      name: "Abu Dhabi Medical Center",
-      city: "Abu Dhabi",
-      email: "info.abudhabi@kingscollegehospital.ae",
+      name: "Ajman Medical Center",
+      city: "Ajman",
+      email: "info.ajman@kingscollegehospital.ae",
       phone: "+971 2 247 7777",
       photoUrl: "https://kingscollegehospitaldubai.com/wp-content/uploads/2021/08/DR_F_KCH_BG_LQ-e1663830273931-1.jpg"
     },
@@ -99,7 +99,7 @@ async function main() {
     {
       group: "Mediclinic Middle East",
       name: "Mediclinic Al Noor Hospital",
-      city: "Abu Dhabi",
+      city: "Ajman",
       email: "alnoor@mediclinic.ae",
       phone: "+971 2 626 5265",
       photoUrl: ""
@@ -132,9 +132,9 @@ async function main() {
     },
     {
       group: "Aster DM Healthcare",
-      name: "Aster Clinic, Abu Dhabi",
-      city: "Abu Dhabi",
-      email: "abudhabi@asterclinics.com",
+      name: "Aster Clinic, Ajman",
+      city: "Ajman",
+      email: "ajman@asterclinics.com",
       phone: "+971 2 626 1500",
       photoUrl: ""
     },
@@ -179,9 +179,9 @@ async function main() {
   for (let i = 0; i < doctorsData.length; i++) {
     const doc = doctorsData[i];
 
-    // Determine target city distribution: Dubai (50%), Abu Dhabi (25%), Sharjah (25%)
+    // Determine target city distribution: Dubai (50%), Ajman (25%), Sharjah (25%)
     let targetCity = "Dubai";
-    if (i % 4 === 1) targetCity = "Abu Dhabi";
+    if (i % 4 === 1) targetCity = "Ajman";
     else if (i % 4 === 2) targetCity = "Sharjah";
 
     // Filter clinics by this target city
@@ -202,7 +202,7 @@ async function main() {
         specialtyId: matchedSpecialty.id,
         rating: doc.rating || 5.0,
         reviews: doc.reviews || 0,
-        city: targetCity, // Dubai, Sharjah, Abu Dhabi
+        city: targetCity, // Dubai, Sharjah, Ajman
         email: `dr.${doc.slug}@kingscollegehospital.ae`,
         clinicId: selectedClinic.id,
         clinicEmail: selectedClinic.email,

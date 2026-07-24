@@ -142,7 +142,7 @@ export default function ClinicsClient({ clinics, hospitalGroups }: ClinicsClient
           <div className="flex justify-between items-center mb-6">
             <div>
               <h2 className="text-xl font-bold text-text-dark">Clinic Branches</h2>
-              <p className="text-sm text-text-mid mt-1">Manage physical branches across Dubai, Sharjah, and Abu Dhabi.</p>
+              <p className="text-sm text-text-mid mt-1">Manage physical branches across Dubai, Sharjah, and Ajman.</p>
             </div>
             <Button onClick={handleOpenAdd} className="bg-blue-primary hover:bg-blue-hover text-white flex items-center gap-2 rounded-xl h-11 px-6 font-bold shadow-md shadow-blue-primary/20">
               <Plus className="w-5 h-5" /> Add Branch
@@ -282,7 +282,7 @@ export default function ClinicsClient({ clinics, hospitalGroups }: ClinicsClient
                   options={[
                     { value: "Dubai", label: "Dubai" },
                     { value: "Sharjah", label: "Sharjah" },
-                    { value: "Abu Dhabi", label: "Abu Dhabi" }
+                    { value: "Ajman", label: "Ajman" }
                   ]}
                 />
                 <input type="hidden" name="city" value={city} required />

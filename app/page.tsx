@@ -132,7 +132,7 @@ export default async function Home() {
 
   const topCities = [
     { flag: "DXB", name: "Dubai", cities: "Dubai's top hospitals & clinics", href: "/search?city=Dubai", image: "/city_dubai.webp" },
-    { flag: "AUH", name: "Abu Dhabi", cities: "Capital healthcare & medical centers", href: "/search?city=Abu%20Dhabi", image: "/city_abudhabi.webp" },
+    { flag: "AJM", name: "Ajman", cities: "Ajman healthcare & medical centers", href: "/search?city=Ajman", image: "/city_ajman.png" },
     { flag: "SHJ", name: "Sharjah", cities: "Family-focused clinics & polyclinics", href: "/search?city=Sharjah", image: "/city_sharjah.webp" },
   ];
 
@@ -166,13 +166,13 @@ export default async function Home() {
 
         <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center text-center">
           <span className="hero-badge mb-4 rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-caption font-medium uppercase tracking-[0.06em] text-blue-200 backdrop-blur-md">
-            Dubai's leading doctor booking platform
+            Dubai's leading doctor's appointment booking platform
           </span>
           <h1 className="hero-title mb-6 text-display font-bold text-white">
             Find and Book the <span className="hero-title-delay text-blue-200">Best Doctors</span> Near You
           </h1>
           <p className="hero-subtitle mx-auto mb-8 max-w-2xl text-lg font-medium text-slate-200 md:text-xl lg:mx-0">
-            Verified specialists in Dubai, Sharjah & Abu Dhabi. Book in under 2 minutes.
+            Verified specialists in Dubai, Sharjah & Ajman. Book in under 2 minutes.
           </p>
         </div>
       </section>
@@ -187,7 +187,7 @@ export default async function Home() {
             <BadgeCheck className="h-4 w-4" /> {totalActiveDoctors} verified doctors
           </div>
           <div className="flex items-center gap-2 transition-transform duration-200 hover:scale-105">
-            <Globe className="h-4 w-4" /> Dubai, Sharjah & Abu Dhabi
+            <Globe className="h-4 w-4" /> Dubai, Sharjah & Ajman
           </div>
           <div className="flex items-center gap-2 transition-transform duration-200 hover:scale-105">
             <Zap className="h-4 w-4" /> Instant confirmation
@@ -212,7 +212,7 @@ export default async function Home() {
             What are you looking for?
           </h2>
           <p className="mb-12 max-w-xl text-slate-200">
-            Search doctors by specialty across Dubai, Sharjah and Abu Dhabi.
+            Search doctors by specialty across Dubai, Sharjah and Ajman.
           </p>
 
           <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-3 mb-10">

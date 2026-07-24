@@ -55,7 +55,7 @@ model Clinic {
   hospitalGroupId String
   hospitalGroup   HospitalGroup @relation(fields: [hospitalGroupId], references: [id], onDelete: Cascade)
   name            String        // Branch name (e.g. Dubai Hills Hospital, Jumeirah Clinic)
-  city            String        // Dubai, Sharjah, Abu Dhabi
+  city            String        // Dubai, Sharjah, Ajman
   email           String        @default("info@clinic.com")
   phone           String        @default("+971 800 7777")
   photoUrl        String?       @db.VarChar(500)
@@ -86,7 +86,7 @@ model Doctor {
   photoUrl       String?       @db.VarChar(500)
   rating         Float         @default(5.0)
   reviews        Int           @default(0)
-  city           String        // Dubai, Sharjah, Abu Dhabi
+  city           String        // Dubai, Sharjah, Ajman
   email          String        @unique
   clinicId       String?
   clinic         Clinic?       @relation(fields: [clinicId], references: [id], onDelete: SetNull)

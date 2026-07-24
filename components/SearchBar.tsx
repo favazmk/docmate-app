@@ -49,33 +49,39 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
 
   const cities = [
     "Dubai",
-    "Abu Dhabi",
+    "Ajman",
     "Sharjah"
   ];
 
   const filteredSuggestions = useMemo(() => {
     if (!query.trim()) {
-      const uniqueSpecialties = Array.from(new Set(doctors.map(d => d.specialty).filter(Boolean)));
+      let availableDoctors = doctors;
+      if (selectedCity) {
+        availableDoctors = doctors.filter(d => d.city.toLowerCase() === selectedCity.toLowerCase());
+      }
+      const uniqueSpecialties = Array.from(new Set(availableDoctors.map(d => d.specialty).filter(Boolean)));
       return uniqueSpecialties.map(specialty => ({
         type: 'specialty',
         id: specialty,
         name: specialty,
         specialty: 'Specialty',
         city: '',
-        url: `/search?specialty=${encodeURIComponent(specialty)}`,
+        url: `/search?specialty=${encodeURIComponent(specialty)}${selectedCity ? `&city=${encodeURIComponent(selectedCity)}` : ''}`,
         icon: Stethoscope
       })).slice(0, 10);
     }
-    const lowerQuery = query.toLowerCase();
+    const normalize = (str: string) => (str || '').replace(/['’]/g, '').toLowerCase();
+    const lowerQuery = normalize(query);
     
     const suggestions: any[] = [];
     const addedIds = new Set();
     
     // Add matching doctors
     for (const d of doctors) {
-      if (d.name.toLowerCase().includes(lowerQuery) || 
-          d.specialty.toLowerCase().includes(lowerQuery) ||
-          d.city.toLowerCase().includes(lowerQuery)) {
+      if (selectedCity && d.city.toLowerCase() !== selectedCity.toLowerCase()) continue;
+      if (normalize(d.name).includes(lowerQuery) || 
+          normalize(d.specialty).includes(lowerQuery) ||
+          normalize(d.city).includes(lowerQuery)) {
         if (!addedIds.has(d.slug)) {
           suggestions.push({
             type: 'doctor',
@@ -93,24 +99,14 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
 
     // Add matching hospitals and clinics
     for (const h of hospitalGroups) {
-      if (h.name.toLowerCase().includes(lowerQuery)) {
-        if (!addedIds.has(h.id)) {
-          suggestions.push({
-            type: 'hospital',
-            id: h.id,
-            name: h.name,
-            specialty: 'Hospital Group',
-            city: '',
-            url: `/hospitals/${h.id}`,
-            icon: Building2
-          });
-          addedIds.add(h.id);
-        }
-      }
-
+      let hospitalHasValidClinic = false;
+      
       if (h.clinics) {
         for (const c of h.clinics) {
-          if (c.name.toLowerCase().includes(lowerQuery) || c.city.toLowerCase().includes(lowerQuery)) {
+          if (selectedCity && c.city.toLowerCase() !== selectedCity.toLowerCase()) continue;
+          hospitalHasValidClinic = true;
+          
+          if (normalize(c.name).includes(lowerQuery) || normalize(c.city).includes(lowerQuery)) {
             if (!addedIds.has(c.id)) {
               suggestions.push({
                 type: 'clinic',
@@ -126,15 +122,42 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
           }
         }
       }
+
+      if (normalize(h.name).includes(lowerQuery)) {
+        if (!selectedCity || hospitalHasValidClinic) {
+          if (!addedIds.has(h.id)) {
+            suggestions.push({
+              type: 'hospital',
+              id: h.id,
+              name: h.name,
+              specialty: 'Hospital Group',
+              city: '',
+              url: `/hospitals/${h.id}`,
+              icon: Building2
+            });
+            addedIds.add(h.id);
+          }
+        }
+      }
     }
     
     return suggestions;
-  }, [query, doctors, hospitalGroups]);
+  }, [query, selectedCity, doctors, hospitalGroups]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const params = new URLSearchParams();
-    if (query.trim()) params.set("query", query.trim());
+    
+    if (query.trim()) {
+      const isSpecialty = doctors.some(d => d.specialty && d.specialty.toLowerCase() === query.trim().toLowerCase());
+      if (isSpecialty) {
+        const exactSpecialty = doctors.find(d => d.specialty && d.specialty.toLowerCase() === query.trim().toLowerCase())?.specialty || query.trim();
+        params.set("specialty", exactSpecialty);
+      } else {
+        params.set("query", query.trim());
+      }
+    }
+
     if (selectedCity) params.set("city", selectedCity);
     setShowSuggestions(false);
     router.push(`/search?${params.toString()}`);
@@ -142,8 +165,12 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
 
   const handleSuggestionClick = (suggestion: any) => {
     setQuery(suggestion.name);
-    setShowSuggestions(false);
-    router.push(suggestion.url);
+    if (suggestion.type !== 'specialty') {
+      setShowSuggestions(false);
+      router.push(suggestion.url);
+    } else {
+      setShowSuggestions(true);
+    }
   };
 
   return (

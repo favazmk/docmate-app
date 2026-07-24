@@ -145,7 +145,7 @@ export default function ListYourClinicPage() {
                   <label className="text-sm font-semibold text-text-dark">City <span className="text-red-500">*</span></label>
                   <select name="city" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors">
                     <option>Dubai</option>
-                    <option>Abu Dhabi</option>
+                    <option>Ajman</option>
                     <option>Riyadh</option>
                     <option>Jeddah</option>
                     <option>Kuwait City</option>

@@ -39,7 +39,7 @@ export default function Footer() {
           <div className="col-span-1 flex flex-col gap-3">
             <h3 className="text-white/80 font-semibold mb-2">Locations</h3>
             <Link href="/dubai" className="text-white/50 hover:text-white transition-colors text-sm">Doctors in Dubai</Link>
-            <Link href="/abu-dhabi" className="text-white/50 hover:text-white transition-colors text-sm">Doctors in Abu Dhabi</Link>
+            <Link href="/ajman" className="text-white/50 hover:text-white transition-colors text-sm">Doctors in Ajman</Link>
             <Link href="/sharjah" className="text-white/50 hover:text-white transition-colors text-sm">Doctors in Sharjah</Link>
           </div>
 

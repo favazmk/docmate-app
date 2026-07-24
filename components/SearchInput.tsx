@@ -51,16 +51,17 @@ export default function SearchInput({ initialValue = "", doctors = [], hospitalG
 
   const filteredSuggestions = useMemo(() => {
     if (!value.trim()) return [];
-    const lowerQuery = value.toLowerCase();
+    const normalize = (str: string) => (str || '').replace(/['’]/g, '').toLowerCase();
+    const lowerQuery = normalize(value);
     
     const suggestions: any[] = [];
     const addedIds = new Set();
     
     // Add matching doctors
     for (const d of doctors) {
-      if (d.name.toLowerCase().includes(lowerQuery) || 
-          d.specialty.toLowerCase().includes(lowerQuery) ||
-          d.city.toLowerCase().includes(lowerQuery)) {
+      if (normalize(d.name).includes(lowerQuery) || 
+          normalize(d.specialty).includes(lowerQuery) ||
+          normalize(d.city).includes(lowerQuery)) {
         if (!addedIds.has(d.slug)) {
           suggestions.push({
             type: 'doctor',
@@ -78,7 +79,7 @@ export default function SearchInput({ initialValue = "", doctors = [], hospitalG
 
     // Add matching hospitals and clinics
     for (const h of hospitalGroups) {
-      if (h.name.toLowerCase().includes(lowerQuery)) {
+      if (normalize(h.name).includes(lowerQuery)) {
         if (!addedIds.has(h.id)) {
           suggestions.push({
             type: 'hospital',
@@ -95,7 +96,7 @@ export default function SearchInput({ initialValue = "", doctors = [], hospitalG
 
       if (h.clinics) {
         for (const c of h.clinics) {
-          if (c.name.toLowerCase().includes(lowerQuery) || c.city.toLowerCase().includes(lowerQuery)) {
+          if (normalize(c.name).includes(lowerQuery) || normalize(c.city).includes(lowerQuery)) {
             if (!addedIds.has(c.id)) {
               suggestions.push({
                 type: 'clinic',
@@ -119,9 +120,18 @@ export default function SearchInput({ initialValue = "", doctors = [], hospitalG
   const handleSearch = (val: string) => {
     const params = new URLSearchParams(searchParams.toString());
     if (val.trim()) {
-      params.set("query", val);
+      const isSpecialty = doctors.some(d => d.specialty && d.specialty.toLowerCase() === val.trim().toLowerCase());
+      if (isSpecialty) {
+        const exactSpecialty = doctors.find(d => d.specialty && d.specialty.toLowerCase() === val.trim().toLowerCase())?.specialty || val.trim();
+        params.set("specialty", exactSpecialty);
+        params.delete("query");
+      } else {
+        params.set("query", val.trim());
+        params.delete("specialty");
+      }
     } else {
       params.delete("query");
+      params.delete("specialty");
     }
     setShowSuggestions(false);
     router.push(`/search?${params.toString()}`);
@@ -129,8 +139,12 @@ export default function SearchInput({ initialValue = "", doctors = [], hospitalG
 
   const handleSuggestionClick = (suggestion: any) => {
     setValue(suggestion.name);
-    setShowSuggestions(false);
-    router.push(suggestion.url);
+    if (suggestion.type !== 'specialty') {
+      setShowSuggestions(false);
+      router.push(suggestion.url);
+    } else {
+      setShowSuggestions(true);
+    }
   };
 
   return (

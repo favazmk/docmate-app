@@ -10,7 +10,7 @@
 
 ## 📝 Project Description
 
-Docmate is a premium, localized healthcare booking platform designed for Dubai, Sharjah, and Abu Dhabi. It allows patients to search for top-rated specialists, check branch availability across hospital networks, and securely book appointments online.
+Docmate is a premium, localized healthcare booking platform designed for Dubai, Sharjah, and Ajman. It allows patients to search for top-rated specialists, check branch availability across hospital networks, and securely book appointments online.
 
 ## 🛠️ Tech Stack
 
@@ -22,7 +22,7 @@ Docmate is a premium, localized healthcare booking platform designed for Dubai, 
 
 ## ✨ Features
 
-* **Multi-City UAE Support**: Fully structured database and layouts covering Dubai, Sharjah, and Abu Dhabi.
+* **Multi-City UAE Support**: Fully structured database and layouts covering Dubai, Sharjah, and Ajman.
 * **Hospital Networks & Branches**: Added parent `HospitalGroup` and branch `Clinic` tables, enabling dynamic branch routing and location-specific doctor listings.
 * **Specialties Management**: Added dynamic `Specialty` catalog, replacing hardcoded strings.
 * **Dual Search Mode**: Homepage search supports both a Quick Booking Wizard (3-step cascading dropdowns) and a free-text Search Bar with location filtering.

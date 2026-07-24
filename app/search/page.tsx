@@ -65,11 +65,20 @@ export default async function SearchResultsPage({
   }
 
   if (query && query.trim() !== "") {
+    const cleanQuery = query.trim();
+    // Try to handle missing or extra apostrophes (e.g. kings -> king's, king's -> kings)
+    const queryWithApostropheS = cleanQuery.replace(/s$/i, "'s");
+    const queryWithoutApostrophe = cleanQuery.replace(/'/g, "");
+
     andClauses.push({
       OR: [
-        { name: { contains: query.trim() } },
-        { specialty: { contains: query.trim() } },
-        { affiliation: { contains: query.trim() } }
+        { name: { contains: cleanQuery } },
+        { specialty: { contains: cleanQuery } },
+        { affiliation: { contains: cleanQuery } },
+        { name: { contains: queryWithApostropheS } },
+        { name: { contains: queryWithoutApostrophe } },
+        { affiliation: { contains: queryWithApostropheS } },
+        { affiliation: { contains: queryWithoutApostrophe } }
       ]
     });
   }

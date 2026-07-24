@@ -42,7 +42,7 @@ export default async function AboutPage() {
     {
       icon: MapPin,
       title: "Built for the UAE",
-      description: "Designed around how healthcare actually works across Dubai, Sharjah, and Abu Dhabi — not a generic global template.",
+      description: "Designed around how healthcare actually works across Dubai, Sharjah, and Ajman — not a generic global template.",
     },
   ];
 
@@ -114,7 +114,7 @@ export default async function AboutPage() {
               Founded in 2026, Docmate started with a simple observation: booking a doctor's appointment in Dubai involved too many phone calls and long hold times. We set out to change that by building a platform that connects patients directly with the best healthcare providers.
             </p>
             <p className="text-text-mid text-lg leading-relaxed">
-              Today, we're growing steadily across Dubai, Sharjah, and Abu Dhabi — onboarding verified specialists and hospital networks one careful step at a time.
+              Today, we're growing steadily across Dubai, Sharjah, and Ajman — onboarding verified specialists and hospital networks one careful step at a time.
             </p>
             <ul className="flex flex-col gap-3 mt-4">
               <li className="flex items-center gap-3 text-text-dark font-semibold">
@@ -162,7 +162,7 @@ export default async function AboutPage() {
         <div className="max-w-2xl mx-auto flex flex-col items-center">
           <h2 className="text-3xl font-bold text-text-dark mb-6">Ready to take control of your health?</h2>
           <p className="text-text-mid text-lg mb-8">
-            Join patients across Dubai, Sharjah, and Abu Dhabi who book their healthcare appointments seamlessly through Docmate.
+            Join patients across Dubai, Sharjah, and Ajman who book their healthcare appointments seamlessly through Docmate.
           </p>
           <div className="flex gap-4 w-full md:w-auto">
             <Link href="/search" className={`${buttonVariants()} flex-1 md:flex-none bg-blue-primary hover:bg-blue-hover text-white h-12 px-8 rounded-xl font-bold text-base shadow-lg shadow-blue-primary/20`}>
