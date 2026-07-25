@@ -3,7 +3,8 @@
 import { useState } from "react";
 import ClinicBranchList from "./ClinicBranchList";
 import DoctorCard from "./DoctorCard";
-import { Users, Building2, Search } from "lucide-react";
+import { Users, Building2, Search, MapPin } from "lucide-react";
+import CustomDropdown from "./ui/CustomDropdown";
 
 interface DoctorData {
   slug: string;
@@ -41,12 +42,29 @@ interface HospitalTabsProps {
 export default function HospitalTabs({ clinics, allDoctors, hospitalName }: HospitalTabsProps) {
   const [activeTab, setActiveTab] = useState<"doctors" | "branches">("doctors");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedBranch, setSelectedBranch] = useState("");
 
-  const filteredDoctors = allDoctors.filter(doc => 
-    doc.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    doc.specialty.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (doc.clinicName && doc.clinicName.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  const filteredDoctors = allDoctors.filter(doc => {
+    const matchesSearch = doc.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      doc.specialty.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (doc.clinicName && doc.clinicName.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    const matchesBranch = selectedBranch === "" || doc.clinicName === selectedBranch;
+
+    return matchesSearch && matchesBranch;
+  });
+
+  const branchOptions = clinics.map(clinic => ({
+    value: `${hospitalName} - ${clinic.name}`,
+    label: (
+      <div className="flex flex-col">
+        <span className="font-semibold">{clinic.name}</span>
+        <span className="text-xs text-text-light flex items-center gap-1 mt-0.5">
+          <MapPin className="w-3 h-3" /> {clinic.city}
+        </span>
+      </div>
+    )
+  }));
 
   return (
     <div className="flex flex-col gap-6">
@@ -76,27 +94,38 @@ export default function HospitalTabs({ clinics, allDoctors, hospitalName }: Hosp
       <div className="mt-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
         {activeTab === "doctors" ? (
           <div>
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-border pb-3 mb-6 gap-4">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-border pb-3 mb-6 gap-4">
               <h2 className="text-2xl font-bold text-text-dark">
                 All Doctors at {hospitalName}
               </h2>
               
-              <div className="relative w-full sm:w-64">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-4 w-4 text-text-light" />
+              <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                <div className="w-full sm:w-64">
+                  <CustomDropdown
+                    value={selectedBranch}
+                    onChange={setSelectedBranch}
+                    options={branchOptions}
+                    placeholder="All Branches"
+                    icon={<Building2 className="w-4 h-4" />}
+                  />
                 </div>
-                <input
-                  type="text"
-                  placeholder="Search doctors or specialties..."
-                  className="w-full pl-9 pr-3 py-2 bg-white border border-gray-border rounded-lg text-sm text-text-dark placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-blue-primary/50 focus:border-blue-primary transition-colors"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
+                <div className="relative w-full sm:w-64">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Search className="h-4 w-4 text-text-light" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Search doctors or specialties..."
+                    className="w-full pl-9 pr-3 py-3 bg-white border border-gray-border rounded-xl text-sm text-text-dark placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-blue-primary/50 focus:border-blue-primary transition-colors"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
               </div>
             </div>
             {filteredDoctors.length === 0 ? (
               <div className="text-center py-12 bg-white rounded-2xl border border-gray-border/60">
-                <p className="text-text-mid font-medium">No doctors found matching "{searchQuery}".</p>
+                <p className="text-text-mid font-medium">No doctors found matching your criteria.</p>
               </div>
             ) : (
               <div className="flex flex-col gap-5">
@@ -120,7 +149,7 @@ export default function HospitalTabs({ clinics, allDoctors, hospitalName }: Hosp
                 <input
                   type="text"
                   placeholder="Search branches by name or city..."
-                  className="w-full pl-9 pr-3 py-2 bg-white border border-gray-border rounded-lg text-sm text-text-dark placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-blue-primary/50 focus:border-blue-primary transition-colors"
+                  className="w-full pl-9 pr-3 py-3 bg-white border border-gray-border rounded-xl text-sm text-text-dark placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-blue-primary/50 focus:border-blue-primary transition-colors"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
