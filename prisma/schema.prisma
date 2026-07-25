@@ -58,6 +58,7 @@ model Clinic {
   city            String        // Dubai, Sharjah, Ajman
   email           String        @default("info@clinic.com")
   phone           String        @default("+971 800 7777")
+  address         String?       @db.Text
   photoUrl        String?       @db.VarChar(500)
   aboutUs         String?       @db.Text
   createdAt       DateTime      @default(now())

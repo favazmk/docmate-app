@@ -5,6 +5,7 @@ import ClinicBranchList from "./ClinicBranchList";
 import DoctorCard from "./DoctorCard";
 import { Users, Building2, Search, MapPin } from "lucide-react";
 import CustomDropdown from "./ui/CustomDropdown";
+import { normalizeSearchText } from "@/lib/utils";
 
 interface DoctorData {
   slug: string;
@@ -45,9 +46,10 @@ export default function HospitalTabs({ clinics, allDoctors, hospitalName }: Hosp
   const [selectedBranch, setSelectedBranch] = useState("");
 
   const filteredDoctors = allDoctors.filter(doc => {
-    const matchesSearch = doc.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      doc.specialty.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (doc.clinicName && doc.clinicName.toLowerCase().includes(searchQuery.toLowerCase()));
+    const normQuery = normalizeSearchText(searchQuery);
+    const matchesSearch = normalizeSearchText(doc.name).includes(normQuery) || 
+      normalizeSearchText(doc.specialty).includes(normQuery) ||
+      (doc.clinicName && normalizeSearchText(doc.clinicName).includes(normQuery));
     
     const matchesBranch = selectedBranch === "" || doc.clinicName === selectedBranch;
 

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Building2, Phone, Mail, Star } from "lucide-react";
 import PhotoGallery from "./PhotoGallery";
 import ExpandableText from "./ExpandableText";
-import { DOCMATE_PHONE } from "@/lib/constants";
+import { DOCMATE_PHONE, DOCMATE_EMAIL } from "@/lib/constants";
 
 export interface ClinicDoctor {
   slug: string;
@@ -81,21 +81,36 @@ export default function ClinicBranchCard({
               <Phone className="w-4 h-4 text-blue-primary shrink-0" />
               <span>{DOCMATE_PHONE}</span>
             </a>
-            <a href={`mailto:${clinic.email}`} title={clinic.email} className="flex items-center gap-2 bg-gray-bg border border-gray-border px-4 py-2 rounded-xl min-w-0 hover:bg-blue-50 transition-colors">
+            <a href={`mailto:${DOCMATE_EMAIL}`} title={DOCMATE_EMAIL} className="flex items-center gap-2 bg-gray-bg border border-gray-border px-4 py-2 rounded-xl min-w-0 hover:bg-blue-50 transition-colors">
               <Mail className="w-4 h-4 text-blue-primary shrink-0" />
-              <span className="truncate">{clinic.email}</span>
+              <span className="truncate">{DOCMATE_EMAIL}</span>
             </a>
           </div>
         </div>
 
         {/* Right column - photo gallery */}
-        <div className="flex-1 flex justify-center lg:justify-start">
-          <PhotoGallery
-            photoUrls={clinic.photoUrls}
-            name={clinic.name}
-            size="branch"
-            fallbackIcon={<Building2 className="w-12 h-12 text-gray-400" />}
-          />
+        <div className="flex-1 flex flex-col gap-4">
+          <div className="flex justify-center lg:justify-start">
+            <PhotoGallery
+              photoUrls={clinic.photoUrls}
+              name={clinic.name}
+              size="branch"
+              fallbackIcon={<Building2 className="w-12 h-12 text-gray-400" />}
+            />
+          </div>
+          
+          {/* Embedded Map */}
+          <div className="w-full h-32 md:h-40 bg-gray-200 rounded-xl overflow-hidden border border-gray-border">
+            <iframe
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              loading="lazy"
+              allowFullScreen
+              referrerPolicy="no-referrer-when-downgrade"
+              src={`https://maps.google.com/maps?q=${encodeURIComponent(hospitalName + ' ' + clinic.name + ', ' + clinic.city)}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
+            ></iframe>
+          </div>
         </div>
       </div>
 

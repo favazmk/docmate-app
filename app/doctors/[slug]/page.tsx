@@ -157,13 +157,15 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
               <p className="text-text-mid mb-6 font-medium">{doctor.clinicName}</p>
               
               <div className="w-full h-64 bg-gray-200 rounded-xl flex items-center justify-center border border-gray-border overflow-hidden relative">
-                {/* Placeholder for Google Maps iframe */}
-                <div className="absolute inset-0 bg-[#E5E3DF] flex items-center justify-center">
-                  <div className="flex flex-col items-center text-text-light gap-2">
-                    <MapPin className="w-8 h-8 text-blue-primary/50" />
-                    <span className="text-sm font-semibold">Map View Loading...</span>
-                  </div>
-                </div>
+                <iframe
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  loading="lazy"
+                  allowFullScreen
+                  referrerPolicy="no-referrer-when-downgrade"
+                  src={`https://maps.google.com/maps?q=${encodeURIComponent(doctor.clinicName + ', ' + doctor.city)}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
+                ></iframe>
               </div>
             </div>
 

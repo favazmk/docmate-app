@@ -55,7 +55,8 @@ export default function DoctorCard({
   const displayDays = formatDays(availableDays);
   const displayTime = availableTime && availableTime !== "Not set" ? availableTime : "09:00 AM - 05:00 PM";
   
-  const defaultPlaceholder = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2200CC&color=fff`;
+  const cleanName = name.replace(/^(Dr\.|Dr|Prof\.|Professor)\s+/i, '');
+  const defaultPlaceholder = `https://ui-avatars.com/api/?name=${encodeURIComponent(cleanName)}&background=2200CC&color=fff`;
   const firstPhoto = photoUrl ? photoUrl.split(',')[0] : defaultPlaceholder;
 
   if (variant === "grid") {

@@ -5,6 +5,7 @@ import { Search, Stethoscope, MapPin, User, Building2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
 import CustomDropdown from "./ui/CustomDropdown";
+import { normalizeSearchText } from "@/lib/utils";
 
 interface DoctorData {
   slug: string;
@@ -70,8 +71,7 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
         icon: Stethoscope
       })).slice(0, 10);
     }
-    const normalize = (str: string) => (str || '').replace(/['’]/g, '').toLowerCase();
-    const lowerQuery = normalize(query);
+    const lowerQuery = normalizeSearchText(query);
     
     const suggestions: any[] = [];
     const addedIds = new Set();
@@ -79,9 +79,9 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
     // Add matching doctors
     for (const d of doctors) {
       if (selectedCity && d.city.toLowerCase() !== selectedCity.toLowerCase()) continue;
-      if (normalize(d.name).includes(lowerQuery) || 
-          normalize(d.specialty).includes(lowerQuery) ||
-          normalize(d.city).includes(lowerQuery)) {
+      if (normalizeSearchText(d.name).includes(lowerQuery) || 
+          normalizeSearchText(d.specialty).includes(lowerQuery) ||
+          normalizeSearchText(d.city).includes(lowerQuery)) {
         if (!addedIds.has(d.slug)) {
           suggestions.push({
             type: 'doctor',
@@ -106,7 +106,7 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
           if (selectedCity && c.city.toLowerCase() !== selectedCity.toLowerCase()) continue;
           hospitalHasValidClinic = true;
           
-          if (normalize(c.name).includes(lowerQuery) || normalize(c.city).includes(lowerQuery)) {
+          if (normalizeSearchText(c.name).includes(lowerQuery) || normalizeSearchText(c.city).includes(lowerQuery)) {
             if (!addedIds.has(c.id)) {
               suggestions.push({
                 type: 'clinic',
@@ -123,7 +123,7 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
         }
       }
 
-      if (normalize(h.name).includes(lowerQuery)) {
+      if (normalizeSearchText(h.name).includes(lowerQuery)) {
         if (!selectedCity || hospitalHasValidClinic) {
           if (!addedIds.has(h.id)) {
             suggestions.push({

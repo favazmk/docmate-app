@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, X, User, Stethoscope, MapPin, Building2 } from "lucide-react";
+import { normalizeSearchText } from "@/lib/utils";
 
 interface DoctorData {
   slug: string;
@@ -51,17 +52,16 @@ export default function SearchInput({ initialValue = "", doctors = [], hospitalG
 
   const filteredSuggestions = useMemo(() => {
     if (!value.trim()) return [];
-    const normalize = (str: string) => (str || '').replace(/['’]/g, '').toLowerCase();
-    const lowerQuery = normalize(value);
+    const lowerQuery = normalizeSearchText(value);
     
     const suggestions: any[] = [];
     const addedIds = new Set();
     
     // Add matching doctors
     for (const d of doctors) {
-      if (normalize(d.name).includes(lowerQuery) || 
-          normalize(d.specialty).includes(lowerQuery) ||
-          normalize(d.city).includes(lowerQuery)) {
+      if (normalizeSearchText(d.name).includes(lowerQuery) || 
+          normalizeSearchText(d.specialty).includes(lowerQuery) ||
+          normalizeSearchText(d.city).includes(lowerQuery)) {
         if (!addedIds.has(d.slug)) {
           suggestions.push({
             type: 'doctor',
@@ -79,7 +79,7 @@ export default function SearchInput({ initialValue = "", doctors = [], hospitalG
 
     // Add matching hospitals and clinics
     for (const h of hospitalGroups) {
-      if (normalize(h.name).includes(lowerQuery)) {
+      if (normalizeSearchText(h.name).includes(lowerQuery)) {
         if (!addedIds.has(h.id)) {
           suggestions.push({
             type: 'hospital',
@@ -96,7 +96,7 @@ export default function SearchInput({ initialValue = "", doctors = [], hospitalG
 
       if (h.clinics) {
         for (const c of h.clinics) {
-          if (normalize(c.name).includes(lowerQuery) || normalize(c.city).includes(lowerQuery)) {
+          if (normalizeSearchText(c.name).includes(lowerQuery) || normalizeSearchText(c.city).includes(lowerQuery)) {
             if (!addedIds.has(c.id)) {
               suggestions.push({
                 type: 'clinic',
