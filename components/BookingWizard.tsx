@@ -310,42 +310,9 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
 
               {/* Submit Action */}
               <div className="pt-4 border-t border-gray-border mt-auto flex flex-col gap-3">
-                <div className="flex items-start gap-2.5 px-0.5">
-                  <input 
-                    type="checkbox" 
-                    id="terms" 
-                    required
-                    checked={acceptedTerms}
-                    onChange={(e) => setAcceptedTerms(e.target.checked)}
-                    className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-primary focus:ring-blue-primary cursor-pointer accent-blue-primary" 
-                  />
-                  <label htmlFor="terms" className="text-xs text-text-mid font-medium cursor-pointer select-none leading-relaxed">
-                    I agree to DocMate's{" "}
-                    <Link 
-                      href="/terms" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="text-blue-primary hover:underline font-semibold"
-                    >
-                      Terms &amp; Conditions
-                    </Link>{" "}
-                    and{" "}
-                    <Link 
-                      href="/privacy-policy" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="text-blue-primary hover:underline font-semibold"
-                    >
-                      Privacy Policy
-                    </Link>.
-                  </label>
-                </div>
-
                 <Button 
                   type="submit"
-                  disabled={isSubmitting || !acceptedTerms}
+                  disabled={isSubmitting}
                   className="bg-blue-primary hover:bg-blue-hover disabled:opacity-50 disabled:cursor-not-allowed text-white h-12 px-8 rounded-xl font-bold text-base w-full shadow-md shadow-blue-primary/20 flex items-center justify-center gap-2 transition-all"
                 >
                   {isSubmitting ? (
@@ -357,7 +324,31 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
                     "Book Appointment"
                   )}
                 </Button>
-                <div className="flex items-center justify-center gap-1.5 mt-3 text-text-light">
+                
+                <p className="text-[11px] text-center text-text-light font-medium leading-relaxed px-4">
+                  By booking, you agree to our{" "}
+                  <Link 
+                    href="/terms" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-blue-primary hover:underline font-semibold"
+                  >
+                    Terms &amp; Conditions
+                  </Link>{" "}
+                  and{" "}
+                  <Link 
+                    href="/privacy-policy" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-blue-primary hover:underline font-semibold"
+                  >
+                    Privacy Policy
+                  </Link>.
+                </p>
+
+                <div className="flex items-center justify-center gap-1.5 text-text-light">
                   <CheckCircle2 className="w-4 h-4 text-green-badge" />
                   <span className="text-xs font-semibold">Zero Booking Fee</span>
                 </div>
