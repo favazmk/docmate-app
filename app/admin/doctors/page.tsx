@@ -18,7 +18,7 @@ export default async function AdminDoctorsPage() {
     orderBy: { createdAt: "desc" },
     include: {
       specialtyRef: true,
-      clinic: {
+      clinics: {
         include: {
           hospitalGroup: true
         }

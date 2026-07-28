@@ -52,15 +52,21 @@ export default async function SearchResultsPage({
 
   if (hospitalGroupId && hospitalGroupId.trim() !== "") {
     andClauses.push({
-      clinic: {
-        hospitalGroupId: hospitalGroupId.trim()
+      clinics: {
+        some: {
+          hospitalGroupId: hospitalGroupId.trim()
+        }
       }
     });
   }
 
   if (clinicId && clinicId.trim() !== "") {
     andClauses.push({
-      clinicId: clinicId.trim()
+      clinics: {
+        some: {
+          id: clinicId.trim()
+        }
+      }
     });
   }
 
@@ -74,11 +80,11 @@ export default async function SearchResultsPage({
       OR: [
         { name: { contains: cleanQuery } },
         { specialty: { contains: cleanQuery } },
-        { affiliation: { contains: cleanQuery } },
+        { clinics: { some: { OR: [{ name: { contains: cleanQuery } }, { hospitalGroup: { name: { contains: cleanQuery } } }] } } },
         { name: { contains: queryWithApostropheS } },
         { name: { contains: queryWithoutApostrophe } },
-        { affiliation: { contains: queryWithApostropheS } },
-        { affiliation: { contains: queryWithoutApostrophe } }
+        { clinics: { some: { OR: [{ name: { contains: queryWithApostropheS } }, { hospitalGroup: { name: { contains: queryWithApostropheS } } }] } } },
+        { clinics: { some: { OR: [{ name: { contains: queryWithoutApostrophe } }, { hospitalGroup: { name: { contains: queryWithoutApostrophe } } }] } } }
       ]
     });
   }
@@ -99,7 +105,7 @@ export default async function SearchResultsPage({
     where: whereClause,
     orderBy: orderByClause,
     include: {
-      clinic: {
+      clinics: {
         include: {
           hospitalGroup: true
         }

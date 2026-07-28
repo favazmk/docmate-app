@@ -51,12 +51,11 @@ export default async function HospitalProfilePage({ params }: { params: { id: st
         specialty: doc.specialty,
         rating: doc.rating,
         reviews: doc.reviews,
-        city: doc.city,
         languages: doc.languages.split(",").map((lang) => lang.trim()),
         photoUrl: doc.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(doc.name)}&background=2200CC&color=fff`,
         isVerified: true,
         fee: doc.fee,
-        clinicName: `${hospital.name} - ${clinic.name}`,
+        clinics: [{ name: clinic.name, city: clinic.city, hospitalGroup: { name: hospital.name } }],
       })),
     };
   });

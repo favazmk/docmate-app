@@ -25,7 +25,7 @@ export default async function Home() {
       take: 4,
       where: { status: "Active" },
       include: {
-        clinic: {
+        clinics: {
           include: {
             hospitalGroup: true,
           },
@@ -39,11 +39,14 @@ export default async function Home() {
         slug: true,
         name: true,
         specialty: true,
-        city: true,
+        clinics: { select: { city: true } },
         availableDays: true,
         availableTime: true,
       },
-    });
+    }).then(docs => docs.map(d => ({
+      ...d,
+      city: d.clinics.length > 0 ? d.clinics[0].city : ""
+    })));
 
     const counts = await prisma.doctor.groupBy({
       by: ["specialty"],

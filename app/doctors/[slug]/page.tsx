@@ -15,6 +15,11 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
   const dbDoctor = await prisma.doctor.findUnique({
     where: { slug: params.slug },
     include: {
+      clinics: {
+        include: {
+          hospitalGroup: true
+        }
+      },
       reviewsList: {
         orderBy: {
           createdAt: "desc"
@@ -32,7 +37,6 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
     specialty: dbDoctor.specialty,
     rating: dbDoctor.rating,
     reviews: dbDoctor.reviews,
-    city: dbDoctor.city,
     languages: dbDoctor.languages.split(",").map(lang => lang.trim()),
     fee: dbDoctor.fee,
     currency: "AED",
@@ -40,14 +44,18 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
     isVerified: true,
     experience: "15+ Years Experience",
     bio: dbDoctor.bio,
+    areaOfExpertise: dbDoctor.areaOfExpertise,
     qualifications: dbDoctor.qualifications
       ? dbDoctor.qualifications.split("\n").map(q => q.trim()).filter(Boolean)
       : [
           "MD, Board Certified Specialist",
-          `Fellowship in Clinical ${dbDoctor.specialty}`,
-          `Affiliated with ${dbDoctor.affiliation}`
+          `Fellowship in Clinical ${dbDoctor.specialty}`
         ],
-    clinicName: dbDoctor.affiliation,
+    clinics: dbDoctor.clinics.map(c => ({
+      name: c.name,
+      city: c.city,
+      hospitalGroup: { name: c.hospitalGroup?.name }
+    })),
     insurances: ["Daman", "AXA", "Nextcare", "Oman Insurance", "MetLife"]
   };
 
@@ -105,7 +113,9 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
                   </div>
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-blue-primary" />
-                    <span className="font-semibold text-text-dark">{doctor.city}</span>
+                    <span className="font-semibold text-text-dark">
+                      {Array.from(new Set(doctor.clinics.map(c => c.city))).join(", ")}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2 font-medium bg-blue-light text-blue-primary px-3 py-1 rounded-full">
                     {doctor.experience}
@@ -124,6 +134,13 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
 
             {/* About Section */}
             <DoctorAboutSection bio={doctor.bio} />
+
+            {doctor.areaOfExpertise && (
+              <div className="bg-white border border-gray-border rounded-2xl p-6 md:p-8 shadow-sm">
+                <h3 className="text-xl font-bold text-text-dark mb-4">Area of Expertise</h3>
+                <p className="text-text-mid leading-relaxed whitespace-pre-wrap">{doctor.areaOfExpertise}</p>
+              </div>
+            )}
 
             {/* Qualifications */}
             <div className="bg-white border border-gray-border rounded-2xl p-6 md:p-8 shadow-sm">
@@ -148,13 +165,20 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
               initialReviews={initialReviews} 
             />
 
-            {/* Clinic Location */}
+            {/* Clinic Locations */}
             <div className="bg-white border border-gray-border rounded-2xl p-6 md:p-8 shadow-sm mb-12">
-              <h3 className="text-xl font-bold text-text-dark mb-2 flex items-center gap-2">
+              <h3 className="text-xl font-bold text-text-dark mb-4 flex items-center gap-2">
                 <MapPin className="w-6 h-6 text-blue-primary" />
-                Clinic Location
+                Clinic Locations
               </h3>
-              <p className="text-text-mid mb-6 font-medium">{doctor.clinicName}</p>
+              <div className="flex flex-col gap-4">
+                {doctor.clinics.map((clinic, idx) => (
+                  <div key={idx} className="flex flex-col gap-1 border-b border-gray-border pb-4 last:border-0 last:pb-0">
+                    <p className="text-text-dark font-bold">{clinic.hospitalGroup?.name} - {clinic.name}</p>
+                    <p className="text-text-mid text-sm font-medium">{clinic.city}</p>
+                  </div>
+                ))}
+              </div>
               
               <div className="w-full h-64 bg-gray-200 rounded-xl flex items-center justify-center border border-gray-border overflow-hidden relative">
                 <iframe

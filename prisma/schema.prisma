@@ -64,6 +64,7 @@ model Clinic {
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
   doctors         Doctor[]
+  appointments    Appointment[]
 
   @@unique([hospitalGroupId, name])
 }
@@ -84,19 +85,15 @@ model Doctor {
   specialtyId    String?
   specialtyRef   Specialty?    @relation(fields: [specialtyId], references: [id], onDelete: SetNull)
   specialty      String        // Fallback/Display compatibility
+  areaOfExpertise String?       @db.Text
   photoUrl       String?       @db.VarChar(500)
   rating         Float         @default(5.0)
   reviews        Int           @default(0)
-  city           String        // Dubai, Sharjah, Ajman
   email          String        @unique
-  clinicId       String?
-  clinic         Clinic?       @relation(fields: [clinicId], references: [id], onDelete: SetNull)
-  clinicEmail    String        @default("info@clinic.com")
-  clinicPhone    String        @default("+971 800 7777")
+  clinics        Clinic[]
   languages      String        @default("English")
   gender         String        @default("Male")
   fee            Int
-  affiliation    String        // Fallback/Display compatibility
   bio            String        @db.Text
   qualifications String?       @db.Text
   status         String        @default("Active") // Active, Pending
@@ -114,6 +111,8 @@ model Appointment {
   user         User?             @relation(fields: [userId], references: [id], onDelete: Cascade)
   doctorId     String
   doctor       Doctor            @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  clinicId     String?
+  clinic       Clinic?           @relation(fields: [clinicId], references: [id], onDelete: SetNull)
   date         String            // Format: YYYY-MM-DD
   timeSlot     String            // Format: HH:MM AM/PM
   patientName  String

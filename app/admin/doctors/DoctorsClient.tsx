@@ -55,8 +55,11 @@ export default function DoctorsClient({
       setEditingDoctor(null);
       setErrorMsg("");
       if (initClinicId) {
-        setClinicId(initClinicId);
+        setClinicIds([initClinicId]);
+      } else {
+        setClinicIds([]);
       }
+      setAreaOfExpertise("");
       setIsAddModalOpen(true);
       router.replace("/admin/doctors", { scroll: false });
     }
@@ -66,7 +69,8 @@ export default function DoctorsClient({
   const [isAddingNewSpecialty, setIsAddingNewSpecialty] = useState(false);
   const [newSpecialtyName, setNewSpecialtyName] = useState("");
   const [newSpecialtyIcon, setNewSpecialtyIcon] = useState("Activity");
-  const [clinicId, setClinicId] = useState("");
+  const [clinicIds, setClinicIds] = useState<string[]>([]);
+  const [areaOfExpertise, setAreaOfExpertise] = useState("");
   const [fee, setFee] = useState(250);
   const [availableDaysState, setAvailableDaysState] = useState<string[]>(["Mon", "Tue", "Wed", "Thu", "Fri"]);
   const [startTime, setStartTime] = useState("09:00");
@@ -129,7 +133,8 @@ export default function DoctorsClient({
       setSpecialtyId(editingDoctor.specialtyId || "");
       setIsAddingNewSpecialty(false);
       setNewSpecialtyName("");
-      setClinicId(editingDoctor.clinicId || "");
+      setClinicIds(editingDoctor.clinics?.map((c: any) => c.id) || []);
+      setAreaOfExpertise(editingDoctor.areaOfExpertise || "");
       setFee(editingDoctor.fee || 250);
       
       if (editingDoctor.availableDays) {
@@ -159,7 +164,8 @@ export default function DoctorsClient({
       setSpecialtyId("");
       setIsAddingNewSpecialty(false);
       setNewSpecialtyName("");
-      setClinicId("");
+      setClinicIds([]);
+      setAreaOfExpertise("");
       setFee(250);
       setAvailableDaysState(["Mon", "Tue", "Wed", "Thu", "Fri"]);
       setStartTime("09:00");
@@ -203,13 +209,14 @@ export default function DoctorsClient({
   const filteredDoctors = useMemo(() => {
     return doctors
       .filter((doc) => {
+        const docCities = Array.from(new Set(doc.clinics.map((c: any) => c.city)));
         const matchesSearch =
           doc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           doc.specialty.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          doc.city.toLowerCase().includes(searchQuery.toLowerCase());
+          docCities.some(city => typeof city === 'string' && city.toLowerCase().includes(searchQuery.toLowerCase()));
 
         const matchesStatus = statusFilter === "all" || doc.status === statusFilter;
-        const matchesCity = cityFilter === "all" || doc.city === cityFilter;
+        const matchesCity = cityFilter === "all" || docCities.includes(cityFilter);
         const matchesSpecialty = specialtyFilter === "all" || doc.specialty === specialtyFilter;
 
         return matchesSearch && matchesStatus && matchesCity && matchesSpecialty;
@@ -229,8 +236,13 @@ export default function DoctorsClient({
   }, [doctors, searchQuery, sortBy, statusFilter, cityFilter, specialtyFilter]);
 
   const uniqueCities = useMemo(() => {
-    const cities = doctors.map((d) => d.city);
-    return Array.from(new Set(cities));
+    const cities = new Set<string>();
+    doctors.forEach(d => {
+      d.clinics?.forEach((c: any) => {
+        if (c.city) cities.add(c.city);
+      });
+    });
+    return Array.from(cities);
   }, [doctors]);
 
   const uniqueSpecialties = useMemo(() => {
@@ -439,10 +451,8 @@ export default function DoctorsClient({
                   <tr>
                     <th className="px-6 py-4">Name</th>
                     <th className="px-6 py-4">Specialty</th>
-                    <th className="px-6 py-4">City</th>
+                    <th className="px-6 py-4">Clinics</th>
                     <th className="px-6 py-4">Status</th>
-                    <th className="px-6 py-4">Clinic Email</th>
-                    <th className="px-6 py-4">Clinic Phone</th>
                     <th className="px-6 py-4">Actions</th>
                   </tr>
                 </thead>
@@ -455,7 +465,9 @@ export default function DoctorsClient({
                     <tr key={doc.id} className="hover:bg-gray-50/50 transition-colors">
                       <td className="px-6 py-4 font-bold text-text-dark">{doc.name}</td>
                       <td className="px-6 py-4 text-text-mid">{doc.specialty}</td>
-                      <td className="px-6 py-4 text-text-mid">{doc.city}</td>
+                      <td className="px-6 py-4 text-text-mid" title={doc.clinics?.map((c: any) => c.name).join(", ")}>
+                        {doc.clinics?.length || 0} {(doc.clinics?.length || 0) === 1 ? "Branch" : "Branches"}
+                      </td>
                       <td className="px-6 py-4">
                         <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider ${
                           doc.status === 'Active' ? 'bg-green-badge-bg text-green-badge' : 'bg-orange-50 text-orange-600'
@@ -463,8 +475,6 @@ export default function DoctorsClient({
                           {doc.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-text-mid">{doc.clinicEmail}</td>
-                      <td className="px-6 py-4 text-text-mid">{doc.clinicPhone || "+971 800 7777"}</td>
                       <td className="px-6 py-4 flex items-center gap-3">
                         <button 
                           onClick={() => handleToggleStatus(doc.id, doc.status)} 
@@ -598,15 +608,45 @@ export default function DoctorsClient({
                       </>
                     )}
                   </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm font-semibold text-text-dark">Clinic Branch *</label>
-                    <CustomDropdown
-                      value={clinicId}
-                      onChange={setClinicId}
-                      options={clinicOptions}
-                      placeholder="Select Clinic Branch"
+                    <label className="text-sm font-semibold text-text-dark">Clinic Branches * (Select one or more)</label>
+                    <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto border border-gray-border rounded-xl p-3 bg-gray-bg">
+                      {clinics.map(clinic => (
+                        <label key={clinic.id} className="flex items-center gap-2 cursor-pointer bg-white border border-gray-border px-3 py-1.5 rounded-lg hover:border-blue-primary transition-colors text-sm font-medium w-full">
+                          <input 
+                            type="checkbox" 
+                            value={clinic.id}
+                            checked={clinicIds.includes(clinic.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setClinicIds([...clinicIds, clinic.id]);
+                              } else {
+                                setClinicIds(clinicIds.filter(id => id !== clinic.id));
+                              }
+                            }}
+                            className="w-4 h-4 text-blue-primary rounded focus:ring-blue-primary"
+                          />
+                          <div className="flex flex-col flex-1">
+                            <span>{clinic.name}</span>
+                            <span className="text-xs text-text-light">{clinic.hospitalGroup?.name} - {clinic.city}</span>
+                          </div>
+                        </label>
+                      ))}
+                    </div>
+                    <input type="hidden" name="clinicIds" value={JSON.stringify(clinicIds)} />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-semibold text-text-dark">Area of Expertise</label>
+                    <textarea 
+                      name="areaOfExpertise" 
+                      defaultValue={editingDoctor?.areaOfExpertise || ""} 
+                      placeholder="Specialized focus areas..." 
+                      className="bg-gray-bg border border-gray-border rounded-xl h-48 p-4 text-sm font-medium focus:outline-none focus:border-blue-primary resize-none" 
                     />
-                    <input type="hidden" name="clinicId" value={clinicId} />
                   </div>
                 </div>
 

@@ -19,9 +19,11 @@ export async function createDoctor(formData: FormData) {
     await requireAdmin();
     const name = formData.get("name") as string;
     const specialtyId = formData.get("specialtyId") as string;
-    const clinicId = formData.get("clinicId") as string;
+    const clinicIdsStr = formData.get("clinicIds") as string;
+    const clinicIds = clinicIdsStr ? JSON.parse(clinicIdsStr) : [];
     const languages = formData.get("languages") as string;
     const bio = formData.get("bio") as string;
+    const areaOfExpertise = formData.get("areaOfExpertise") as string;
     const qualifications = formData.get("qualifications") as string;
     const feeStr = formData.get("fee") as string;
     const fee = feeStr ? parseInt(feeStr, 10) : 250;
@@ -49,12 +51,7 @@ export async function createDoctor(formData: FormData) {
     
     if (!specRecord) throw new Error("Specialty is required");
 
-    // Resolve clinic details
-    const clinicRecord = await prisma.clinic.findUnique({
-      where: { id: clinicId },
-      include: { hospitalGroup: true }
-    });
-    if (!clinicRecord) throw new Error("Clinic branch is required");
+    if (!clinicIds || clinicIds.length === 0) throw new Error("At least one clinic branch is required");
 
     // Generate slug from name
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Math.floor(Math.random() * 1000);
@@ -72,14 +69,13 @@ export async function createDoctor(formData: FormData) {
         email,
         specialtyId: specRecord.id,
         specialty: specRecord.name,
-        clinicId: clinicRecord.id,
-        clinicEmail: clinicRecord.email,
-        clinicPhone: clinicRecord.phone,
-        city: clinicRecord.city,
+        clinics: {
+          connect: clinicIds.map((id: string) => ({ id }))
+        },
         fee,
         languages: languages || "English",
-        affiliation: `${clinicRecord.hospitalGroup.name} - ${clinicRecord.name}`,
         bio: bio || "A dedicated healthcare professional.",
+        areaOfExpertise: areaOfExpertise || null,
         qualifications: qualifications || "MD, Board Certified Specialist",
         photoUrl,
         status: "Active",
@@ -104,10 +100,13 @@ export async function updateDoctor(id: string, formData: FormData) {
     await requireAdmin();
     const name = formData.get("name") as string;
     const specialtyId = formData.get("specialtyId") as string;
-    const clinicId = formData.get("clinicId") as string;
+    const clinicIdsStr = formData.get("clinicIds") as string;
+    const clinicIds = clinicIdsStr ? JSON.parse(clinicIdsStr) : [];
     const languages = formData.get("languages") as string;
     const bio = formData.get("bio") as string;
+    const areaOfExpertise = formData.get("areaOfExpertise") as string;
     const qualifications = formData.get("qualifications") as string;
+    const status = formData.get("status") as string;
     const feeStr = formData.get("fee") as string;
     const fee = feeStr ? parseInt(feeStr, 10) : 250;
     const availableDays = formData.get("availableDays") as string;
@@ -133,18 +132,21 @@ export async function updateDoctor(id: string, formData: FormData) {
     }
     
     if (!specRecord) throw new Error("Specialty is required");
-    if (!specRecord) throw new Error("Specialty is required");
+    if (!clinicIds || clinicIds.length === 0) throw new Error("At least one clinic branch is required");
 
-    // Resolve clinic details
-    const clinicRecord = await prisma.clinic.findUnique({
-      where: { id: clinicId },
-      include: { hospitalGroup: true }
-    });
-    if (!clinicRecord) throw new Error("Clinic branch is required");
+    const existingDoctor = await prisma.doctor.findUnique({ where: { id } });
+    if (!existingDoctor) throw new Error("Doctor not found");
 
-    // Process uploaded doctor photos if new ones are selected
+    // Process new uploaded photos if any
     const photos = formData.getAll("photos") as File[];
-    const uploadedPhotoUrl = await uploadImages(photos);
+    let photoUrl = existingDoctor.photoUrl;
+    
+    if (photos.length > 0 && photos[0].size > 0) {
+      const uploadedPhotoUrl = await uploadImages(photos);
+      if (uploadedPhotoUrl) {
+        photoUrl = uploadedPhotoUrl;
+      }
+    }
 
     const doctor = await prisma.doctor.update({
       where: { id },
@@ -152,18 +154,18 @@ export async function updateDoctor(id: string, formData: FormData) {
         name,
         specialtyId: specRecord.id,
         specialty: specRecord.name,
-        clinicId: clinicRecord.id,
-        clinicEmail: clinicRecord.email,
-        clinicPhone: clinicRecord.phone,
-        city: clinicRecord.city,
+        clinics: {
+          set: clinicIds.map((cid: string) => ({ id: cid }))
+        },
         fee,
         languages: languages || "English",
-        affiliation: `${clinicRecord.hospitalGroup.name} - ${clinicRecord.name}`,
         bio: bio || "A dedicated healthcare professional.",
+        areaOfExpertise: areaOfExpertise || null,
         qualifications: qualifications || "MD, Board Certified Specialist",
+        status: status || "Active",
         availableDays: availableDays || "Mon - Fri",
         availableTime: availableTime || "09:00 AM - 05:00 PM",
-        ...(uploadedPhotoUrl ? { photoUrl: uploadedPhotoUrl } : {})
+        photoUrl
       }
     });
 

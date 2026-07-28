@@ -13,6 +13,7 @@ export async function createAppointment(data: {
   patientEmail: string;
   patientPhone: string;
   reason?: string;
+  clinicId?: string;
 }) {
   try {
     // 1. Find the doctor
@@ -49,6 +50,7 @@ export async function createAppointment(data: {
         patientPhone: data.patientPhone,
         reason: data.reason || "",
         status: "PENDING",
+        clinicId: data.clinicId,
       },
     });
 

@@ -13,11 +13,10 @@ interface DoctorCardProps {
   specialty: string;
   rating: number;
   reviews: number;
-  city: string;
+  clinics?: { name: string; city: string; hospitalGroup?: { name: string } }[];
   languages: string[];
   photoUrl: string;
   isVerified: boolean;
-  clinicName?: string;
   fee?: number;
   variant?: "grid" | "row";
   availableDays?: string;
@@ -87,16 +86,21 @@ export default function DoctorCard({
           </h3>
 
           {/* Clinic & City details */}
-          {clinicName && (
-            <p className="text-xs font-bold text-text-mid mb-1 line-clamp-1 flex items-center gap-1">
-              <Building2 className="w-3.5 h-3.5 shrink-0" /> {clinicName}
-            </p>
+          {clinics && clinics.length > 0 && (
+            <div className="mb-4">
+              {clinics.map((clinic, idx) => (
+                <div key={idx} className="mb-1 last:mb-0">
+                  <p className="text-xs font-bold text-text-mid line-clamp-1 flex items-center gap-1">
+                    <Building2 className="w-3.5 h-3.5 shrink-0" /> {clinic.hospitalGroup?.name} - {clinic.name}
+                  </p>
+                  <div className="flex items-center gap-1.5 text-xs text-text-light font-medium ml-4 mt-0.5">
+                    <MapPin className="w-3.5 h-3.5 text-blue-primary" />
+                    <span>{clinic.city}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
-
-          <div className="flex items-center gap-1.5 mb-4 text-xs text-text-light font-medium">
-            <MapPin className="w-3.5 h-3.5 text-blue-primary" />
-            <span>{city}</span>
-          </div>
 
           <div className="flex items-center gap-1.5 mb-4" title="Ratings are read-only placeholder">
             <Star className="w-4 h-4 text-star-color fill-star-color" />
@@ -155,17 +159,23 @@ export default function DoctorCard({
           </Link>
         </div>
 
-        {clinicName && (
-          <div className="text-sm font-semibold text-text-dark flex items-center gap-1.5">
-            <Building2 className="w-4 h-4 text-blue-primary shrink-0" />
-            <span>{clinicName}</span>
+        {/* Clinic & City details */}
+        {clinics && clinics.length > 0 && (
+          <div className="flex flex-col gap-2 mt-1">
+            {clinics.map((clinic, idx) => (
+              <div key={idx} className="flex flex-col gap-0.5">
+                <div className="text-sm font-semibold text-text-dark flex items-center gap-1.5">
+                  <Building2 className="w-4 h-4 text-blue-primary shrink-0" />
+                  <span>{clinic.hospitalGroup?.name} - {clinic.name}</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-xs text-text-light font-medium ml-5">
+                  <MapPin className="w-3.5 h-3.5 text-blue-primary shrink-0" />
+                  <span>{clinic.city}</span>
+                </div>
+              </div>
+            ))}
           </div>
         )}
-
-        <div className="flex items-center gap-1.5 text-xs text-text-light font-medium">
-          <MapPin className="w-4 h-4 text-blue-primary shrink-0" />
-          <span>{city}</span>
-        </div>
 
         {/* Languages */}
         <div className="flex items-center gap-1.5 flex-wrap mt-1">

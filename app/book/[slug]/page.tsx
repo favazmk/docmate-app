@@ -10,7 +10,14 @@ export default async function BookingFlowPage({ params }: { params: { slug: stri
   const session = await getServerSession(authOptions);
   
   const dbDoctor = await prisma.doctor.findUnique({
-    where: { slug: params.slug }
+    where: { slug: params.slug },
+    include: {
+      clinics: {
+        include: {
+          hospitalGroup: true
+        }
+      }
+    }
   });
 
   if (!dbDoctor || dbDoctor.status !== "Active") {
@@ -22,8 +29,12 @@ export default async function BookingFlowPage({ params }: { params: { slug: stri
     name: dbDoctor.name,
     specialty: dbDoctor.specialty,
     photoUrl: dbDoctor.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(dbDoctor.name.replace(/^(Dr\.|Dr|Prof\.|Professor)\s+/i, ''))}&background=2200CC&color=fff`,
-    clinicName: dbDoctor.affiliation,
-    city: dbDoctor.city
+    clinics: dbDoctor.clinics.map(c => ({
+      id: c.id,
+      name: c.name,
+      city: c.city,
+      hospitalGroup: c.hospitalGroup ? { name: c.hospitalGroup.name } : undefined
+    }))
   };
 
   const user = session?.user ? {

@@ -13,8 +13,14 @@ interface BookingWizardProps {
     name: string;
     specialty: string;
     photoUrl: string;
-    clinicName: string;
-    city: string;
+    clinics: {
+      id: string;
+      name: string;
+      city: string;
+      hospitalGroup?: {
+        name: string;
+      };
+    }[];
   };
   user?: {
     name: string;
@@ -27,6 +33,12 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
   const [bookingId, setBookingId] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isConfirmed, setIsConfirmed] = useState(false);
+  const [selectedClinicId, setSelectedClinicId] = useState<string | null>(null);
+
+  const selectedClinic = useMemo(() => {
+    if (!selectedClinicId) return null;
+    return doctor.clinics.find(c => c.id === selectedClinicId) || null;
+  }, [selectedClinicId, doctor.clinics]);
 
   // Calendar State
   const today = useMemo(() => new Date(), []);
@@ -118,6 +130,7 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
         patientEmail: email,
         patientPhone: `${phonePrefix} ${phone}`,
         reason: reason,
+        clinicId: selectedClinicId || undefined,
       });
 
       if (result.success) {
@@ -138,10 +151,19 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
     <div className="max-w-4xl mx-auto">
       {/* Header / Back */}
       {!isConfirmed && (
-        <div className="mb-6 flex items-center">
-          <Link href={`/doctors/${doctor.slug}`} className="flex items-center text-text-mid hover:text-blue-primary font-medium text-sm transition-colors">
+        <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <Link href={`/doctors/${doctor.slug}`} className="flex items-center text-text-mid hover:text-blue-primary font-medium text-sm transition-colors w-fit">
             <ChevronLeft className="w-4 h-4 mr-1" /> Back to Profile
           </Link>
+          
+          {selectedClinicId && (
+            <button 
+              onClick={() => setSelectedClinicId(null)}
+              className="flex items-center text-blue-primary hover:underline font-medium text-sm transition-colors w-fit"
+            >
+              Change Clinic
+            </button>
+          )}
         </div>
       )}
 
@@ -154,15 +176,48 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
           <div>
             <h2 className="text-lg font-bold text-text-dark leading-tight mb-1">{doctor.name}</h2>
             <p className="text-sm font-medium text-blue-primary">{doctor.specialty}</p>
-            <div className="flex items-center gap-1 mt-1 text-xs text-text-mid font-medium">
-              <MapPin className="w-3.5 h-3.5 text-text-light" /> {doctor.clinicName}, {doctor.city}
-            </div>
+            {selectedClinic && (
+              <div className="flex items-center gap-1 mt-1 text-xs text-text-mid font-medium">
+                <MapPin className="w-3.5 h-3.5 text-text-light" /> {selectedClinic.hospitalGroup?.name} - {selectedClinic.name}, {selectedClinic.city}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Clinic Selection Step */}
+      {!isConfirmed && !selectedClinicId && (
+        <div className="bg-white border border-gray-border rounded-2xl p-6 md:p-8 shadow-sm mb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="mb-6">
+            <h3 className="text-xl font-bold text-text-dark mb-2 flex items-center gap-2">
+              <MapPin className="w-5.5 h-5.5 text-blue-primary" />
+              Select a Clinic
+            </h3>
+            <p className="text-sm text-text-mid">
+              Please select the clinic branch where you would like to book your appointment.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {doctor.clinics.map(clinic => (
+              <div 
+                key={clinic.id} 
+                onClick={() => setSelectedClinicId(clinic.id)}
+                className="border border-gray-border rounded-xl p-5 hover:border-blue-primary hover:shadow-md cursor-pointer transition-all bg-gray-50 hover:bg-blue-light/20 flex flex-col gap-1"
+              >
+                <h4 className="font-bold text-text-dark text-base">{clinic.hospitalGroup?.name}</h4>
+                <p className="font-semibold text-text-mid text-sm">{clinic.name}</p>
+                <div className="flex items-center gap-1.5 mt-2 text-xs text-text-light font-medium">
+                  <MapPin className="w-3.5 h-3.5" /> {clinic.city}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
 
       {/* Booking Form Step */}
-      {!isConfirmed ? (
+      {!isConfirmed && selectedClinicId ? (
         <div className="bg-white border border-gray-border rounded-2xl p-6 md:p-8 shadow-sm">
           <div className="mb-8">
             <h3 className="text-xl font-bold text-text-dark mb-2 flex items-center gap-2">

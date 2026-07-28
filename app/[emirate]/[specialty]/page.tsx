@@ -35,7 +35,7 @@ export default async function SpecialtyCityPage({
 
   const whereClause: any = {
     status: "Active",
-    city: { contains: emirateFormatted },
+    clinics: { some: { city: { contains: emirateFormatted } } },
     specialty: { contains: params.specialty }
   };
 
@@ -52,7 +52,7 @@ export default async function SpecialtyCityPage({
   const dbDoctors = await prisma.doctor.findMany({
     where: whereClause,
     include: {
-      clinic: {
+      clinics: {
         include: {
           hospitalGroup: true
         }
