@@ -1,0 +1,1 @@
+fetch('http://localhost:3000').then(r=>r.text()).then(html=>{ const matches = html.match(/<img[^>]+src=[^>]*>/g); if(matches) console.log(matches.slice(0, 10).join('\n')); else console.log('no images'); }).catch(console.error)
