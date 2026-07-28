@@ -430,7 +430,7 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
 
             <h2 className="mb-4 text-2xl font-bold text-text-dark md:text-3xl">Appointment Request Received!</h2>
             <p className="mx-auto mb-10 max-w-lg text-text-mid">
-              Your booking request has been successfully submitted. A representative from <span className="font-semibold text-text-dark">{doctor.clinicName}</span> will contact you shortly at <span className="font-semibold text-text-dark">{phonePrefix} {phone}</span> to schedule and finalize your appointment time.
+              Your booking request has been successfully submitted. A representative from <span className="font-semibold text-text-dark">{doctor.clinics.find(c => c.id === selectedClinicId)?.name || doctor.clinics[0]?.name || "the clinic"}</span> will contact you shortly at <span className="font-semibold text-text-dark">{phonePrefix} {phone}</span> to schedule and finalize your appointment time.
             </p>
 
             {/* Booking Summary */}
@@ -462,7 +462,9 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
                   </div>
                   <div>
                     <span className="block text-xs font-semibold uppercase tracking-wider text-text-light">Location</span>
-                    <span className="block text-sm font-bold leading-tight text-text-dark">{doctor.clinicName}, {doctor.city}</span>
+                    <span className="block text-sm font-bold leading-tight text-text-dark">
+                      {doctor.clinics.find(c => c.id === selectedClinicId)?.name || doctor.clinics[0]?.name}, {doctor.clinics.find(c => c.id === selectedClinicId)?.city || doctor.clinics[0]?.city}
+                    </span>
                   </div>
                 </div>
               </div>

@@ -121,7 +121,10 @@ export default async function SearchResultsPage({
         select: {
           id: true,
           name: true,
-          city: true
+          city: true,
+          hospitalGroup: {
+            select: { name: true }
+          }
         }
       }
     }
@@ -137,11 +140,11 @@ export default async function SearchResultsPage({
     specialty: d.specialty,
     rating: d.rating,
     reviews: d.reviews,
-    city: d.city,
-    languages: d.languages.split(",").map(lang => lang.trim()),
-    photoUrl: d.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(d.name)}&background=2200CC&color=fff`,
+    city: d.clinics.length > 0 ? d.clinics[0].city : "",
     isVerified: true,
-    clinicName: d.clinic ? `${d.clinic.hospitalGroup.name} - ${d.clinic.name}` : d.affiliation,
+    languages: d.languages.split(",").map((lang: string) => lang.trim()),
+    photoUrl: d.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(d.name)}&background=2200CC&color=fff`,
+    clinics: d.clinics,
     fee: d.fee,
     availableDays: d.availableDays || undefined,
     availableTime: d.availableTime || undefined

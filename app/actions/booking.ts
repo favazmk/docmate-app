@@ -25,6 +25,20 @@ export async function createAppointment(data: {
       return { success: false, error: "Doctor is currently not active or not found" };
     }
 
+    let clinicName = "the clinic";
+    let clinicEmail = doctor.email;
+
+    if (data.clinicId) {
+      const clinic = await prisma.clinic.findUnique({
+        where: { id: data.clinicId },
+        include: { hospitalGroup: true }
+      });
+      if (clinic) {
+        clinicName = `${clinic.hospitalGroup.name} - ${clinic.name}`;
+        if (clinic.email) clinicEmail = clinic.email;
+      }
+    }
+
     // 2. Authenticate the user (optional for guest booking)
     const session = await getServerSession(authOptions);
     let userId: string | null = null;
@@ -60,9 +74,9 @@ export async function createAppointment(data: {
       patientName: data.patientName,
       patientPhone: data.patientPhone,
       patientReason: data.reason || "None specified",
-      doctorEmail: doctor.clinicEmail || doctor.email,
+      doctorEmail: clinicEmail,
       doctorName: doctor.name,
-      clinicName: doctor.affiliation,
+      clinicName: clinicName,
       appointmentDate: data.date,
       appointmentTime: data.timeSlot,
     }).catch(console.error);

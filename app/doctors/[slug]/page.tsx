@@ -188,7 +188,7 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
                   loading="lazy"
                   allowFullScreen
                   referrerPolicy="no-referrer-when-downgrade"
-                  src={`https://maps.google.com/maps?q=${encodeURIComponent(doctor.clinicName + ', ' + doctor.city)}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
+                  src={`https://maps.google.com/maps?q=${encodeURIComponent((doctor.clinics[0]?.name || '') + ', ' + (doctor.clinics[0]?.city || ''))}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
                 ></iframe>
               </div>
             </div>
@@ -197,7 +197,7 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
 
           {/* Sticky Booking Widget (Right) */}
           <div className="lg:col-span-1">
-            <BookingWidget slug={params.slug} doctorName={doctor.name} clinicName={doctor.clinicName} />
+            <BookingWidget slug={params.slug} doctorName={doctor.name} clinicName={doctor.clinics[0]?.name || ''} />
           </div>
 
         </div>

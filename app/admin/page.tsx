@@ -20,7 +20,7 @@ export default async function AdminDashboardPage() {
   const totalBookings = await prisma.appointment.count();
   const registeredPatients = await prisma.user.count({ where: { role: 'PATIENT' } });
   
-  const uniqueEmirates = await prisma.doctor.groupBy({
+  const uniqueEmirates = await prisma.clinic.groupBy({
     by: ['city'],
   });
   const liveEmirates = uniqueEmirates.length;

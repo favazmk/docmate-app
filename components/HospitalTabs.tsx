@@ -13,12 +13,11 @@ interface DoctorData {
   specialty: string;
   rating: number;
   reviews: number;
-  city: string;
   languages: string[];
   photoUrl: string;
   isVerified: boolean;
   fee: number;
-  clinicName?: string;
+  clinics?: { name: string; city: string; hospitalGroup?: { name: string } }[];
 }
 
 interface ClinicData {
@@ -49,9 +48,9 @@ export default function HospitalTabs({ clinics, allDoctors, hospitalName }: Hosp
     const normQuery = normalizeSearchText(searchQuery);
     const matchesSearch = normalizeSearchText(doc.name).includes(normQuery) || 
       normalizeSearchText(doc.specialty).includes(normQuery) ||
-      (doc.clinicName && normalizeSearchText(doc.clinicName).includes(normQuery));
+      (doc.clinics?.some(c => normalizeSearchText(c.name).includes(normQuery)));
     
-    const matchesBranch = selectedBranch === "" || doc.clinicName === selectedBranch;
+    const matchesBranch = selectedBranch === "" || doc.clinics?.some(c => `${hospitalName} - ${c.name}` === selectedBranch);
 
     return matchesSearch && matchesBranch;
   });

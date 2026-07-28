@@ -12,7 +12,6 @@ export interface ClinicDoctor {
   specialty: string;
   rating: number;
   reviews: number;
-  city: string;
   languages: string[];
   photoUrl: string;
   isVerified: boolean;

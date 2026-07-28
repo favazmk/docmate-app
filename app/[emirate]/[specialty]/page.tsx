@@ -66,11 +66,10 @@ export default async function SpecialtyCityPage({
     specialty: d.specialty,
     rating: d.rating,
     reviews: d.reviews,
-    city: d.city,
-    languages: d.languages.split(",").map(lang => lang.trim()),
+    languages: d.languages.split(",").map((lang: string) => lang.trim()),
     photoUrl: d.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(d.name)}&background=2200CC&color=fff`,
     isVerified: true,
-    clinicName: d.clinic ? `${d.clinic.hospitalGroup.name} - ${d.clinic.name}` : d.affiliation,
+    clinics: d.clinics,
     fee: d.fee,
     availableDays: d.availableDays || undefined,
     availableTime: d.availableTime || undefined

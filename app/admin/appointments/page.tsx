@@ -21,7 +21,7 @@ export default async function AdminAppointmentsPage() {
     include: {
       doctor: {
         include: {
-          clinic: {
+          clinics: {
             include: {
               hospitalGroup: true
             }
