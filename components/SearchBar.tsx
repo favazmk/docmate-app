@@ -89,7 +89,7 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
             name: d.name,
             specialty: d.specialty,
             city: d.city,
-            url: `/doctor/${d.slug}`,
+            url: `/doctors/${d.slug}`,
             icon: User
           });
           addedIds.add(d.slug);

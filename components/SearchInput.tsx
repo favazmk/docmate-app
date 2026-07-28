@@ -69,7 +69,7 @@ export default function SearchInput({ initialValue = "", doctors = [], hospitalG
             name: d.name,
             specialty: d.specialty,
             city: d.city,
-            url: `/doctor/${d.slug}`,
+            url: `/doctors/${d.slug}`,
             icon: User
           });
           addedIds.add(d.slug);
