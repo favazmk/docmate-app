@@ -27,7 +27,7 @@ export async function uploadImages(files: File[]): Promise<string> {
       const filepath = path.join(uploadDir, filename);
       await writeFile(filepath, buffer);
       
-      urls.push(`/uploads/${filename}`);
+      urls.push(`/api/uploads/${filename}`);
     } catch (error) {
       console.error("Failed to upload image file:", file.name, error);
     }
