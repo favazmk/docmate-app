@@ -166,7 +166,7 @@ export default async function Home() {
 
         <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center text-center">
           <span className="hero-badge mb-4 rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-caption font-medium uppercase tracking-[0.06em] text-blue-200 backdrop-blur-md">
-            Dubai's leading doctor's appointment booking platform
+            Dubai's leading doctor appointment booking platform
           </span>
           <h1 className="hero-title mb-6 text-display font-bold text-white">
             Find and Book the <span className="hero-title-delay text-blue-200">Best Doctors</span> Near You
