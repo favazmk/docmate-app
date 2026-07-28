@@ -76,16 +76,7 @@ export default function ClinicBranchCard({
             </div>
           )}
 
-          <div className="flex flex-col gap-2 text-xs md:text-sm text-text-dark font-semibold">
-            <a href={`tel:${DOCMATE_PHONE.replace(/\s+/g, '')}`} className="flex items-center gap-2 bg-gray-bg border border-gray-border px-4 py-2 rounded-xl hover:bg-blue-50 transition-colors">
-              <Phone className="w-4 h-4 text-blue-primary shrink-0" />
-              <span>{DOCMATE_PHONE}</span>
-            </a>
-            <a href={`mailto:${DOCMATE_EMAIL}`} title={DOCMATE_EMAIL} className="flex items-center gap-2 bg-gray-bg border border-gray-border px-4 py-2 rounded-xl min-w-0 hover:bg-blue-50 transition-colors">
-              <Mail className="w-4 h-4 text-blue-primary shrink-0" />
-              <span className="truncate">{DOCMATE_EMAIL}</span>
-            </a>
-          </div>
+
         </div>
 
         {/* Right column - photo gallery */}
