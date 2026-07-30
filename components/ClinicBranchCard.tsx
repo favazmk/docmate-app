@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { Building2, Phone, Mail, Star } from "lucide-react";
+import Link from "next/link";
+import { Building2, Phone, Mail, Star, Users } from "lucide-react";
 import PhotoGallery from "./PhotoGallery";
 import ExpandableText from "./ExpandableText";
 import { DOCMATE_PHONE, DOCMATE_EMAIL } from "@/lib/constants";
@@ -74,7 +75,15 @@ export default function ClinicBranchCard({
               <span className="text-xs text-text-light">({clinic.reviewCount} reviews)</span>
             </div>
           )}
-
+          
+          <div className="mt-2">
+            <Link
+              href={`/search?clinicId=${clinic.id}`}
+              className="inline-flex items-center justify-center gap-2 bg-blue-primary hover:bg-blue-hover text-white h-11 px-6 rounded-xl font-bold shadow-md shadow-blue-primary/20 transition-all w-full lg:w-auto"
+            >
+              <Users className="w-5 h-5" /> View Doctors
+            </Link>
+          </div>
 
         </div>
 
