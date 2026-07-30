@@ -7,10 +7,12 @@ import Link from "next/link";
 import { Lock, Mail, User } from "lucide-react";
 import { registerPatient } from "@/app/actions/auth";
 import { signIn } from "next-auth/react";
+import CustomDropdown from "@/components/ui/CustomDropdown";
 
 export default function RegisterPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [phonePrefix, setPhonePrefix] = useState("+971");
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -106,21 +108,21 @@ export default function RegisterPage() {
               <label className="block text-sm font-medium text-text-dark mb-1">
                 Phone Number
               </label>
-              <div className="flex">
-                <select
-                  name="phonePrefix"
-                  defaultValue="+971"
-                  className="bg-gray-bg border border-gray-border border-r-0 rounded-l-xl px-3 text-sm font-medium text-text-dark focus:outline-none"
-                >
-                  <option>+971</option>
-                  <option>+966</option>
-                  <option>+965</option>
-                </select>
+              <div className="flex gap-2">
+                <div className="w-[120px] shrink-0">
+                  <CustomDropdown
+                    value={phonePrefix}
+                    onChange={setPhonePrefix}
+                    options={["+971", "+966", "+965"]}
+                    placeholder="Prefix"
+                  />
+                  <input type="hidden" name="phonePrefix" value={phonePrefix} />
+                </div>
                 <input
                   type="tel"
                   name="phone"
                   required
-                  className="appearance-none block w-full px-3 py-2 border border-gray-border rounded-r-xl placeholder-gray-400 focus:outline-none focus:ring-blue-primary focus:border-blue-primary sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-border rounded-xl placeholder-gray-400 focus:outline-none focus:ring-blue-primary focus:border-blue-primary sm:text-sm"
                   placeholder="50 123 4567"
                 />
               </div>

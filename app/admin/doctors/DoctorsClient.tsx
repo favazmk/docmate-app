@@ -565,8 +565,18 @@ export default function DoctorsClient({
                         <div className="text-text-dark font-medium">{doc.specialty}</div>
                         {doc.type && <div className="text-xs text-text-mid mt-0.5">{doc.type}</div>}
                       </td>
-                      <td className="px-6 py-4 text-text-mid" title={doc.clinics?.map((c: any) => c.name).join(", ")}>
-                        {doc.clinics?.length || 0} {(doc.clinics?.length || 0) === 1 ? "Branch" : "Branches"}
+                      <td className="px-6 py-4">
+                        {doc.clinics && doc.clinics.length > 0 ? (
+                          <div className="flex flex-col gap-1">
+                            {doc.clinics.map((c: any, index: number) => (
+                              <span key={index} className="text-text-dark font-medium text-xs">
+                                {c.name}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="text-text-mid text-xs">No Clinics</span>
+                        )}
                       </td>
                       <td className="px-6 py-4">
                         <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider ${

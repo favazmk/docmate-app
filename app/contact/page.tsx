@@ -4,10 +4,12 @@ import { Mail, MapPin, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { submitContact } from "@/app/actions/contact";
+import CustomDropdown from "@/components/ui/CustomDropdown";
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [subject, setSubject] = useState("General Inquiry");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -108,12 +110,13 @@ export default function ContactPage() {
                 </div>
                 <div className="flex flex-col gap-2 flex-1">
                   <label className="text-sm font-semibold text-text-dark">Subject</label>
-                  <select name="subject" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors">
-                    <option>General Inquiry</option>
-                    <option>Support with Booking</option>
-                    <option>Clinic Partnership</option>
-                    <option>Feedback</option>
-                  </select>
+                  <CustomDropdown
+                    value={subject}
+                    onChange={setSubject}
+                    options={["General Inquiry", "Support with Booking", "Clinic Partnership", "Feedback"]}
+                    placeholder="Select Subject"
+                  />
+                  <input type="hidden" name="subject" value={subject} />
                 </div>
               </div>
 

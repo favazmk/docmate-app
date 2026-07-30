@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Image from "next/image";
 import AdminAppointmentStatusSelect from "@/components/AdminAppointmentStatusSelect";
+import CustomDropdown from "@/components/ui/CustomDropdown";
 import { Download, Search, SlidersHorizontal, X, User } from "lucide-react";
 import * as XLSX from 'xlsx';
 
@@ -15,6 +15,7 @@ export default function AppointmentsClient({ appointments }: { appointments: any
   const [hospitalFilter, setHospitalFilter] = useState("ALL");
   const [clinicFilter, setClinicFilter] = useState("ALL");
   const [sortOrder, setSortOrder] = useState("NEWEST"); // NEWEST or OLDEST
+  const [preset, setPreset] = useState("");
 
   // Extract unique hospitals and clinics for filters
   const uniqueHospitals = useMemo(() => {
@@ -117,111 +118,121 @@ export default function AppointmentsClient({ appointments }: { appointments: any
           </div>
           <div className="flex items-center gap-2 w-full md:w-auto shrink-0">
             <SlidersHorizontal className="h-4 w-4 text-text-light hidden md:block" />
-            <select 
-              value={sortOrder} 
-              onChange={(e) => setSortOrder(e.target.value)}
-              className="block w-full md:w-auto py-2 px-3 border border-gray-border rounded-xl bg-gray-bg focus:outline-none focus:border-blue-primary text-sm font-semibold text-text-dark"
-            >
-              <option value="NEWEST">Newest First</option>
-              <option value="OLDEST">Oldest First</option>
-            </select>
+            <div className="w-full md:w-[150px]">
+              <CustomDropdown
+                value={sortOrder}
+                onChange={setSortOrder}
+                options={[
+                  { value: "NEWEST", label: "Newest First" },
+                  { value: "OLDEST", label: "Oldest First" }
+                ]}
+                placeholder="Sort By"
+              />
+            </div>
           </div>
         </div>
         
         {/* Secondary filters row */}
         <div className="flex flex-col xl:flex-row gap-4 items-start xl:items-center justify-start border-t border-gray-border pt-4">
           
-          <div className="flex items-center gap-2 bg-gray-bg border border-gray-border rounded-xl px-2 w-full xl:w-auto shrink-0 overflow-x-auto">
-            <span className="text-xs text-text-light font-semibold pl-2">From:</span>
-            <input
-              type="date"
-              value={fromDate}
-              onChange={(e) => setFromDate(e.target.value)}
-              className="bg-transparent py-2 px-1 focus:outline-none text-sm font-semibold text-text-dark"
-            />
-            <span className="text-xs text-text-light font-semibold">To:</span>
-            <input
-              type="date"
-              value={toDate}
-              onChange={(e) => setToDate(e.target.value)}
-              className="bg-transparent py-2 px-1 focus:outline-none text-sm font-semibold text-text-dark"
-            />
-            <select
-              onChange={(e) => {
-                const preset = e.target.value;
-                const today = new Date();
-                const from = new Date();
-                
-                if (preset === "ALL") {
-                  setFromDate("");
-                  setToDate("");
-                } else {
-                  if (preset === "TODAY") {
-                    // today is already handled
-                  } else if (preset === "7DAYS") {
-                    from.setDate(today.getDate() - 7);
-                  } else if (preset === "1MONTH") {
-                    from.setMonth(today.getMonth() - 1);
-                  } else if (preset === "3MONTHS") {
-                    from.setMonth(today.getMonth() - 3);
+            <div className="flex items-center gap-2 bg-gray-bg border border-gray-border rounded-xl px-4 h-12 w-full xl:w-auto shrink-0 overflow-x-auto">
+              <span className="text-xs text-text-light font-semibold">From:</span>
+              <input
+                type="date"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+                className="bg-transparent focus:outline-none text-sm font-semibold text-text-dark"
+              />
+              <span className="text-xs text-text-light font-semibold ml-2">To:</span>
+              <input
+                type="date"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+                className="bg-transparent focus:outline-none text-sm font-semibold text-text-dark"
+              />
+            </div>
+
+            <div className="w-[140px] shrink-0">
+              <CustomDropdown
+                value={preset}
+                onChange={(presetVal) => {
+                  const today = new Date();
+                  const from = new Date();
+                  
+                  if (presetVal === "ALL") {
+                    setFromDate("");
+                    setToDate("");
+                  } else {
+                    if (presetVal === "TODAY") {
+                      // today is already handled
+                    } else if (presetVal === "7DAYS") {
+                      from.setDate(today.getDate() - 7);
+                    } else if (presetVal === "1MONTH") {
+                      from.setMonth(today.getMonth() - 1);
+                    } else if (presetVal === "3MONTHS") {
+                      from.setMonth(today.getMonth() - 3);
+                    }
+                    // Format dates to YYYY-MM-DD
+                    const formatDate = (d: Date) => d.toISOString().split('T')[0];
+                    setFromDate(formatDate(from));
+                    setToDate(formatDate(today));
                   }
-                  // Format dates to YYYY-MM-DD
-                  const formatDate = (d: Date) => d.toISOString().split('T')[0];
-                  setFromDate(formatDate(from));
-                  setToDate(formatDate(today));
-                }
-                e.target.value = ""; // Reset select after applying
-              }}
-              className="bg-transparent border-l border-gray-border py-2 pl-2 pr-4 focus:outline-none text-sm font-semibold text-blue-primary cursor-pointer"
-              defaultValue=""
-            >
-              <option value="" disabled>Presets...</option>
-              <option value="ALL">All Time</option>
-              <option value="TODAY">Today</option>
-              <option value="7DAYS">Last 7 Days</option>
-              <option value="1MONTH">Last 1 Month</option>
-              <option value="3MONTHS">Last 3 Months</option>
-            </select>
-          </div>
+                  setPreset(""); // Reset after applying
+                }}
+                options={[
+                  { value: "ALL", label: "All Time" },
+                  { value: "TODAY", label: "Today" },
+                  { value: "7DAYS", label: "Last 7 Days" },
+                  { value: "1MONTH", label: "Last 1 Month" },
+                  { value: "3MONTHS", label: "Last 3 Months" }
+                ]}
+                placeholder="Presets..."
+              />
+            </div>
 
-          <div className="flex flex-wrap gap-3 w-full xl:w-auto">
-            <select 
-              value={statusFilter} 
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="block flex-1 md:flex-none py-2 px-3 border border-gray-border rounded-xl bg-gray-bg focus:outline-none focus:border-blue-primary text-sm font-semibold text-text-dark"
-            >
-              <option value="ALL">All Status</option>
-              <option value="PENDING">Pending</option>
-              <option value="CONFIRMED">Confirmed</option>
-              <option value="CANCELLED">Cancelled</option>
-              <option value="COMPLETED">Completed</option>
-              <option value="RESCHEDULED">Rescheduled</option>
-            </select>
+          <div className="flex flex-col md:flex-row gap-3 w-full xl:w-auto">
+            <div className="flex-1 md:w-[180px]">
+              <CustomDropdown
+                value={statusFilter}
+                onChange={setStatusFilter}
+                options={[
+                  { value: "ALL", label: "All Status" },
+                  { value: "PENDING", label: "Pending" },
+                  { value: "CONFIRMED", label: "Confirmed" },
+                  { value: "CANCELLED", label: "Cancelled" },
+                  { value: "COMPLETED", label: "Completed" },
+                  { value: "RESCHEDULED", label: "Rescheduled" }
+                ]}
+                placeholder="All Status"
+              />
+            </div>
             
-            <select 
-              value={hospitalFilter} 
-              onChange={(e) => {
-                setHospitalFilter(e.target.value);
-                setClinicFilter("ALL"); // Reset clinic filter when hospital changes
-              }}
-              className="block flex-1 md:flex-none py-2 px-3 border border-gray-border rounded-xl bg-gray-bg focus:outline-none focus:border-blue-primary text-sm font-semibold text-text-dark"
-            >
-              <option value="ALL">All Hospitals / Groups</option>
-              {uniqueHospitals.map(h => (
-                <option key={h} value={h}>{h}</option>
-              ))}
-            </select>
+            <div className="flex-1 md:w-[220px]">
+              <CustomDropdown
+                value={hospitalFilter}
+                onChange={(val) => {
+                  setHospitalFilter(val);
+                  setClinicFilter("ALL");
+                }}
+                options={[
+                  { value: "ALL", label: "All Hospitals / Groups" },
+                  ...uniqueHospitals.map(h => ({ value: h, label: h }))
+                ]}
+                placeholder="All Hospitals / Groups"
+              />
+            </div>
 
-            <select 
-              value={clinicFilter} 
-              onChange={(e) => setClinicFilter(e.target.value)}
-              className="block flex-1 md:flex-none py-2 px-3 border border-gray-border rounded-xl bg-gray-bg focus:outline-none focus:border-blue-primary text-sm font-semibold text-text-dark"
-            >
-              <option value="ALL">All Clinics</option>
-              {uniqueClinics.map(c => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
+            <div className="flex-1 md:w-[200px]">
+              <CustomDropdown
+                value={clinicFilter}
+                onChange={setClinicFilter}
+                options={[
+                  { value: "ALL", label: "All Clinics" },
+                  ...uniqueClinics.map(c => ({ value: c, label: c }))
+                ]}
+                placeholder="All Clinics"
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -5,10 +5,13 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useState } from "react";
 import { submitClinicRequest } from "@/app/actions/contact";
+import CustomDropdown from "@/components/ui/CustomDropdown";
 
 export default function ListYourClinicPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [city, setCity] = useState("Dubai");
+  const [role, setRole] = useState("Doctor");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -143,16 +146,13 @@ export default function ListYourClinicPage() {
                 </div>
                 <div className="flex flex-col gap-2 flex-1">
                   <label className="text-sm font-semibold text-text-dark">City <span className="text-red-500">*</span></label>
-                  <select name="city" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors">
-                    <option>Dubai</option>
-                    <option>Ajman</option>
-                    <option>Riyadh</option>
-                    <option>Jeddah</option>
-                    <option>Kuwait City</option>
-                    <option>Doha</option>
-                    <option>Manama</option>
-                    <option>Muscat</option>
-                  </select>
+                  <CustomDropdown
+                    value={city}
+                    onChange={setCity}
+                    options={["Dubai", "Ajman", "Riyadh", "Jeddah", "Kuwait City", "Doha", "Manama", "Muscat"]}
+                    placeholder="Select City"
+                  />
+                  <input type="hidden" name="city" value={city} />
                 </div>
               </div>
 
@@ -163,12 +163,13 @@ export default function ListYourClinicPage() {
                 </div>
                 <div className="flex flex-col gap-2 flex-1">
                   <label className="text-sm font-semibold text-text-dark">Role <span className="text-red-500">*</span></label>
-                  <select name="role" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors">
-                    <option>Doctor</option>
-                    <option>Clinic Manager</option>
-                    <option>Owner</option>
-                    <option>Other</option>
-                  </select>
+                  <CustomDropdown
+                    value={role}
+                    onChange={setRole}
+                    options={["Doctor", "Clinic Manager", "Owner", "Other"]}
+                    placeholder="Select Role"
+                  />
+                  <input type="hidden" name="role" value={role} />
                 </div>
               </div>
 

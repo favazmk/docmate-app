@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Mail, Phone, Calendar, Clock, MapPin, User, Search, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import CustomDropdown from "@/components/ui/CustomDropdown";
 
 export default function TrackBookingPage() {
   const [email, setEmail] = useState("");
@@ -77,23 +78,22 @@ export default function TrackBookingPage() {
               <label className="text-sm font-bold text-text-dark flex items-center gap-1.5">
                 <Phone className="w-4 h-4 text-blue-primary" /> Phone Number
               </label>
-              <div className="flex">
-                <select
-                  value={phonePrefix}
-                  onChange={(e) => setPhonePrefix(e.target.value)}
-                  className="bg-gray-bg border border-gray-border border-r-0 rounded-l-xl h-12 px-3 text-sm font-medium text-text-dark focus:outline-none"
-                >
-                  <option>+971</option>
-                  <option>+966</option>
-                  <option>+965</option>
-                </select>
+              <div className="flex gap-2">
+                <div className="w-[120px] shrink-0">
+                  <CustomDropdown
+                    value={phonePrefix}
+                    onChange={setPhonePrefix}
+                    options={["+971", "+966", "+965"]}
+                    placeholder="Prefix"
+                  />
+                </div>
                 <input
                   type="tel"
                   required
                   placeholder="50 123 4567"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full bg-gray-bg border border-gray-border rounded-r-xl h-12 px-4 text-sm font-medium text-text-dark focus:outline-none focus:border-blue-primary focus:ring-1 focus:ring-blue-primary"
+                  className="w-full bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium text-text-dark focus:outline-none focus:border-blue-primary focus:ring-1 focus:ring-blue-primary"
                 />
               </div>
             </div>
