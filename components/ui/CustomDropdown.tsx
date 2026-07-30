@@ -103,15 +103,19 @@ export default function CustomDropdown({
       {isOpen && !disabled && (
         <div className="absolute left-0 right-0 mt-2 bg-white border border-gray-border rounded-xl shadow-[0_12px_32px_rgba(0,0,0,0.12)] z-[9999] max-h-60 overflow-y-auto py-1.5 animate-in fade-in-50 slide-in-from-top-1 duration-150">
           {/* Default Option if not value */}
-          <div
-            onClick={() => handleSelect("")}
-            className={`px-4 py-2.5 text-sm cursor-pointer transition-colors ${
-              value === "" ? "bg-blue-light text-blue-primary font-bold" : "text-text-mid hover:bg-gray-bg hover:text-text-dark"
-            }`}
-          >
-            {placeholder}
-          </div>
-          <div className="h-px bg-gray-border my-1"></div>
+          {!normalizedOptions.some(opt => String(opt.label) === placeholder || opt.value === "" || String(opt.value).toLowerCase() === "all") && (
+            <>
+              <div
+                onClick={() => handleSelect("")}
+                className={`px-4 py-2.5 text-sm cursor-pointer transition-colors ${
+                  value === "" ? "bg-blue-light text-blue-primary font-bold" : "text-text-mid hover:bg-gray-bg hover:text-text-dark"
+                }`}
+              >
+                {placeholder}
+              </div>
+              <div className="h-px bg-gray-border my-1"></div>
+            </>
+          )}
 
           {normalizedOptions.length === 0 ? (
             <div className="px-4 py-3 text-xs text-text-light text-center">No options available</div>

@@ -242,6 +242,8 @@ export default function DoctorsClient({
   const [statusFilter, setStatusFilter] = useState("all");
   const [cityFilter, setCityFilter] = useState("all");
   const [specialtyFilter, setSpecialtyFilter] = useState("all");
+  const [hospitalFilter, setHospitalFilter] = useState("all");
+  const [clinicFilter, setClinicFilter] = useState("all");
 
   const filteredDoctors = useMemo(() => {
     return doctors
@@ -255,8 +257,14 @@ export default function DoctorsClient({
         const matchesStatus = statusFilter === "all" || doc.status === statusFilter;
         const matchesCity = cityFilter === "all" || docCities.includes(cityFilter);
         const matchesSpecialty = specialtyFilter === "all" || doc.specialty === specialtyFilter;
+        
+        const docHospitalGroups = Array.from(new Set(doc.clinics?.map((c: any) => c.hospitalGroup?.name).filter(Boolean)));
+        const docClinicNames = Array.from(new Set(doc.clinics?.map((c: any) => c.name).filter(Boolean)));
+        
+        const matchesHospital = hospitalFilter === "all" || docHospitalGroups.includes(hospitalFilter);
+        const matchesClinic = clinicFilter === "all" || docClinicNames.includes(clinicFilter);
 
-        return matchesSearch && matchesStatus && matchesCity && matchesSpecialty;
+        return matchesSearch && matchesStatus && matchesCity && matchesSpecialty && matchesHospital && matchesClinic;
       })
       .sort((a, b) => {
         if (sortBy === "alphabetical-asc") {
@@ -270,7 +278,7 @@ export default function DoctorsClient({
         }
         return 0;
       });
-  }, [doctors, searchQuery, sortBy, statusFilter, cityFilter, specialtyFilter]);
+  }, [doctors, searchQuery, sortBy, statusFilter, cityFilter, specialtyFilter, hospitalFilter, clinicFilter]);
 
   const uniqueCities = useMemo(() => {
     const cities = new Set<string>();
@@ -284,8 +292,29 @@ export default function DoctorsClient({
 
   const uniqueSpecialties = useMemo(() => {
     const specialties = doctors.map((d) => d.specialty);
-    return Array.from(new Set(specialties));
+    return Array.from(new Set(specialties)).filter(Boolean).sort();
   }, [doctors]);
+
+  const uniqueHospitals = useMemo(() => {
+    const hospitals = new Set<string>();
+    doctors.forEach(d => {
+      d.clinics?.forEach((c: any) => {
+        if (c.hospitalGroup?.name) hospitals.add(c.hospitalGroup.name);
+      });
+    });
+    return Array.from(hospitals).sort();
+  }, [doctors]);
+
+  const uniqueClinicsForFilter = useMemo(() => {
+    const clinicSet = new Set<string>();
+    doctors.forEach(d => {
+      d.clinics?.forEach((c: any) => {
+        if (hospitalFilter !== "all" && c.hospitalGroup?.name !== hospitalFilter) return;
+        if (c.name) clinicSet.add(c.name);
+      });
+    });
+    return Array.from(clinicSet).sort();
+  }, [doctors, hospitalFilter]);
 
   const handleEdit = (doc: any) => {
     setEditingDoctor(doc);
@@ -446,6 +475,35 @@ export default function DoctorsClient({
               />
             </div>
 
+            {/* Hospital Filter */}
+            <div className="flex flex-col gap-1 min-w-[180px]">
+              <CustomDropdown
+                value={hospitalFilter}
+                onChange={(val) => {
+                  setHospitalFilter(val);
+                  setClinicFilter("all"); // Reset clinic filter when hospital changes
+                }}
+                placeholder="All Hospitals"
+                options={[
+                  { value: "all", label: "All Hospitals/Groups" },
+                  ...uniqueHospitals.map((h) => ({ value: h, label: h }))
+                ]}
+              />
+            </div>
+
+            {/* Clinic Filter */}
+            <div className="flex flex-col gap-1 min-w-[160px]">
+              <CustomDropdown
+                value={clinicFilter}
+                onChange={setClinicFilter}
+                placeholder="All Clinics"
+                options={[
+                  { value: "all", label: "All Clinics" },
+                  ...uniqueClinicsForFilter.map((c) => ({ value: c, label: c }))
+                ]}
+              />
+            </div>
+
             {/* Sort Dropdown */}
             <div className="flex flex-col gap-1 min-w-[180px]">
               <CustomDropdown
@@ -464,7 +522,7 @@ export default function DoctorsClient({
 
           <div className="flex items-center justify-between mb-4 text-xs font-bold text-text-mid uppercase tracking-wider px-1">
             <span>Showing {filteredDoctors.length} of {doctors.length} Doctors</span>
-            {(searchQuery || statusFilter !== "all" || cityFilter !== "all" || specialtyFilter !== "all") && (
+            {(searchQuery || statusFilter !== "all" || cityFilter !== "all" || specialtyFilter !== "all" || hospitalFilter !== "all" || clinicFilter !== "all") && (
               <button
                 onClick={() => {
                   setSearchQuery("");
@@ -472,6 +530,8 @@ export default function DoctorsClient({
                   setStatusFilter("all");
                   setCityFilter("all");
                   setSpecialtyFilter("all");
+                  setHospitalFilter("all");
+                  setClinicFilter("all");
                 }}
                 className="text-blue-primary hover:underline font-bold"
               >
