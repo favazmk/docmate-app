@@ -18,7 +18,7 @@ export default function AdminSidebar() {
   ];
 
   return (
-    <aside className="w-64 bg-sidebar border-r border-sidebar-border hidden md:flex flex-col shrink-0">
+    <aside className="w-64 bg-sidebar border-r border-sidebar-border hidden md:flex flex-col shrink-0 sticky top-0 h-screen">
       <div className="h-16 flex items-center px-6 border-b border-sidebar-border bg-white">
         <Link href="/" className="flex items-center">
           <Image src="/logo.png" alt="Doc Mate Logo" width={110} height={32} className="object-contain" priority />
