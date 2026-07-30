@@ -49,6 +49,7 @@ export default async function HospitalProfilePage({ params }: { params: { id: st
         slug: doc.slug,
         name: doc.name,
         specialty: doc.specialty,
+        type: doc.type,
         rating: doc.rating,
         reviews: doc.reviews,
         languages: doc.languages.split(",").map((lang) => lang.trim()),

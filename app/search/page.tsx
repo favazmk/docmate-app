@@ -6,12 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import prisma from "@/lib/prisma";
 import SearchInput from "@/components/SearchInput";
+import Pagination from "@/components/Pagination";
 
 export default async function SearchResultsPage({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
+  const page = typeof searchParams.page === "string" ? parseInt(searchParams.page, 10) : 1;
+  const PAGE_SIZE = 15;
   const specialty = typeof searchParams.specialty === "string" ? searchParams.specialty : undefined;
   const city = typeof searchParams.city === "string" ? searchParams.city : undefined;
   const sort = typeof searchParams.sort === "string" ? searchParams.sort : "recommended";
@@ -101,9 +104,13 @@ export default async function SearchResultsPage({
     orderByClause = { createdAt: "desc" }; // Recommended fallback
   }
 
+  const totalCount = await prisma.doctor.count({ where: whereClause });
+
   const dbDoctors = await prisma.doctor.findMany({
     where: whereClause,
     orderBy: orderByClause,
+    skip: (page - 1) * PAGE_SIZE,
+    take: PAGE_SIZE,
     include: {
       clinics: {
         include: {
@@ -138,6 +145,7 @@ export default async function SearchResultsPage({
     slug: d.slug,
     name: d.name,
     specialty: d.specialty,
+    type: d.type,
     rating: d.rating,
     reviews: d.reviews,
     city: d.clinics.length > 0 ? d.clinics[0].city : "",
@@ -155,7 +163,7 @@ export default async function SearchResultsPage({
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-text-dark mb-1">{doctors.length} doctors found</h1>
+            <h1 className="text-2xl font-bold text-text-dark mb-1">{totalCount} doctors found</h1>
             <p className="text-sm text-text-mid">
               Showing results for{" "}
               <span className="font-semibold text-text-dark">
@@ -214,12 +222,8 @@ export default async function SearchResultsPage({
               </div>
             )}
 
-            {doctors.length > 0 && (
-              <div className="flex justify-center mt-8">
-                <Button variant="outline" className="border-gray-border bg-white text-text-dark hover:bg-gray-bg hover:text-blue-primary font-semibold h-11 px-8 rounded-xl shadow-sm">
-                  Load more doctors
-                </Button>
-              </div>
+            {totalCount > 0 && (
+              <Pagination currentPage={page} totalPages={Math.ceil(totalCount / PAGE_SIZE)} />
             )}
           </div>
         </div>

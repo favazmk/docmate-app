@@ -22,6 +22,7 @@ export async function createDoctor(formData: FormData) {
     const clinicIdsStr = formData.get("clinicIds") as string;
     const clinicIds = clinicIdsStr ? JSON.parse(clinicIdsStr) : [];
     const languages = formData.get("languages") as string;
+    const type = formData.get("type") as string;
     const bio = formData.get("bio") as string;
     const areaOfExpertise = formData.get("areaOfExpertise") as string;
     const qualifications = formData.get("qualifications") as string;
@@ -73,6 +74,7 @@ export async function createDoctor(formData: FormData) {
           connect: clinicIds.map((id: string) => ({ id }))
         },
         fee,
+        type: type || "Specialist",
         languages: languages || "English",
         bio: bio || "A dedicated healthcare professional.",
         areaOfExpertise: areaOfExpertise || null,
@@ -103,6 +105,7 @@ export async function updateDoctor(id: string, formData: FormData) {
     const clinicIdsStr = formData.get("clinicIds") as string;
     const clinicIds = clinicIdsStr ? JSON.parse(clinicIdsStr) : [];
     const languages = formData.get("languages") as string;
+    const type = formData.get("type") as string;
     const bio = formData.get("bio") as string;
     const areaOfExpertise = formData.get("areaOfExpertise") as string;
     const qualifications = formData.get("qualifications") as string;
@@ -158,6 +161,7 @@ export async function updateDoctor(id: string, formData: FormData) {
           set: clinicIds.map((cid: string) => ({ id: cid }))
         },
         fee,
+        type: type || "Specialist",
         languages: languages || "English",
         bio: bio || "A dedicated healthcare professional.",
         areaOfExpertise: areaOfExpertise || null,

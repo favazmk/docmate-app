@@ -25,6 +25,7 @@ interface ClinicData {
   name: string;
   city: string;
   hospitalGroup: {
+    id: string;
     name: string;
   };
 }
@@ -70,6 +71,25 @@ export default function DoctorsClient({
   const [newSpecialtyName, setNewSpecialtyName] = useState("");
   const [newSpecialtyIcon, setNewSpecialtyIcon] = useState("Activity");
   const [clinicIds, setClinicIds] = useState<string[]>([]);
+  const [selectedHospitalGroupIds, setSelectedHospitalGroupIds] = useState<string[]>([]);
+  const [doctorType, setDoctorType] = useState("Specialist");
+  const [customDoctorType, setCustomDoctorType] = useState("");
+
+  const hospitalGroups = useMemo(() => {
+    const groups = new Map();
+    clinics.forEach(c => {
+      if (c.hospitalGroup) {
+        groups.set(c.hospitalGroup.id, c.hospitalGroup);
+      }
+    });
+    return Array.from(groups.values());
+  }, [clinics]);
+
+  const filteredModalClinics = useMemo(() => {
+    if (selectedHospitalGroupIds.length === 0) return clinics;
+    return clinics.filter(c => c.hospitalGroup && selectedHospitalGroupIds.includes(c.hospitalGroup.id));
+  }, [clinics, selectedHospitalGroupIds]);
+
   const [areaOfExpertise, setAreaOfExpertise] = useState("");
   const [fee, setFee] = useState(250);
   const [availableDaysState, setAvailableDaysState] = useState<string[]>(["Mon", "Tue", "Wed", "Thu", "Fri"]);
@@ -134,8 +154,22 @@ export default function DoctorsClient({
       setIsAddingNewSpecialty(false);
       setNewSpecialtyName("");
       setClinicIds(editingDoctor.clinics?.map((c: any) => c.id) || []);
+      const groupIds = new Set<string>();
+      editingDoctor.clinics?.forEach((c: any) => {
+         if (c.hospitalGroupId) groupIds.add(c.hospitalGroupId);
+      });
+      setSelectedHospitalGroupIds(Array.from(groupIds));
       setAreaOfExpertise(editingDoctor.areaOfExpertise || "");
       setFee(editingDoctor.fee || 250);
+
+      const typeStr = editingDoctor.type || "Specialist";
+      if (["General Physio", "Specialist", "Consultant"].includes(typeStr)) {
+        setDoctorType(typeStr);
+        setCustomDoctorType("");
+      } else {
+        setDoctorType("Other");
+        setCustomDoctorType(typeStr);
+      }
       
       if (editingDoctor.availableDays) {
         if (editingDoctor.availableDays.includes("-") || editingDoctor.availableDays.includes("Every") || editingDoctor.availableDays.includes("Weekend") || editingDoctor.availableDays.includes("Flexible")) {
@@ -165,8 +199,11 @@ export default function DoctorsClient({
       setIsAddingNewSpecialty(false);
       setNewSpecialtyName("");
       setClinicIds([]);
+      setSelectedHospitalGroupIds([]);
       setAreaOfExpertise("");
       setFee(250);
+      setDoctorType("Specialist");
+      setCustomDoctorType("");
       setAvailableDaysState(["Mon", "Tue", "Wed", "Thu", "Fri"]);
       setStartTime("09:00");
       setEndTime("17:00");
@@ -464,7 +501,10 @@ export default function DoctorsClient({
                   ) : filteredDoctors.map((doc) => (
                     <tr key={doc.id} className="hover:bg-gray-50/50 transition-colors">
                       <td className="px-6 py-4 font-bold text-text-dark">{doc.name}</td>
-                      <td className="px-6 py-4 text-text-mid">{doc.specialty}</td>
+                      <td className="px-6 py-4">
+                        <div className="text-text-dark font-medium">{doc.specialty}</div>
+                        {doc.type && <div className="text-xs text-text-mid mt-0.5">{doc.type}</div>}
+                      </td>
                       <td className="px-6 py-4 text-text-mid" title={doc.clinics?.map((c: any) => c.name).join(", ")}>
                         {doc.clinics?.length || 0} {(doc.clinics?.length || 0) === 1 ? "Branch" : "Branches"}
                       </td>
@@ -608,13 +648,64 @@ export default function DoctorsClient({
                       </>
                     )}
                   </div>
+
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-semibold text-text-dark">Doctor Type *</label>
+                    <CustomDropdown
+                      value={doctorType}
+                      onChange={setDoctorType}
+                      options={[
+                        { value: "General Physio", label: "General Physio" },
+                        { value: "Specialist", label: "Specialist" },
+                        { value: "Consultant", label: "Consultant" },
+                        { value: "Other", label: "Other (Custom)" },
+                      ]}
+                      placeholder="Select Type"
+                    />
+                    {doctorType === "Other" && (
+                      <input 
+                        type="text" 
+                        value={customDoctorType}
+                        onChange={(e) => setCustomDoctorType(e.target.value)}
+                        placeholder="Enter custom type..."
+                        className="mt-2 bg-gray-bg border border-gray-border rounded-xl h-11 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary"
+                      />
+                    )}
+                    <input type="hidden" name="type" value={doctorType === "Other" ? customDoctorType : doctorType} />
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-2">
+                    <label className="text-sm font-semibold text-text-dark">Main Hospital Groups (Filter Branches)</label>
+                    <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto border border-gray-border rounded-xl p-3 bg-gray-bg">
+                      {hospitalGroups.map((group: any) => (
+                        <label key={group.id} className="flex items-center gap-2 cursor-pointer bg-white border border-gray-border px-3 py-1.5 rounded-lg hover:border-blue-primary transition-colors text-sm font-medium w-full">
+                          <input 
+                            type="checkbox" 
+                            value={group.id}
+                            checked={selectedHospitalGroupIds.includes(group.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedHospitalGroupIds([...selectedHospitalGroupIds, group.id]);
+                              } else {
+                                setSelectedHospitalGroupIds(selectedHospitalGroupIds.filter(id => id !== group.id));
+                              }
+                            }}
+                            className="w-4 h-4 text-blue-primary rounded focus:ring-blue-primary"
+                          />
+                          <div className="flex flex-col flex-1">
+                            <span>{group.name}</span>
+                          </div>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-2">
                     <label className="text-sm font-semibold text-text-dark">Clinic Branches * (Select one or more)</label>
                     <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto border border-gray-border rounded-xl p-3 bg-gray-bg">
-                      {clinics.map(clinic => (
+                      {filteredModalClinics.map(clinic => (
                         <label key={clinic.id} className="flex items-center gap-2 cursor-pointer bg-white border border-gray-border px-3 py-1.5 rounded-lg hover:border-blue-primary transition-colors text-sm font-medium w-full">
                           <input 
                             type="checkbox" 

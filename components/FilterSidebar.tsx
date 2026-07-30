@@ -93,8 +93,8 @@ export default function FilterSidebar({ hospitalGroups = [], clinics = [] }: Fil
   ];
   const areas = [
     "Dubai",
-    "Ajman",
-    "Sharjah"
+    "Sharjah",
+    "Ajman"
   ];
   const languages = ["English", "Arabic", "French", "Hindi", "Urdu"];
 

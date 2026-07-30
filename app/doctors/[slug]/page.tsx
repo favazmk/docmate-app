@@ -35,6 +35,7 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
   const doctor = {
     name: dbDoctor.name,
     specialty: dbDoctor.specialty,
+    type: dbDoctor.type,
     rating: dbDoctor.rating,
     reviews: dbDoctor.reviews,
     languages: dbDoctor.languages.split(",").map(lang => lang.trim()),
@@ -67,19 +68,21 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
     createdAt: r.createdAt
   }));
 
+  const primaryCity = dbDoctor.clinics[0]?.city || "Dubai";
+  const primaryCitySlug = primaryCity.toLowerCase().replace(/\s+/g, '-');
+  const specialtySlug = dbDoctor.specialty.toLowerCase().replace(/\s+/g, '-');
+
   return (
     <div className="min-h-screen py-8 px-4">
       <div className="max-w-6xl mx-auto">
         
         {/* Breadcrumb */}
-        <div className="text-sm font-medium text-text-light mb-8 flex items-center gap-2">
+        <div className="text-sm font-medium text-text-light mb-8 flex flex-wrap items-center gap-2 capitalize">
           <Link href="/" className="hover:text-blue-primary transition-colors">Home</Link>
           <span>/</span>
-          <Link href="/ae" className="hover:text-blue-primary transition-colors">UAE</Link>
+          <Link href={`/${primaryCitySlug}`} className="hover:text-blue-primary transition-colors">{primaryCity}</Link>
           <span>/</span>
-          <Link href="/ae/dubai" className="hover:text-blue-primary transition-colors">Dubai</Link>
-          <span>/</span>
-          <Link href="/ae/dubai/cardiologist" className="hover:text-blue-primary transition-colors">Cardiologist</Link>
+          <Link href={`/${primaryCitySlug}/${specialtySlug}`} className="hover:text-blue-primary transition-colors">{dbDoctor.specialty}</Link>
           <span>/</span>
           <span className="text-text-dark">{doctor.name}</span>
         </div>
@@ -103,7 +106,14 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
                   )}
                 </div>
                 
-                <h2 className="text-lg md:text-xl font-medium text-blue-primary mb-4">{doctor.specialty}</h2>
+                <h2 className="text-lg md:text-xl font-medium text-blue-primary mb-4 flex items-center gap-2">
+                  {doctor.specialty}
+                  {doctor.type && (
+                    <span className="text-sm text-text-mid bg-gray-100 px-2 py-0.5 rounded-md font-semibold">
+                      {doctor.type}
+                    </span>
+                  )}
+                </h2>
                 
                 <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-text-mid mb-6">
                   <div className="flex items-center gap-1.5" title="Ratings are read-only placeholder">

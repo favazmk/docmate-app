@@ -5,6 +5,7 @@ import { SlidersHorizontal, SearchX } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Metadata } from "next";
 import prisma from "@/lib/prisma";
+import Pagination from "@/components/Pagination";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +31,9 @@ export default async function SpecialtyCityPage({
   const emirateFormatted = emirate.charAt(0).toUpperCase() + emirate.slice(1);
   const specialtyFormatted = params.specialty.charAt(0).toUpperCase() + params.specialty.slice(1);
 
+  const page = typeof searchParams.page === "string" ? parseInt(searchParams.page, 10) : 1;
+  const PAGE_SIZE = 15;
+
   const gender = typeof searchParams.gender === "string" ? searchParams.gender : undefined;
   const languages = typeof searchParams.language === "string" ? [searchParams.language] : (searchParams.language || []);
 
@@ -49,8 +53,12 @@ export default async function SpecialtyCityPage({
     }));
   }
 
+  const totalCount = await prisma.doctor.count({ where: whereClause });
+
   const dbDoctors = await prisma.doctor.findMany({
     where: whereClause,
+    skip: (page - 1) * PAGE_SIZE,
+    take: PAGE_SIZE,
     include: {
       clinics: {
         include: {
@@ -64,6 +72,7 @@ export default async function SpecialtyCityPage({
     slug: d.slug,
     name: d.name,
     specialty: d.specialty,
+    type: d.type,
     rating: d.rating,
     reviews: d.reviews,
     languages: d.languages.split(",").map((lang: string) => lang.trim()),
@@ -100,7 +109,7 @@ export default async function SpecialtyCityPage({
         </div>
 
         <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
-          <h2 className="text-xl font-bold text-text-dark">{featuredDoctors.length} doctors available</h2>
+          <h2 className="text-xl font-bold text-text-dark">{totalCount} doctors available</h2>
           
           <Sheet>
             <SheetTrigger className="md:hidden w-full bg-white border border-gray-border rounded-xl h-11 flex items-center justify-center gap-2 text-sm font-medium text-text-dark shadow-sm">
@@ -134,6 +143,10 @@ export default async function SpecialtyCityPage({
                   <DoctorCard key={i} {...doc} variant="row" />
                 ))}
               </div>
+            )}
+
+            {totalCount > 0 && (
+              <Pagination currentPage={page} totalPages={Math.ceil(totalCount / PAGE_SIZE)} />
             )}
           </div>
         </div>

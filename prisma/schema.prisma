@@ -85,6 +85,7 @@ model Doctor {
   specialtyId    String?
   specialtyRef   Specialty?    @relation(fields: [specialtyId], references: [id], onDelete: SetNull)
   specialty      String        // Fallback/Display compatibility
+  type           String        @default("Specialist")
   areaOfExpertise String?       @db.Text
   photoUrl       String?       @db.VarChar(500)
   rating         Float         @default(5.0)

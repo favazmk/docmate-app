@@ -120,6 +120,7 @@ export default async function Home() {
     slug: d.slug,
     name: d.name,
     specialty: d.specialty,
+    type: d.type,
     rating: d.rating,
     reviews: d.reviews,
     city: d.city,
@@ -135,8 +136,8 @@ export default async function Home() {
 
   const topCities = [
     { flag: "DXB", name: "Dubai", cities: "Dubai's top hospitals & clinics", href: "/search?city=Dubai", image: "/city_dubai.webp" },
-    { flag: "AJM", name: "Ajman", cities: "Ajman healthcare & medical centers", href: "/search?city=Ajman", image: "/city_ajman.png" },
     { flag: "SHJ", name: "Sharjah", cities: "Family-focused clinics & polyclinics", href: "/search?city=Sharjah", image: "/city_sharjah.webp" },
+    { flag: "AJM", name: "Ajman", cities: "Ajman healthcare & medical centers", href: "/search?city=Ajman", image: "/city_ajman.png" },
   ];
 
   return (

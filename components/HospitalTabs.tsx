@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import ClinicBranchList from "./ClinicBranchList";
 import DoctorCard from "./DoctorCard";
 import { Users, Building2, Search, MapPin } from "lucide-react";
@@ -42,19 +42,27 @@ interface HospitalTabsProps {
 export default function HospitalTabs({ clinics, allDoctors, hospitalName }: HospitalTabsProps) {
   const [activeTab, setActiveTab] = useState<"doctors" | "branches">("doctors");
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 15;
   const [selectedBranch, setSelectedBranch] = useState("");
 
-  const filteredDoctors = allDoctors.filter(doc => {
-    const normQuery = normalizeSearchText(searchQuery);
-    const matchesSearch = normalizeSearchText(doc.name).includes(normQuery) || 
-      normalizeSearchText(doc.specialty).includes(normQuery) ||
-      (doc.clinics?.some(c => normalizeSearchText(c.name).includes(normQuery)));
-    
-    const matchesBranch = selectedBranch === "" || doc.clinics?.some(c => `${hospitalName} - ${c.name}` === selectedBranch);
+  // Reset pagination when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab, selectedBranch, searchQuery]);
 
-    return matchesSearch && matchesBranch;
-  });
+  const filteredDoctors = useMemo(() => {
+    return allDoctors.filter(doc => {
+      const normQuery = normalizeSearchText(searchQuery);
+      const matchesSearch = normalizeSearchText(doc.name).includes(normQuery) || 
+        normalizeSearchText(doc.specialty).includes(normQuery) ||
+        (doc.clinics?.some(c => normalizeSearchText(c.name).includes(normQuery)));
+      
+      const matchesBranch = selectedBranch === "" || doc.clinics?.some(c => `${hospitalName} - ${c.name}` === selectedBranch);
 
+      return matchesSearch && matchesBranch;
+    });
+  }, [allDoctors, searchQuery, selectedBranch, hospitalName]);
   const branchOptions = clinics.map(clinic => ({
     value: `${hospitalName} - ${clinic.name}`,
     label: (
@@ -130,9 +138,31 @@ export default function HospitalTabs({ clinics, allDoctors, hospitalName }: Hosp
               </div>
             ) : (
               <div className="flex flex-col gap-5">
-                {filteredDoctors.map((doc, idx) => (
+                {filteredDoctors.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE).map((doc, idx) => (
                   <DoctorCard key={`${doc.slug}-${idx}`} {...doc} variant="row" />
                 ))}
+
+                {filteredDoctors.length > PAGE_SIZE && (
+                  <div className="flex items-center justify-center gap-2 mt-8">
+                    <button
+                      disabled={currentPage <= 1}
+                      onClick={() => setCurrentPage(p => p - 1)}
+                      className="flex items-center gap-1 border border-gray-border text-text-dark px-3 py-1.5 rounded-md text-sm font-medium disabled:opacity-50 hover:bg-gray-50"
+                    >
+                      Previous
+                    </button>
+                    <span className="text-sm font-medium text-text-mid px-4">
+                      Page {currentPage} of {Math.ceil(filteredDoctors.length / PAGE_SIZE)}
+                    </span>
+                    <button
+                      disabled={currentPage >= Math.ceil(filteredDoctors.length / PAGE_SIZE)}
+                      onClick={() => setCurrentPage(p => p + 1)}
+                      className="flex items-center gap-1 border border-gray-border text-text-dark px-3 py-1.5 rounded-md text-sm font-medium disabled:opacity-50 hover:bg-gray-50"
+                    >
+                      Next
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>

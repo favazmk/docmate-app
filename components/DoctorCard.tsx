@@ -11,6 +11,7 @@ interface DoctorCardProps {
   slug: string;
   name: string;
   specialty: string;
+  type?: string;
   rating: number;
   reviews: number;
   clinics?: { name: string; city: string; hospitalGroup?: { name: string } }[];
@@ -27,6 +28,7 @@ export default function DoctorCard({
   slug,
   name,
   specialty,
+  type,
   rating,
   reviews,
   clinics,
@@ -75,8 +77,11 @@ export default function DoctorCard({
 
         {/* Card Content */}
         <div className="p-5 flex flex-col flex-1">
-          <span className="text-caption font-bold text-blue-primary uppercase tracking-[0.06em] mb-1.5 flex items-center gap-1">
-            <Stethoscope className="w-3.5 h-3.5" /> {specialty}
+          <span className="text-caption font-bold text-blue-primary uppercase tracking-[0.06em] mb-1.5 flex items-center gap-1 flex-wrap">
+            <span className="flex items-center gap-1">
+              <Stethoscope className="w-3.5 h-3.5" /> {specialty}
+            </span>
+            {type && <span className="text-text-mid text-[10px] ml-1">&bull; {type}</span>}
           </span>
 
           <h3 className="font-bold text-text-dark text-subheading hover:text-blue-primary flex items-center gap-1.5 transition-colors mb-1.5">
@@ -145,8 +150,11 @@ export default function DoctorCard({
       {/* Middle Column - Doctor Details */}
       <div className="flex-grow flex flex-col gap-2">
         <div className="flex flex-col">
-          <span className="text-caption font-bold text-blue-primary uppercase tracking-[0.06em] flex items-center gap-1 mb-1">
-            <Stethoscope className="w-3.5 h-3.5" /> {specialty}
+          <span className="text-caption font-bold text-blue-primary uppercase tracking-[0.06em] flex items-center gap-1 mb-1 flex-wrap">
+            <span className="flex items-center gap-1">
+              <Stethoscope className="w-3.5 h-3.5" /> {specialty}
+            </span>
+            {type && <span className="text-text-mid text-[10px] ml-1">&bull; {type}</span>}
           </span>
           <Link
             href={`/doctors/${slug}`}

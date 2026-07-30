@@ -50,8 +50,8 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
 
   const cities = [
     "Dubai",
-    "Ajman",
-    "Sharjah"
+    "Sharjah",
+    "Ajman"
   ];
 
   const filteredSuggestions = useMemo(() => {

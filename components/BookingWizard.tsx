@@ -33,7 +33,9 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
   const [bookingId, setBookingId] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isConfirmed, setIsConfirmed] = useState(false);
-  const [selectedClinicId, setSelectedClinicId] = useState<string | null>(null);
+  const [selectedClinicId, setSelectedClinicId] = useState<string | null>(
+    doctor.clinics.length === 1 ? doctor.clinics[0].id : null
+  );
 
   const selectedClinic = useMemo(() => {
     if (!selectedClinicId) return null;
@@ -156,7 +158,7 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
             <ChevronLeft className="w-4 h-4 mr-1" /> Back to Profile
           </Link>
           
-          {selectedClinicId && (
+          {selectedClinicId && doctor.clinics.length > 1 && (
             <button 
               onClick={() => setSelectedClinicId(null)}
               className="flex items-center text-blue-primary hover:underline font-medium text-sm transition-colors w-fit"
@@ -217,7 +219,7 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
       )}
 
       {/* Booking Form Step */}
-      {!isConfirmed && selectedClinicId ? (
+      {!isConfirmed && selectedClinicId && (
         <div className="bg-white border border-gray-border rounded-2xl p-6 md:p-8 shadow-sm">
           <div className="mb-8">
             <h3 className="text-xl font-bold text-text-dark mb-2 flex items-center gap-2">
@@ -411,8 +413,10 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
             </div>
           </form>
         </div>
-      ) : (
-        /* Confirmation Step */
+      )}
+      
+      {/* Confirmation Step */}
+      {isConfirmed && (
         <div className="relative overflow-hidden rounded-3xl border border-gray-border/60 bg-white shadow-[0_24px_64px_-20px_rgba(26,18,100,0.28)] animate-in fade-in zoom-in duration-500">
           <div className="h-1.5 w-full bg-gradient-to-r from-blue-primary via-blue-mid to-blue-primary" />
 
