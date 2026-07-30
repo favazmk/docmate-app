@@ -29,6 +29,11 @@ export default async function AdminAppointmentsPage() {
         }
       },
       user: true,
+      clinic: {
+        include: {
+          hospitalGroup: true
+        }
+      }
     }
   });
 

@@ -20,7 +20,7 @@ export default function AppointmentsClient({ appointments }: { appointments: any
   const uniqueHospitals = useMemo(() => {
     const hospitals = new Set<string>();
     appointments.forEach(apt => {
-      const hg = apt.doctor?.clinic?.hospitalGroup?.name;
+      const hg = apt.clinic?.hospitalGroup?.name;
       if (hg) hospitals.add(hg);
     });
     return Array.from(hospitals).sort();
@@ -30,10 +30,10 @@ export default function AppointmentsClient({ appointments }: { appointments: any
     const clinics = new Set<string>();
     appointments.forEach(apt => {
       // Only include clinics that match the selected hospital group (if any)
-      if (hospitalFilter !== "ALL" && apt.doctor?.clinic?.hospitalGroup?.name !== hospitalFilter) {
+      if (hospitalFilter !== "ALL" && apt.clinic?.hospitalGroup?.name !== hospitalFilter) {
         return;
       }
-      const clinicName = apt.doctor?.clinic?.name;
+      const clinicName = apt.clinic?.name;
       if (clinicName) clinics.add(clinicName);
     });
     return Array.from(clinics).sort();
@@ -46,12 +46,12 @@ export default function AppointmentsClient({ appointments }: { appointments: any
         bookingId.includes(searchTerm.toLowerCase()) ||
         apt.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (apt.doctor?.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (apt.doctor?.clinic?.name || "").toLowerCase().includes(searchTerm.toLowerCase())
+        (apt.clinic?.name || "").toLowerCase().includes(searchTerm.toLowerCase())
       );
       const matchStatus = statusFilter === "ALL" || apt.status === statusFilter;
       const matchDate = (!fromDate || apt.date >= fromDate) && (!toDate || apt.date <= toDate);
-      const matchHospital = hospitalFilter === "ALL" || apt.doctor?.clinic?.hospitalGroup?.name === hospitalFilter;
-      const matchClinic = clinicFilter === "ALL" || apt.doctor?.clinic?.name === clinicFilter;
+      const matchHospital = hospitalFilter === "ALL" || apt.clinic?.hospitalGroup?.name === hospitalFilter;
+      const matchClinic = clinicFilter === "ALL" || apt.clinic?.name === clinicFilter;
       
       return matchSearch && matchStatus && matchDate && matchHospital && matchClinic;
     });
@@ -262,7 +262,7 @@ export default function AppointmentsClient({ appointments }: { appointments: any
                   </td>
                   <td className="px-6 py-4 font-medium text-text-mid">{apt.patientPhone}</td>
                   <td className="px-6 py-4 font-bold text-text-dark">{apt.doctor?.name || "Unknown"}</td>
-                  <td className="px-6 py-4 text-text-mid font-medium">{apt.doctor?.clinic?.name || "Unknown"}</td>
+                  <td className="px-6 py-4 text-text-mid font-medium">{apt.clinic?.name || "Unknown"}</td>
                   <td className="px-6 py-4 text-text-mid font-medium">
                     {apt.date}
                     {apt.timeSlot && apt.timeSlot !== "Pending Phone Call" && `, ${apt.timeSlot}`}
