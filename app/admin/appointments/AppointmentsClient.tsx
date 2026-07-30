@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Image from "next/image";
 import AdminAppointmentStatusSelect from "@/components/AdminAppointmentStatusSelect";
 import CustomDropdown from "@/components/ui/CustomDropdown";
 import { Download, Search, SlidersHorizontal, X, User } from "lucide-react";
