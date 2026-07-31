@@ -35,7 +35,11 @@ export default async function SearchResultsPage({
 
   if (city && city.trim() !== "") {
     andClauses.push({
-      city: { contains: city.trim() }
+      clinics: {
+        some: {
+          city: { contains: city.trim() }
+        }
+      }
     });
   }
 

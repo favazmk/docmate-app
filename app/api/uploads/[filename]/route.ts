@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { readFile } from 'fs/promises';
+import { readFile, access } from 'fs/promises';
 import path from 'path';
+import { getUploadsDir, getBundledUploadsDir } from '@/lib/upload';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,9 +14,28 @@ export async function GET(request: Request, { params }: { params: { filename: st
       return new NextResponse('Invalid filename', { status: 400 });
     }
     
-    const filepath = path.join(process.cwd(), 'public', 'uploads', filename);
+    // Persistent uploads dir first, then the copy bundled with the deploy so
+    // photos committed to the repo keep working once UPLOADS_DIR is set.
+    const dirs = Array.from(new Set([getUploadsDir(), getBundledUploadsDir()]));
+    let filepath = '';
+
+    for (const dir of dirs) {
+      const candidate = path.join(dir, filename);
+      try {
+        await access(candidate);
+        filepath = candidate;
+        break;
+      } catch {
+        continue;
+      }
+    }
+
+    if (!filepath) {
+      return new NextResponse('File not found', { status: 404 });
+    }
+
     const file = await readFile(filepath);
-    
+
     let contentType = 'image/jpeg';
     if (filename.endsWith('.png')) contentType = 'image/png';
     else if (filename.endsWith('.webp')) contentType = 'image/webp';
