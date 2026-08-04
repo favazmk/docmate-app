@@ -63,7 +63,7 @@ export default function ContactPage() {
                   </div>
                   <div className="flex flex-col mt-2">
                     <span className="font-semibold text-white mb-1">Email</span>
-                    <span>support@docmate.com</span>
+                    <span>info@docmate.ae</span>
                     <span className="text-sm opacity-70 mt-1">We'll reply within 24 hours</span>
                   </div>
                 </div>
