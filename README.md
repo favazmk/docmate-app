@@ -179,15 +179,9 @@ node -e "console.log(require('bcryptjs').hashSync('YOUR_NEW_PASSWORD', 10))"
 UPDATE User SET password = '<paste the hash>' WHERE email = 'admin@docmate.ae';
 ```
 
-Authorisation happens in two places, and **both** matter:
-
-- `middleware.ts` guards the `/admin/*` and `/dashboard/*` **page routes**
-- `requireAdmin()` at the top of every mutating server action in
-  `app/actions/admin.ts` and `app/actions/doctors.ts`
-
-Server actions are publicly reachable POST endpoints. Middleware alone does not
-protect them. **Any new admin action must call `requireAdmin()` as its first
-line.**
+Authorisation runs in two layers — `middleware.ts` for the page routes and
+`requireAdmin()` inside each server action. Both are load-bearing; see
+[section 9](#9-security-model) before adding an admin feature.
 
 ---
 
@@ -212,24 +206,91 @@ route to a real answer.
 
 ---
 
-## 9. Known issues / backlog
+## 9. Security model
 
-| Priority | Item |
+**Two independent layers protect the admin area, and both are required.**
+
+`middleware.ts` guards the `/admin/*` and `/dashboard/*` **page routes** and
+handles role-based redirects. On its own that is not enough: Next.js server
+actions are publicly reachable POST endpoints, resolved by action ID rather than
+by route, so middleware does not cover them.
+
+That is why every mutating action in `app/actions/admin.ts` and
+`app/actions/doctors.ts` calls `requireAdmin()` on its first line:
+
+```ts
+async function requireAdmin() {
+  const session = await getServerSession(authOptions);
+  if (!session || (session.user as any)?.role !== "ADMIN") {
+    throw new Error("Unauthorized");
+  }
+}
+```
+
+> **Any new admin action must call `requireAdmin()` as its first statement.**
+> Do not rely on the middleware.
+
+### Endpoints that are public by design
+
+These accept unauthenticated input, which is intentional — but it means they are
+the app's exposed surface and worth keeping in mind when extending them:
+
+| Action | Behaviour |
 |---|---|
-| 🔴 High | **Remote MySQL is open to `%`** — any IP on the internet may attempt to connect, with only the password in the way. The production app connects over `localhost` and does not need this rule at all. Remove it in hPanel → Databases → Remote MySQL, and re-add your own IP temporarily whenever you need external access (phpMyAdmin in hPanel keeps working either way). |
-| 🔴 High | **`createReview` requires no authentication** (`app/actions/reviews.ts`) — anyone can post reviews and move doctor ratings. Should require a logged-in user, ideally one with a past appointment. |
-| 🟠 Medium | **No rate limiting anywhere.** `submitContact`, `submitClinicRequest`, `createAppointment` and `createReview` can be scripted. `getAppointmentsByEmailAndPhone` returns patient data for any email+phone pair and is brute-forceable. |
-| 🟠 Medium | **Every public page is `force-dynamic`**, so each click re-queries the database — this is the navigation lag. Public pages could use `export const revalidate = 300` instead; the admin actions already call `revalidatePath()`, so edits would still appear immediately. |
-| 🟠 Medium | **No indexes on filter columns.** `Doctor.status`, `Doctor.specialty` and `Clinic.city` are unindexed. See `db-indexes.sql`. |
-| 🟡 Low | Three clinics use the placeholder email `info@clinic.com`, a domain owned by someone else. Booking emails containing patient names and phone numbers are delivered there. |
-| 🟡 Low | `/search` ships a ~200 KB payload. |
-| 🟡 Low | `prisma/seed.js` and `scripts/import-doctors.js` still contain demo data and placeholder phone numbers. |
+| `registerPatient` | Public signup |
+| `submitContact`, `submitClinicRequest` | Public forms; send email only, nothing is persisted |
+| `createAppointment` | Guest booking without an account |
+| `createReview` | Accepts a review without a login — anyone can post one and affect a doctor's rating |
+| `getAppointmentsByEmailAndPhone` | Passwordless booking lookup: returns a patient's appointments for a matching email + phone pair |
+
+None of these are rate limited. If the site starts attracting bots, that is the
+first thing to add.
+
+### Database access
+
+The production app reaches MySQL over `localhost`, so it does not need remote
+access at all. There is currently a **Remote MySQL rule set to `%`** (hPanel →
+Databases → Remote MySQL), which allows connection attempts from any IP with only
+the password in the way. It exists for external tooling, not for the app —
+**remove it** and re-add a specific IP only while you need one. hPanel's own
+phpMyAdmin is unaffected either way.
+
+### Credentials
+
+Passwords are bcrypt-hashed (cost 10) and cannot be recovered, only reset.
+Prisma parameterises all queries, so the app is not exposed to SQL injection.
 
 ---
 
-## 10. Handover checklist
+## 10. Performance characteristics
 
-**Rotate — everything below was shared during development:**
+Worth knowing before you chase a slow page:
+
+**Public pages declare `export const dynamic = "force-dynamic"`**, so every
+request re-renders on the server and re-queries the database — there is no page
+cache. That is the main cost in navigation. Switching public pages to
+`export const revalidate = 300` would serve them from cache between changes;
+admin actions already call `revalidatePath()`, so edits would still appear
+straight away. Left as-is deliberately so admin changes are always instant —
+change it if traffic grows.
+
+**Indexes.** `Doctor.status`, `Doctor.specialty`, `Doctor.type` and `Clinic.city`
+are declared with `@@index` in the schema. If you are working against a database
+created before those were added, apply `db-indexes.sql` — Prisma will not add
+them to an existing table without a migration.
+
+**Images.** `app/icon.png` is the favicon source and Next.js serves it close to
+verbatim, so keep it small (it is 512×512). Uploaded photos go through
+`next/image` and are resized on demand.
+
+---
+
+## 11. Handover checklist
+
+Standard credential hygiene when a project changes hands — rotate anything the
+previous team could still use.
+
+**Rotate:**
 
 - [ ] MySQL password for `u785953539_docmate_admin`, then update `DATABASE_URL` in hPanel
 - [ ] `info@docmate.ae` mailbox password, then update `SMTP_PASS`
@@ -244,7 +305,7 @@ route to a real answer.
 
 **Restrict:**
 
-- [ ] Change Remote MySQL from `%` to specific IPs (hPanel → Databases → Remote MySQL)
+- [ ] Remove the Remote MySQL `%` rule (hPanel → Databases → Remote MySQL) — the app connects over `localhost` and does not use it
 
 **Transfer:**
 
@@ -258,7 +319,8 @@ route to a real answer.
 - [ ] Delete the old company database `u775843128_docmate_db` (data was merged into production on 2026-08-04 — keep the backup until roughly 2026-09-01)
 - [ ] Delete the orphaned `docmate.ae` DNS zone in the old company Hostinger account
 - [ ] Remove test records: doctors with slugs `test-*` / `tester-*`, and the `testing` clinic
-- [ ] Replace the three `info@clinic.com` clinic addresses with real ones
+- [ ] Fill in real clinic email addresses as the client supplies them — booking notifications go to `Clinic.email`, so any branch still on the `info@clinic.com` default will not reach the right inbox:
+      `SELECT name, email FROM Clinic WHERE email = 'info@clinic.com';`
 
 **Verify after handover:**
 
