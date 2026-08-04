@@ -2,6 +2,7 @@
 import prisma from "@/lib/prisma";
 
 import { revalidatePath } from "next/cache";
+import { revalidatePublic } from "@/lib/revalidate";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { uploadImages } from "@/lib/upload";
@@ -87,8 +88,7 @@ export async function createDoctor(formData: FormData) {
     });
 
     revalidatePath("/admin/doctors");
-    revalidatePath("/search");
-    revalidatePath("/");
+    revalidatePublic();
     
     return { success: true, doctor };
   } catch (error: any) {
@@ -174,8 +174,7 @@ export async function updateDoctor(id: string, formData: FormData) {
     });
 
     revalidatePath("/admin/doctors");
-    revalidatePath("/search");
-    revalidatePath("/");
+    revalidatePublic();
     
     return { success: true, doctor };
   } catch (error: any) {
@@ -192,7 +191,7 @@ export async function deleteDoctor(id: string) {
     });
 
     revalidatePath("/admin/doctors");
-    revalidatePath("/search");
+    revalidatePublic();
     
     return { success: true };
   } catch (error) {
@@ -211,8 +210,7 @@ export async function toggleDoctorStatus(id: string, currentStatus: string) {
     });
 
     revalidatePath("/admin/doctors");
-    revalidatePath("/search");
-    revalidatePath("/");
+    revalidatePublic();
     
     return { success: true, status: newStatus };
   } catch (error: any) {

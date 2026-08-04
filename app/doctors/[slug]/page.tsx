@@ -9,7 +9,9 @@ import { notFound } from "next/navigation";
 import DoctorAboutSection from "@/components/DoctorAboutSection";
 import DoctorReviews from "@/components/DoctorReviews";
 
-export const dynamic = "force-dynamic";
+// Cached for 5 minutes. Admin actions call revalidatePath(), so edits made
+// through the dashboard still appear immediately.
+export const revalidate = 300;
 
 export default async function DoctorProfilePage({ params }: { params: { slug: string } }) {
   const dbDoctor = await prisma.doctor.findUnique({

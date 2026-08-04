@@ -2,6 +2,7 @@
 import prisma from "@/lib/prisma";
 
 import { revalidatePath } from "next/cache";
+import { revalidatePublic } from "@/lib/revalidate";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { uploadImages } from "@/lib/upload";
@@ -55,8 +56,7 @@ export async function createSpecialty(formData: FormData) {
     });
 
     revalidatePath("/admin/specialties");
-    revalidatePath("/");
-    revalidatePath("/search");
+    revalidatePublic();
     return { success: true, specialty };
   } catch (error: any) {
     console.error("Error creating specialty:", error);
@@ -81,8 +81,7 @@ export async function updateSpecialty(id: string, formData: FormData) {
     });
 
     revalidatePath("/admin/specialties");
-    revalidatePath("/");
-    revalidatePath("/search");
+    revalidatePublic();
     return { success: true, specialty };
   } catch (error: any) {
     console.error("Error updating specialty:", error);
@@ -97,8 +96,7 @@ export async function deleteSpecialty(id: string) {
       where: { id }
     });
     revalidatePath("/admin/specialties");
-    revalidatePath("/");
-    revalidatePath("/search");
+    revalidatePublic();
     return { success: true };
   } catch (error: any) {
     console.error("Error deleting specialty:", error);
@@ -233,8 +231,7 @@ export async function createClinic(formData: FormData) {
     });
 
     revalidatePath("/admin/clinics");
-    revalidatePath("/");
-    revalidatePath("/search");
+    revalidatePublic();
     return { success: true, clinic };
   } catch (error: any) {
     console.error("Error creating clinic:", error);
@@ -280,8 +277,7 @@ export async function updateClinic(id: string, formData: FormData) {
     });
 
     revalidatePath("/admin/clinics");
-    revalidatePath("/");
-    revalidatePath("/search");
+    revalidatePublic();
     return { success: true, clinic };
   } catch (error: any) {
     console.error("Error updating clinic:", error);
@@ -296,8 +292,7 @@ export async function deleteClinic(id: string) {
       where: { id }
     });
     revalidatePath("/admin/clinics");
-    revalidatePath("/");
-    revalidatePath("/search");
+    revalidatePublic();
     return { success: true };
   } catch (error: any) {
     console.error("Error deleting clinic:", error);

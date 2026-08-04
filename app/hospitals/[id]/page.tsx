@@ -6,7 +6,9 @@ import HospitalTabs from "@/components/HospitalTabs";
 import PhotoGallery from "@/components/PhotoGallery";
 import ExpandableText from "@/components/ExpandableText";
 
-export const dynamic = "force-dynamic";
+// Cached for 5 minutes. Admin actions call revalidatePath(), so edits made
+// through the dashboard still appear immediately.
+export const revalidate = 300;
 
 export default async function HospitalProfilePage({ params }: { params: { id: string } }) {
   const hospital = await prisma.hospitalGroup.findUnique({

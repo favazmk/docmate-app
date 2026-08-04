@@ -3,7 +3,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { Building2 } from "lucide-react";
 
-export const dynamic = "force-dynamic";
+// Cached for 5 minutes. Admin actions call revalidatePath(), so edits made
+// through the dashboard still appear immediately.
+export const revalidate = 300;
 
 export default async function HospitalsPage() {
   let hospitalGroups: any[] = [];

@@ -10,7 +10,9 @@ import { BadgeCheck, Globe, Zap, Star, Activity, Heart, Eye, Bone, Baby, Brain, 
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { cn } from "@/lib/utils";
-export const dynamic = "force-dynamic";
+// Cached for 5 minutes. Admin actions call revalidatePath(), so edits made
+// through the dashboard still appear immediately.
+export const revalidate = 300;
 
 export default async function Home() {
   let dbDoctors: any[] = [];

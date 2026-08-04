@@ -266,13 +266,22 @@ Prisma parameterises all queries, so the app is not exposed to SQL injection.
 
 Worth knowing before you chase a slow page:
 
-**Public pages declare `export const dynamic = "force-dynamic"`**, so every
-request re-renders on the server and re-queries the database — there is no page
-cache. That is the main cost in navigation. Switching public pages to
-`export const revalidate = 300` would serve them from cache between changes;
-admin actions already call `revalidatePath()`, so edits would still appear
-straight away. Left as-is deliberately so admin changes are always instant —
-change it if traffic grows.
+**Public pages are cached for 5 minutes** — `export const revalidate = 300` at the
+top of `/`, `/about`, `/hospitals`, `/hospitals/[id]`, `/doctors/[slug]` and
+`/book/[slug]`. Without it every click re-queried the database, which is what made
+navigation feel slow.
+
+The cache does **not** delay admin edits. Every mutating action calls
+`revalidatePublic()` from `lib/revalidate.ts`, which busts all public paths at
+once, so a change saved in the dashboard is live immediately.
+
+> **If you add a public page that reads from the database, add its path to
+> `revalidatePublic()`** — otherwise edits to it will lag by up to 5 minutes.
+
+Two pages stay uncached on purpose: `/search` and `/[emirate]/[specialty]` read
+`searchParams`, and Next.js renders those per-request regardless of what
+`revalidate` says. **All `/admin/*` pages remain `force-dynamic`** and must stay
+that way — an admin panel showing stale data is worse than a slow one.
 
 **Indexes.** `Doctor.status`, `Doctor.specialty`, `Doctor.type` and `Clinic.city`
 are declared with `@@index` in the schema. If you are working against a database
@@ -280,8 +289,10 @@ created before those were added, apply `db-indexes.sql` — Prisma will not add
 them to an existing table without a migration.
 
 **Images.** `app/icon.png` is the favicon source and Next.js serves it close to
-verbatim, so keep it small (it is 512×512). Uploaded photos go through
-`next/image` and are resized on demand.
+verbatim — it is not resized for you, so keep it small. It is currently 256×256
+in a 16-colour palette (~7 KB); an earlier 8192×8192 export meant every page view
+downloaded 5 MB for the browser tab icon. Uploaded photos are fine — those go
+through `next/image` and are resized on demand.
 
 ---
 

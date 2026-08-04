@@ -4,7 +4,9 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 
-export const dynamic = "force-dynamic";
+// Cached for 5 minutes. Admin actions call revalidatePath(), so edits made
+// through the dashboard still appear immediately.
+export const revalidate = 300;
 
 export default async function AboutPage() {
   let totalActiveDoctors = 0;

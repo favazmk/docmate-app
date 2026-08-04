@@ -4,7 +4,9 @@ import BookingWizard from "@/components/BookingWizard";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
-export const dynamic = "force-dynamic";
+// Cached for 5 minutes. Admin actions call revalidatePath(), so edits made
+// through the dashboard still appear immediately.
+export const revalidate = 300;
 
 export default async function BookingFlowPage({ params }: { params: { slug: string } }) {
   const session = await getServerSession(authOptions);
