@@ -12,13 +12,13 @@ not confirmed slots.
 | Environment | URL | Hosting | Deploys from |
 |---|---|---|---|
 | **Production** | https://docmate.ae | Hostinger Web Apps (Node 22) | GitHub `master`, automatic |
-| **Preview** | https://docmate-app.vercel.app | Vercel | GitHub `master`, automatic |
-
-Both point at the **same** MySQL database. A change made in the admin panel shows
-up on both.
 
 **Deploying = pushing to `master`.** Hostinger rebuilds on its own and takes about
-2½ minutes. There is no manual deploy step and no separate staging database.
+2½ minutes. There is no manual deploy step.
+
+There is **one** database and no staging environment — the admin panel edits
+production data directly. Test schema changes against a local MySQL instance
+first (see section 3).
 
 ---
 
@@ -81,13 +81,16 @@ The host depends on **where the code runs**:
 | Runs on | Host |
 |---|---|
 | Hostinger (docmate.ae) | `localhost:3306` — app and MySQL share a machine |
-| Vercel, your laptop, anything else | `srv346.hstgr.io:3306` |
+| Your laptop, or any other host | `srv346.hstgr.io:3306` |
 
 Same username, password and database name — only the host changes. Using
-`localhost` from off-Hostinger produces
+`localhost` from anywhere other than the Hostinger server produces
 `PrismaClientInitializationError: Can't reach database server at localhost:3306`,
 and because the page-level data fetches are wrapped in `try/catch`, **pages render
 empty instead of showing an error.** Silent blank lists almost always mean this.
+
+Connecting from outside also requires a Remote MySQL rule in hPanel → Databases
+(see the security note in section 9).
 
 ### 4.2 Hostinger's env var panel — three traps
 
@@ -213,7 +216,7 @@ route to a real answer.
 
 | Priority | Item |
 |---|---|
-| 🔴 High | **Remote MySQL is open to `%`** (any IP on the internet may attempt to connect). Restrict it to the Vercel egress ranges, or disable remote access entirely once the Vercel preview is retired. |
+| 🔴 High | **Remote MySQL is open to `%`** — any IP on the internet may attempt to connect, with only the password in the way. The production app connects over `localhost` and does not need this rule at all. Remove it in hPanel → Databases → Remote MySQL, and re-add your own IP temporarily whenever you need external access (phpMyAdmin in hPanel keeps working either way). |
 | 🔴 High | **`createReview` requires no authentication** (`app/actions/reviews.ts`) — anyone can post reviews and move doctor ratings. Should require a logged-in user, ideally one with a past appointment. |
 | 🟠 Medium | **No rate limiting anywhere.** `submitContact`, `submitClinicRequest`, `createAppointment` and `createReview` can be scripted. `getAppointmentsByEmailAndPhone` returns patient data for any email+phone pair and is brute-forceable. |
 | 🟠 Medium | **Every public page is `force-dynamic`**, so each click re-queries the database — this is the navigation lag. Public pages could use `export const revalidate = 300` instead; the admin actions already call `revalidatePath()`, so edits would still appear immediately. |
@@ -228,7 +231,7 @@ route to a real answer.
 
 **Rotate — everything below was shared during development:**
 
-- [ ] MySQL password for `u785953539_docmate_admin`, then update `DATABASE_URL` in **both** hPanel and Vercel
+- [ ] MySQL password for `u785953539_docmate_admin`, then update `DATABASE_URL` in hPanel
 - [ ] `info@docmate.ae` mailbox password, then update `SMTP_PASS`
 - [ ] Admin panel password (section 7)
 - [ ] `NEXTAUTH_SECRET` — regenerate with `openssl rand -base64 32` (this signs out all users)
@@ -236,7 +239,8 @@ route to a real answer.
 - [ ] Revoke the old Gmail App Password on `teamwebbranding@gmail.com`
 
 > ⚠️ Rotating the MySQL password takes the site down until `DATABASE_URL` is
-> updated. Order: change password → update hPanel → update Vercel → verify.
+> updated. Order: change password → update `DATABASE_URL` in hPanel → wait for
+> the automatic redeploy → verify the site loads.
 
 **Restrict:**
 
@@ -247,7 +251,7 @@ route to a real answer.
 - [ ] Hostinger account ownership, or create a client-owned account
 - [ ] GitHub repository ownership
 - [ ] Domain `docmate.ae` at the registrar (Tasjeel)
-- [ ] Vercel project — or delete it if the preview is no longer needed
+- [ ] Delete the temporary Vercel preview project (`docmate-app`) — it was only used to show the client work in progress and is not part of the live setup
 
 **Clean up:**
 
