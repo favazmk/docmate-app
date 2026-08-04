@@ -126,7 +126,7 @@ export async function createHospitalGroup(formData: FormData) {
 
     const uploadedUrl = await uploadImages(photos);
     const merged = mergePhotoUrls(existingPhotos, uploadedUrl);
-    const photoUrl = merged || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff&size=500`;
+    const photoUrl = merged || `https://ui-avatars.com/api/?format=png&name=${encodeURIComponent(name)}&background=random&color=fff&size=500`;
 
     const hospitalGroup = await prisma.hospitalGroup.create({
       data: {

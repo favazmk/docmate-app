@@ -61,7 +61,7 @@ export async function createDoctor(formData: FormData) {
     // Process uploaded doctor photos
     const photos = formData.getAll("photos") as File[];
     const uploadedPhotoUrl = await uploadImages(photos);
-    const photoUrl = uploadedPhotoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff`;
+    const photoUrl = uploadedPhotoUrl || `https://ui-avatars.com/api/?format=png&name=${encodeURIComponent(name)}&background=random&color=fff`;
 
     const doctor = await prisma.doctor.create({
       data: {

@@ -28,7 +28,7 @@ export default async function HospitalsPage() {
       return {
         id: h.id,
         name: h.name,
-        photoUrl: h.photoUrl ? h.photoUrl.split(",")[0].trim() : `https://ui-avatars.com/api/?name=${encodeURIComponent(h.name)}&background=2200CC&color=fff`,
+        photoUrl: h.photoUrl ? h.photoUrl.split(",")[0].trim() : `https://ui-avatars.com/api/?format=png&name=${encodeURIComponent(h.name)}&background=2200CC&color=fff`,
         branchCount,
         doctorCount,
       };

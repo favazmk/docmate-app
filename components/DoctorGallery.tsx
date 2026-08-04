@@ -10,7 +10,7 @@ interface DoctorGalleryProps {
 
 export default function DoctorGallery({ photoUrls, name }: DoctorGalleryProps) {
   const cleanName = name.replace(/^(Dr\.|Dr|Prof\.|Professor)\s+/i, '');
-  const defaultPlaceholder = `https://ui-avatars.com/api/?name=${encodeURIComponent(cleanName)}&background=2200CC&color=fff`;
+  const defaultPlaceholder = `https://ui-avatars.com/api/?format=png&name=${encodeURIComponent(cleanName)}&background=2200CC&color=fff`;
   const [activePhoto, setActivePhoto] = useState(photoUrls[0] || defaultPlaceholder);
 
   return (

@@ -28,7 +28,7 @@ export default async function BookingFlowPage({ params }: { params: { slug: stri
     slug: dbDoctor.slug,
     name: dbDoctor.name,
     specialty: dbDoctor.specialty,
-    photoUrl: dbDoctor.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(dbDoctor.name.replace(/^(Dr\.|Dr|Prof\.|Professor)\s+/i, ''))}&background=2200CC&color=fff`,
+    photoUrl: dbDoctor.photoUrl || `https://ui-avatars.com/api/?format=png&name=${encodeURIComponent(dbDoctor.name.replace(/^(Dr\.|Dr|Prof\.|Professor)\s+/i, ''))}&background=2200CC&color=fff`,
     clinics: dbDoctor.clinics.map(c => ({
       id: c.id,
       name: c.name,

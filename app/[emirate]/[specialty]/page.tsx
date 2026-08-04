@@ -76,7 +76,7 @@ export default async function SpecialtyCityPage({
     rating: d.rating,
     reviews: d.reviews,
     languages: d.languages.split(",").map((lang: string) => lang.trim()),
-    photoUrl: d.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(d.name)}&background=2200CC&color=fff`,
+    photoUrl: d.photoUrl || `https://ui-avatars.com/api/?format=png&name=${encodeURIComponent(d.name)}&background=2200CC&color=fff`,
     isVerified: true,
     clinics: d.clinics,
     fee: d.fee,

@@ -155,7 +155,7 @@ export default async function SearchResultsPage({
     city: d.clinics.length > 0 ? d.clinics[0].city : "",
     isVerified: true,
     languages: d.languages.split(",").map((lang: string) => lang.trim()),
-    photoUrl: d.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(d.name)}&background=2200CC&color=fff`,
+    photoUrl: d.photoUrl || `https://ui-avatars.com/api/?format=png&name=${encodeURIComponent(d.name)}&background=2200CC&color=fff`,
     clinics: d.clinics,
     fee: d.fee,
     availableDays: d.availableDays || undefined,

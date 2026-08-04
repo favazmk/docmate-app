@@ -86,7 +86,7 @@ export default async function Home() {
       return {
         id: h.id,
         name: h.name,
-        photoUrl: h.photoUrl ? h.photoUrl.split(",")[0].trim() : `https://ui-avatars.com/api/?name=${encodeURIComponent(h.name)}&background=2200CC&color=fff`,
+        photoUrl: h.photoUrl ? h.photoUrl.split(",")[0].trim() : `https://ui-avatars.com/api/?format=png&name=${encodeURIComponent(h.name)}&background=2200CC&color=fff`,
         branchCount,
         doctorCount,
         clinics: h.clinics.map((c) => ({
@@ -126,7 +126,7 @@ export default async function Home() {
     languages: d.languages.split(",").map((s: string) => s.trim()),
     fee: d.fee,
     currency: "AED",
-    photoUrl: d.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(d.name)}&background=2200CC&color=fff`,
+    photoUrl: d.photoUrl || `https://ui-avatars.com/api/?format=png&name=${encodeURIComponent(d.name)}&background=2200CC&color=fff`,
     isVerified: true,
     clinics: d.clinics,
     availableDays: d.availableDays || undefined,

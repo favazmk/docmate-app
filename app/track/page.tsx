@@ -161,7 +161,7 @@ export default function TrackBookingPage() {
                     <div className="flex gap-4 items-start">
                       <div className="relative w-16 h-16 rounded-2xl overflow-hidden bg-gray-bg border border-gray-border shrink-0">
                         <Image
-                          src={apt.doctor.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(apt.doctor.name)}&background=2200CC&color=fff`}
+                          src={apt.doctor.photoUrl || `https://ui-avatars.com/api/?format=png&name=${encodeURIComponent(apt.doctor.name)}&background=2200CC&color=fff`}
                           alt={apt.doctor.name}
                           fill
                           className="object-cover"

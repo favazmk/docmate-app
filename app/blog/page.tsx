@@ -13,7 +13,7 @@ export default function BlogPage() {
       date: "Oct 15, 2026",
       readTime: "5 min read",
       category: "Dental Health",
-      imageUrl: "https://ui-avatars.com/api/?name=Dental&background=EEF0FF&color=2200CC&size=800"
+      imageUrl: "https://ui-avatars.com/api/?format=png&name=Dental&background=EEF0FF&color=2200CC&size=800"
     },
     {
       title: "Understanding Heart Health in the UAE",
@@ -23,7 +23,7 @@ export default function BlogPage() {
       date: "Oct 10, 2026",
       readTime: "8 min read",
       category: "Cardiology",
-      imageUrl: "https://ui-avatars.com/api/?name=Heart&background=F5F6FA&color=0A0A2E&size=800"
+      imageUrl: "https://ui-avatars.com/api/?format=png&name=Heart&background=F5F6FA&color=0A0A2E&size=800"
     },
     {
       title: "Skincare Secrets for the Middle East Climate",
@@ -33,7 +33,7 @@ export default function BlogPage() {
       date: "Oct 5, 2026",
       readTime: "6 min read",
       category: "Dermatology",
-      imageUrl: "https://ui-avatars.com/api/?name=Skin&background=ECFDF5&color=059669&size=800"
+      imageUrl: "https://ui-avatars.com/api/?format=png&name=Skin&background=ECFDF5&color=059669&size=800"
     }
   ];
 

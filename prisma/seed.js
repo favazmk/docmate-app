@@ -45,9 +45,9 @@ async function main() {
   console.log("Seeding Hospital Groups...");
   const groups = [
     { name: "King's College Hospital London", photoUrl: "https://kingscollegehospitaldubai.com/wp-content/uploads/2021/03/DR_NEW_KCH_BG_LQ-1.jpg" },
-    { name: "Mediclinic Middle East", photoUrl: "https://ui-avatars.com/api/?name=Mediclinic&background=0A0A2E&color=fff&size=500" },
-    { name: "Aster DM Healthcare", photoUrl: "https://ui-avatars.com/api/?name=Aster&background=2200CC&color=fff&size=500" },
-    { name: "Saudi German Health", photoUrl: "https://ui-avatars.com/api/?name=SGH&background=059669&color=fff&size=500" }
+    { name: "Mediclinic Middle East", photoUrl: "https://ui-avatars.com/api/?format=png&name=Mediclinic&background=0A0A2E&color=fff&size=500" },
+    { name: "Aster DM Healthcare", photoUrl: "https://ui-avatars.com/api/?format=png&name=Aster&background=2200CC&color=fff&size=500" },
+    { name: "Saudi German Health", photoUrl: "https://ui-avatars.com/api/?format=png&name=SGH&background=059669&color=fff&size=500" }
   ];
 
   const groupsMap = {};

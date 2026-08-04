@@ -55,7 +55,7 @@ export default function DashboardClient({ appointments, user }: { appointments: 
           <div className="bg-white border border-gray-border rounded-2xl p-4 shadow-sm flex flex-col gap-2">
             <div className="flex items-center gap-3 px-2 py-2 border-b border-gray-border mb-2 pb-4">
                <div className="relative w-12 h-12 rounded-full overflow-hidden border border-gray-border bg-gray-bg shrink-0">
-                  <Image src={user?.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName || "Patient")}&background=random&color=fff`} alt={userName || "Patient"} fill className="object-cover" />
+                  <Image src={user?.photoUrl || `https://ui-avatars.com/api/?format=png&name=${encodeURIComponent(userName || "Patient")}&background=random&color=fff`} alt={userName || "Patient"} fill className="object-cover" />
                </div>
                <div className="flex flex-col overflow-hidden">
                   <span className="font-bold text-text-dark truncate" title={userName || "Patient"}>{userName || "Patient"}</span>
@@ -95,7 +95,7 @@ export default function DashboardClient({ appointments, user }: { appointments: 
                   <div key={apt.id} className="bg-white border border-gray-border rounded-2xl p-5 md:p-6 shadow-sm flex flex-col md:flex-row justify-between gap-6">
                     <div className="flex gap-4">
                       <div className="relative w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-gray-border bg-gray-bg">
-                        <Image src={apt.doctor.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(apt.doctor.name)}&background=2200CC&color=fff`} alt={apt.doctor.name} fill className="object-cover" />
+                        <Image src={apt.doctor.photoUrl || `https://ui-avatars.com/api/?format=png&name=${encodeURIComponent(apt.doctor.name)}&background=2200CC&color=fff`} alt={apt.doctor.name} fill className="object-cover" />
                       </div>
                       <div className="flex flex-col">
                         <h3 className="font-bold text-text-dark text-lg">{apt.doctor.name}</h3>
@@ -144,7 +144,7 @@ export default function DashboardClient({ appointments, user }: { appointments: 
                   <div key={apt.id} className="bg-white border border-gray-border rounded-2xl p-5 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
                     <div className="flex items-center gap-4">
                       <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-gray-border bg-gray-bg grayscale opacity-80">
-                        <Image src={apt.doctor.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(apt.doctor.name)}&background=059669&color=fff`} alt={apt.doctor.name} fill className="object-cover" />
+                        <Image src={apt.doctor.photoUrl || `https://ui-avatars.com/api/?format=png&name=${encodeURIComponent(apt.doctor.name)}&background=059669&color=fff`} alt={apt.doctor.name} fill className="object-cover" />
                       </div>
                       <div className="flex flex-col">
                         <h3 className="font-bold text-text-dark">{apt.doctor.name}</h3>
