@@ -26,8 +26,10 @@ export default async function Home() {
       where: { status: "Active" },
       include: {
         clinics: {
-          include: {
-            hospitalGroup: true,
+          select: {
+            name: true,
+            city: true,
+            hospitalGroup: { select: { name: true } },
           },
         },
       },

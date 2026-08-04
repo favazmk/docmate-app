@@ -2,10 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Building2, Phone, Mail, Star, Users } from "lucide-react";
+import { Building2, Star, Users } from "lucide-react";
 import PhotoGallery from "./PhotoGallery";
 import ExpandableText from "./ExpandableText";
-import { DOCMATE_PHONE, DOCMATE_EMAIL } from "@/lib/constants";
 
 export interface ClinicDoctor {
   slug: string;
@@ -24,7 +23,6 @@ export interface ClinicBranch {
   name: string;
   city: string;
   email: string;
-  phone: string;
   photoUrls: string[];
   aboutUs: string | null;
   rating: number | null;

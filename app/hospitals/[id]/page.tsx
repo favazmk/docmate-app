@@ -40,7 +40,6 @@ export default async function HospitalProfilePage({ params }: { params: { id: st
       name: clinic.name,
       city: clinic.city,
       email: clinic.email,
-      phone: clinic.phone,
       photoUrls: clinic.photoUrl ? clinic.photoUrl.split(",").map((s) => s.trim()).filter(Boolean) : [],
       aboutUs: clinic.aboutUs,
       rating,

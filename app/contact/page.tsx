@@ -1,6 +1,6 @@
 "use client";
 
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { submitContact } from "@/app/actions/contact";
@@ -46,17 +46,6 @@ export default function ContactPage() {
               <h3 className="text-3xl font-bold text-white mb-8">Contact Info</h3>
               
               <div className="flex flex-col gap-8">
-                <div className="flex items-start gap-4 text-white/90">
-                  <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-                    <Phone className="w-5 h-5" />
-                  </div>
-                  <div className="flex flex-col mt-2">
-                    <span className="font-semibold text-white mb-1">Phone</span>
-                    <span>+971 4 123 4567</span>
-                    <span className="text-sm opacity-70 mt-1">Mon-Fri, 9am - 6pm (GST)</span>
-                  </div>
-                </div>
-
                 <div className="flex items-start gap-4 text-white/90">
                   <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
                     <Mail className="w-5 h-5" />

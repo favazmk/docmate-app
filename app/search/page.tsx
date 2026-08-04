@@ -117,8 +117,10 @@ export default async function SearchResultsPage({
     take: PAGE_SIZE,
     include: {
       clinics: {
-        include: {
-          hospitalGroup: true
+        select: {
+          name: true,
+          city: true,
+          hospitalGroup: { select: { name: true } }
         }
       }
     }

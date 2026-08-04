@@ -25,7 +25,6 @@ interface ClinicData {
   name: string;
   city: string;
   email: string;
-  phone: string;
   photoUrls: string[];
   aboutUs: string | null;
   rating: number | null;
