@@ -128,7 +128,7 @@ export default function HospitalsClient({ hospitals }: HospitalsClientProps) {
                         <td className="px-6 py-4">
                           <div className="relative w-12 h-12 rounded-xl border border-gray-border bg-gray-bg overflow-hidden flex items-center justify-center shrink-0">
                             {h.photoUrl ? (
-                              <Image src={h.photoUrl} alt={h.name} fill className="object-cover" />
+                              <Image src={h.photoUrl.split(",")[0].trim()} alt={h.name} fill className="object-cover" />
                             ) : (
                               <Building2 className="w-5 h-5 text-gray-400" />
                             )}

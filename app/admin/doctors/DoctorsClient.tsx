@@ -163,7 +163,7 @@ export default function DoctorsClient({
       setFee(editingDoctor.fee || 250);
 
       const typeStr = editingDoctor.type || "Specialist";
-      if (["General Physio", "Specialist", "Consultant"].includes(typeStr)) {
+      if (["General Physician", "Specialist", "Consultant"].includes(typeStr)) {
         setDoctorType(typeStr);
         setCustomDoctorType("");
       } else {
@@ -725,7 +725,7 @@ export default function DoctorsClient({
                       value={doctorType}
                       onChange={setDoctorType}
                       options={[
-                        { value: "General Physio", label: "General Physio" },
+                        { value: "General Physician", label: "General Physician" },
                         { value: "Specialist", label: "Specialist" },
                         { value: "Consultant", label: "Consultant" },
                         { value: "Other", label: "Other (Custom)" },

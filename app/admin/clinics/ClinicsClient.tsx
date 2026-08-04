@@ -174,7 +174,7 @@ export default function ClinicsClient({ clinics, hospitalGroups }: ClinicsClient
                           <div className="flex items-center gap-3">
                             <div className="relative w-10 h-10 rounded-lg border border-gray-border overflow-hidden bg-gray-50 flex items-center justify-center">
                               {c.photoUrl ? (
-                                <Image src={c.photoUrl} alt={c.name} fill className="object-cover" />
+                                <Image src={c.photoUrl.split(",")[0].trim()} alt={c.name} fill className="object-cover" />
                               ) : (
                                 <Building className="w-5 h-5 text-gray-400" />
                               )}
