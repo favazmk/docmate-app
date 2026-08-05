@@ -23,19 +23,37 @@ export default async function Home() {
   let totalSpecialtiesCount = 0;
 
   try {
-    dbDoctors = await prisma.doctor.findMany({
-      take: 4,
-      where: { status: "Active" },
-      include: {
-        clinics: {
-          select: {
-            name: true,
-            city: true,
-            hospitalGroup: { select: { name: true } },
-          },
+    const doctorCardInclude = {
+      clinics: {
+        select: {
+          name: true,
+          city: true,
+          hospitalGroup: { select: { name: true } },
         },
       },
+    };
+
+    // Homepage shows up to 4 admin-picked featured doctors; if fewer than 4
+    // are marked featured, fill the rest with top-rated active doctors so the
+    // section never looks sparse.
+    const featuredPicks = await prisma.doctor.findMany({
+      where: { status: "Active", isFeatured: true },
+      take: 4,
+      orderBy: { name: "asc" },
+      include: doctorCardInclude,
     });
+
+    if (featuredPicks.length < 4) {
+      const fillerDoctors = await prisma.doctor.findMany({
+        where: { status: "Active", isFeatured: false },
+        take: 4 - featuredPicks.length,
+        orderBy: [{ rating: "desc" }, { reviews: "desc" }],
+        include: doctorCardInclude,
+      });
+      dbDoctors = [...featuredPicks, ...fillerDoctors];
+    } else {
+      dbDoctors = featuredPicks;
+    }
 
     searchBarDoctors = await prisma.doctor.findMany({
       where: { status: "Active" },
@@ -93,6 +111,7 @@ export default async function Home() {
         photoUrl: h.photoUrl ? h.photoUrl.split(",")[0].trim() : `https://ui-avatars.com/api/?format=png&name=${encodeURIComponent(h.name)}&background=2200CC&color=fff`,
         branchCount,
         doctorCount,
+        isFeatured: h.isFeatured,
         clinics: h.clinics.map((c) => ({
           id: c.id,
           name: c.name,
@@ -103,6 +122,14 @@ export default async function Home() {
   } catch (e) {
     console.error("Error fetching homepage DB data:", e);
   }
+
+  // Homepage shows up to 4 admin-picked featured hospital groups; if fewer
+  // than 4 are marked featured, fill the rest with the largest networks by
+  // doctor count so the section never looks sparse.
+  const featuredHospitalGroups = [
+    ...hospitalGroups.filter((h) => h.isFeatured),
+    ...hospitalGroups.filter((h) => !h.isFeatured).sort((a, b) => b.doctorCount - a.doctorCount),
+  ].slice(0, 4);
 
   const getSpecialtyCount = (name: string) => {
     const found = specialtiesWithCounts.find(
@@ -189,18 +216,18 @@ export default async function Home() {
       </AnimatedSection>
 
       <AnimatedSection animation="reveal" delay={100} className="mx-4 my-10 flex justify-center">
-        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 rounded-full border border-blue-primary/15 bg-white/80 px-6 py-3.5 text-caption font-medium text-blue-primary shadow-sm backdrop-blur-md md:gap-x-12 md:px-10">
-          <div className="flex items-center gap-2 transition-transform duration-200 hover:scale-105">
-            <BadgeCheck className="h-4 w-4" /> {totalActiveDoctors} verified doctors
+        <div className="grid grid-cols-2 gap-x-4 gap-y-3 rounded-2xl border border-blue-primary/15 bg-white/80 px-5 py-4 text-caption font-medium text-blue-primary shadow-sm backdrop-blur-md md:flex md:flex-wrap md:items-center md:justify-center md:gap-x-12 md:gap-y-3 md:rounded-full md:px-10 md:py-3.5">
+          <div className="flex items-center justify-center gap-2 transition-transform duration-200 hover:scale-105 md:justify-start">
+            <BadgeCheck className="h-4 w-4 shrink-0" /> {totalActiveDoctors} verified doctors
           </div>
-          <div className="flex items-center gap-2 transition-transform duration-200 hover:scale-105">
-            <Globe className="h-4 w-4" /> Dubai, Sharjah & Ajman
+          <div className="flex items-center justify-center gap-2 transition-transform duration-200 hover:scale-105 md:justify-start">
+            <Globe className="h-4 w-4 shrink-0" /> Dubai, Sharjah & Ajman
           </div>
-          <div className="flex items-center gap-2 transition-transform duration-200 hover:scale-105">
-            <Zap className="h-4 w-4" /> Instant confirmation
+          <div className="flex items-center justify-center gap-2 transition-transform duration-200 hover:scale-105 md:justify-start">
+            <Zap className="h-4 w-4 shrink-0" /> Instant confirmation
           </div>
-          <div className="flex items-center gap-2 transition-transform duration-200 hover:scale-105">
-            <Star className="h-4 w-4" /> 4.8/5 patient rating
+          <div className="flex items-center justify-center gap-2 transition-transform duration-200 hover:scale-105 md:justify-start">
+            <Star className="h-4 w-4 shrink-0" /> 4.8/5 patient rating
           </div>
         </div>
       </AnimatedSection>
@@ -280,7 +307,7 @@ export default async function Home() {
           </p>
 
           <div className="grid w-full grid-cols-1 gap-6 text-left sm:grid-cols-2 lg:grid-cols-4 mb-10">
-            {hospitalGroups.slice(0, 4).map((h, i) => (
+            {featuredHospitalGroups.map((h, i) => (
               <div key={h.id} className="stagger-child h-full">
                 <Link
                   href={`/hospitals/${h.id}`}
@@ -334,31 +361,37 @@ export default async function Home() {
           <div className="absolute inset-0 bg-gradient-to-b from-slate-900/20 via-slate-900/35 to-slate-900/55" />
         </div>
         <AnimatedSection animation="reveal" className="relative z-10 mx-auto flex max-w-7xl flex-col items-center text-center">
-          <h2 className="mb-16 text-heading font-bold text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)]">
+          <h2 className="mb-10 text-heading font-bold text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)] md:mb-16">
             Book in 3 steps
           </h2>
 
-          <div className="grid w-full max-w-5xl grid-cols-1 gap-8 md:grid-cols-3">
-            <div className="stagger-child rounded-2xl border border-white/40 bg-white/45 p-8 backdrop-blur-md transition-[border-color,box-shadow,transform,background-color] duration-300 hover:-translate-y-1 hover:bg-white/60 hover:shadow-lg hover:shadow-blue-primary/8">
-              <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-primary text-2xl font-bold text-white transition-transform duration-300 hover:scale-105">
+          <div className="grid w-full max-w-5xl grid-cols-1 gap-4 md:gap-8 md:grid-cols-3">
+            <div className="stagger-child flex items-center gap-4 rounded-2xl border border-white/40 bg-white/45 p-5 text-left backdrop-blur-md transition-[border-color,box-shadow,transform,background-color] duration-300 hover:-translate-y-1 hover:bg-white/60 hover:shadow-lg hover:shadow-blue-primary/8 md:flex-col md:items-stretch md:p-8 md:text-center">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-primary text-xl font-bold text-white transition-transform duration-300 hover:scale-105 md:mx-auto md:mb-6 md:h-16 md:w-16 md:text-2xl">
                 1
               </div>
-              <h3 className="mb-3 text-xl font-bold text-text-dark">Search</h3>
-              <p className="text-text-mid">Find the right doctor by specialty, location, or spoken languages.</p>
+              <div>
+                <h3 className="mb-1 text-xl font-bold text-text-dark md:mb-3">Search</h3>
+                <p className="text-text-mid">Find the right doctor by specialty, location, or spoken languages.</p>
+              </div>
             </div>
-            <div className="stagger-child rounded-2xl border border-white/40 bg-white/45 p-8 backdrop-blur-md transition-[border-color,box-shadow,transform,background-color] duration-300 hover:-translate-y-1 hover:bg-white/60 hover:shadow-lg hover:shadow-blue-primary/8">
-              <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-primary text-2xl font-bold text-white transition-transform duration-300 hover:scale-105">
+            <div className="stagger-child flex items-center gap-4 rounded-2xl border border-white/40 bg-white/45 p-5 text-left backdrop-blur-md transition-[border-color,box-shadow,transform,background-color] duration-300 hover:-translate-y-1 hover:bg-white/60 hover:shadow-lg hover:shadow-blue-primary/8 md:flex-col md:items-stretch md:p-8 md:text-center">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-primary text-xl font-bold text-white transition-transform duration-300 hover:scale-105 md:mx-auto md:mb-6 md:h-16 md:w-16 md:text-2xl">
                 2
               </div>
-              <h3 className="mb-3 text-xl font-bold text-text-dark">Choose a slot</h3>
-              <p className="text-text-mid">View real-time availability and select a time that works best for you.</p>
+              <div>
+                <h3 className="mb-1 text-xl font-bold text-text-dark md:mb-3">Choose a slot</h3>
+                <p className="text-text-mid">View real-time availability and select a time that works best for you.</p>
+              </div>
             </div>
-            <div className="stagger-child rounded-2xl border border-white/40 bg-white/45 p-8 backdrop-blur-md transition-[border-color,box-shadow,transform,background-color] duration-300 hover:-translate-y-1 hover:bg-white/60 hover:shadow-lg hover:shadow-blue-primary/8">
-              <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-primary text-2xl font-bold text-white transition-transform duration-300 hover:scale-105">
+            <div className="stagger-child flex items-center gap-4 rounded-2xl border border-white/40 bg-white/45 p-5 text-left backdrop-blur-md transition-[border-color,box-shadow,transform,background-color] duration-300 hover:-translate-y-1 hover:bg-white/60 hover:shadow-lg hover:shadow-blue-primary/8 md:flex-col md:items-stretch md:p-8 md:text-center">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-primary text-xl font-bold text-white transition-transform duration-300 hover:scale-105 md:mx-auto md:mb-6 md:h-16 md:w-16 md:text-2xl">
                 3
               </div>
-              <h3 className="mb-3 text-xl font-bold text-text-dark">Confirm</h3>
-              <p className="text-text-mid">Enter your details and instantly receive your booking confirmation.</p>
+              <div>
+                <h3 className="mb-1 text-xl font-bold text-text-dark md:mb-3">Confirm</h3>
+                <p className="text-text-mid">Enter your details and instantly receive your booking confirmation.</p>
+              </div>
             </div>
           </div>
           

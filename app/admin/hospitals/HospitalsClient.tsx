@@ -1,21 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Plus, Pencil, Trash2, CheckCircle2, X, Building2 } from "lucide-react";
+import { Plus, Pencil, Trash2, CheckCircle2, X, Building2, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminHeader from "@/components/AdminHeader";
 import PhotoUploader from "@/components/admin/PhotoUploader";
-import { createHospitalGroup, updateHospitalGroup, deleteHospitalGroup } from "@/app/actions/admin";
+import { createHospitalGroup, updateHospitalGroup, deleteHospitalGroup, toggleHospitalFeatured } from "@/app/actions/admin";
+import { MAX_FEATURED_HOSPITALS } from "@/lib/constants";
 
 interface HospitalData {
   id: string;
   name: string;
   photoUrl: string | null;
   aboutUs: string | null;
+  isFeatured: boolean;
 }
 
 interface HospitalsClientProps {
@@ -89,6 +91,17 @@ export default function HospitalsClient({ hospitals }: HospitalsClientProps) {
     }
   };
 
+  const featuredCount = useMemo(() => hospitals.filter((h) => h.isFeatured).length, [hospitals]);
+
+  const handleToggleFeatured = async (id: string, currentlyFeatured: boolean) => {
+    const res = await toggleHospitalFeatured(id, currentlyFeatured);
+    if (res.success) {
+      router.refresh();
+    } else {
+      alert(res.error || "Failed to update featured status.");
+    }
+  };
+
   return (
     <div className="min-h-screen flex">
       <AdminSidebar />
@@ -101,6 +114,10 @@ export default function HospitalsClient({ hospitals }: HospitalsClientProps) {
             <div>
               <h2 className="text-xl font-bold text-text-dark">Hospital Groups (Networks)</h2>
               <p className="text-sm text-text-mid mt-1">Manage parent healthcare networks (e.g. King's College, Mediclinic).</p>
+              <p className="text-xs font-semibold text-text-mid mt-1 flex items-center gap-1">
+                <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                {featuredCount}/{MAX_FEATURED_HOSPITALS} featured on homepage
+              </p>
             </div>
             <Button onClick={handleOpenAdd} className="bg-blue-primary hover:bg-blue-hover text-white flex items-center gap-2 rounded-xl h-11 px-6 font-bold shadow-md shadow-blue-primary/20">
               <Plus className="w-5 h-5" /> Add Hospital Group
@@ -136,6 +153,13 @@ export default function HospitalsClient({ hospitals }: HospitalsClientProps) {
                         </td>
                         <td className="px-6 py-4 font-bold text-text-dark">{h.name}</td>
                         <td className="px-6 py-4 flex items-center gap-3">
+                          <button
+                            onClick={() => handleToggleFeatured(h.id, h.isFeatured)}
+                            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                            title={h.isFeatured ? 'Remove from Homepage Featured' : 'Feature on Homepage'}
+                          >
+                            <Star className={`w-4.5 h-4.5 ${h.isFeatured ? 'text-amber-500 fill-amber-500' : 'text-text-light'}`} />
+                          </button>
                           <Link
                             href={`/admin/clinics?action=add&hospitalId=${h.id}`}
                             className="p-1.5 hover:bg-gray-100 rounded-lg text-green-600 flex items-center justify-center"

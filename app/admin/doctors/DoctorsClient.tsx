@@ -4,10 +4,11 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import Link from "next/link";
 import CustomDropdown from "@/components/ui/CustomDropdown";
 import Image from "next/image";
-import { Users, Activity, Calendar, Search, Plus, X, Upload, CheckCircle2, Bell, Pause, Play, Pencil, Trash2, AlertTriangle, Info, XCircle } from "lucide-react";
+import { Users, Activity, Calendar, Search, Plus, X, Upload, CheckCircle2, Bell, Pause, Play, Pencil, Trash2, AlertTriangle, Info, XCircle, Star } from "lucide-react";
 import * as Icons from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { createDoctor, updateDoctor, deleteDoctor, toggleDoctorStatus } from "@/app/actions/doctors";
+import { createDoctor, updateDoctor, deleteDoctor, toggleDoctorStatus, toggleDoctorFeatured } from "@/app/actions/doctors";
+import { MAX_FEATURED_DOCTORS } from "@/lib/constants";
 import { useRouter, useSearchParams } from "next/navigation";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminHeader from "@/components/AdminHeader";
@@ -369,6 +370,21 @@ export default function DoctorsClient({
     });
   };
 
+  const featuredCount = useMemo(() => doctors.filter((d) => d.isFeatured).length, [doctors]);
+
+  const handleToggleFeatured = async (id: string, currentlyFeatured: boolean) => {
+    const res = await toggleDoctorFeatured(id, currentlyFeatured);
+    if (res.success) {
+      router.refresh();
+    } else {
+      setAlertModal({
+        isOpen: true,
+        title: "Can't Feature Doctor",
+        description: res.error || "An error occurred while updating the featured status."
+      });
+    }
+  };
+
   const openAddModal = () => {
     setEditingDoctor(null);
     setErrorMsg("");
@@ -415,6 +431,10 @@ export default function DoctorsClient({
             <div>
               <h2 className="text-xl font-bold text-text-dark">Doctors Database</h2>
               <p className="text-sm text-text-mid mt-1">Add, update, or remove doctors from the platform.</p>
+              <p className="text-xs font-semibold text-text-mid mt-1 flex items-center gap-1">
+                <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                {featuredCount}/{MAX_FEATURED_DOCTORS} featured on homepage
+              </p>
             </div>
             <Button onClick={openAddModal} className="bg-blue-primary hover:bg-blue-hover text-white h-10 px-5 rounded-xl font-bold flex items-center gap-2">
               <Plus className="w-4 h-4" /> Add Doctor
@@ -586,8 +606,15 @@ export default function DoctorsClient({
                         </span>
                       </td>
                       <td className="px-6 py-4 flex items-center gap-3">
-                        <button 
-                          onClick={() => handleToggleStatus(doc.id, doc.status)} 
+                        <button
+                          onClick={() => handleToggleFeatured(doc.id, doc.isFeatured)}
+                          className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                          title={doc.isFeatured ? 'Remove from Homepage Featured' : 'Feature on Homepage'}
+                        >
+                          <Star className={`w-4.5 h-4.5 ${doc.isFeatured ? 'text-amber-500 fill-amber-500' : 'text-text-light'}`} />
+                        </button>
+                        <button
+                          onClick={() => handleToggleStatus(doc.id, doc.status)}
                           className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
                           title={doc.status === 'Active' ? 'Pause Doctor' : 'Resume Doctor'}
                         >
@@ -597,8 +624,8 @@ export default function DoctorsClient({
                             <Play className="w-4.5 h-4.5 text-green-600" />
                           )}
                         </button>
-                        <button 
-                          onClick={() => handleEdit(doc)} 
+                        <button
+                          onClick={() => handleEdit(doc)}
                           className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
                           title="Edit Profile"
                         >

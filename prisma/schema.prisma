@@ -41,13 +41,16 @@ model User {
 }
 
 model HospitalGroup {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  photoUrl  String?  @db.VarChar(500)
-  aboutUs   String?  @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  clinics   Clinic[]
+  id         String   @id @default(uuid())
+  name       String   @unique
+  photoUrl   String?  @db.VarChar(500)
+  aboutUs    String?  @db.Text
+  isFeatured Boolean  @default(false) // Shown in "Top Hospital Groups" on homepage (max 4, enforced in app/actions/admin.ts)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  clinics    Clinic[]
+
+  @@index([isFeatured])
 }
 
 model Clinic {
@@ -99,6 +102,7 @@ model Doctor {
   bio             String        @db.Text
   qualifications  String?       @db.Text
   status          String        @default("Active") // Active, Pending
+  isFeatured      Boolean       @default(false) // Shown in "Featured doctors" on homepage (max 4, enforced in app/actions/doctors.ts)
   availableDays   String        @default("Mon - Fri")
   availableTime   String        @default("09:00 AM - 05:00 PM")
   createdAt       DateTime      @default(now())
@@ -109,6 +113,7 @@ model Doctor {
   @@index([status])
   @@index([specialty])
   @@index([type])
+  @@index([isFeatured])
 }
 
 model Appointment {

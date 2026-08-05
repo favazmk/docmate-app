@@ -6,6 +6,7 @@ import { revalidatePublic } from "@/lib/revalidate";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { uploadImages } from "@/lib/upload";
+import { MAX_FEATURED_DOCTORS } from "@/lib/constants";
 
 
 async function requireAdmin() {
@@ -211,10 +212,39 @@ export async function toggleDoctorStatus(id: string, currentStatus: string) {
 
     revalidatePath("/admin/doctors");
     revalidatePublic();
-    
+
     return { success: true, status: newStatus };
   } catch (error: any) {
     console.error("Error toggling doctor status:", error);
     return { success: false, error: "Failed to update doctor status" };
+  }
+}
+
+export async function toggleDoctorFeatured(id: string, currentlyFeatured: boolean) {
+  try {
+    await requireAdmin();
+
+    if (!currentlyFeatured) {
+      const featuredCount = await prisma.doctor.count({ where: { isFeatured: true } });
+      if (featuredCount >= MAX_FEATURED_DOCTORS) {
+        return {
+          success: false,
+          error: `Only ${MAX_FEATURED_DOCTORS} doctors can be featured at once. Un-feature one first.`,
+        };
+      }
+    }
+
+    const doctor = await prisma.doctor.update({
+      where: { id },
+      data: { isFeatured: !currentlyFeatured },
+    });
+
+    revalidatePath("/admin/doctors");
+    revalidatePublic();
+
+    return { success: true, isFeatured: doctor.isFeatured };
+  } catch (error: any) {
+    console.error("Error toggling doctor featured flag:", error);
+    return { success: false, error: "Failed to update featured status" };
   }
 }

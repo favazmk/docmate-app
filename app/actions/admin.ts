@@ -6,6 +6,7 @@ import { revalidatePublic } from "@/lib/revalidate";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { uploadImages } from "@/lib/upload";
+import { MAX_FEATURED_HOSPITALS } from "@/lib/constants";
 
 
 import { AppointmentStatus } from "@prisma/client";
@@ -188,6 +189,35 @@ export async function deleteHospitalGroup(id: string) {
   } catch (error: any) {
     console.error("Error deleting hospital group:", error);
     return { success: false, error: error.message || "Failed to delete hospital group" };
+  }
+}
+
+export async function toggleHospitalFeatured(id: string, currentlyFeatured: boolean) {
+  try {
+    await requireAdmin();
+
+    if (!currentlyFeatured) {
+      const featuredCount = await prisma.hospitalGroup.count({ where: { isFeatured: true } });
+      if (featuredCount >= MAX_FEATURED_HOSPITALS) {
+        return {
+          success: false,
+          error: `Only ${MAX_FEATURED_HOSPITALS} hospital groups can be featured at once. Un-feature one first.`,
+        };
+      }
+    }
+
+    const hospitalGroup = await prisma.hospitalGroup.update({
+      where: { id },
+      data: { isFeatured: !currentlyFeatured },
+    });
+
+    revalidatePath("/admin/hospitals");
+    revalidatePublic();
+
+    return { success: true, isFeatured: hospitalGroup.isFeatured };
+  } catch (error: any) {
+    console.error("Error toggling hospital group featured flag:", error);
+    return { success: false, error: "Failed to update featured status" };
   }
 }
 
