@@ -2,8 +2,11 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import PasswordInput from "@/components/ui/PasswordInput";
 import { changeUserPassword } from "@/app/actions/user";
+
+const passwordFieldClass =
+  "block w-full rounded-xl border border-gray-border bg-transparent px-3 py-2 text-sm outline-none transition-colors focus:border-blue-primary";
 
 export default function UserPasswordForm({ user }: { user: any }) {
   const [isChangingPassword, setIsChangingPassword] = useState(false);
@@ -43,16 +46,16 @@ export default function UserPasswordForm({ user }: { user: any }) {
         {user.password && (
           <div className="flex flex-col gap-2">
             <label className="text-sm font-bold text-text-dark">Current Password</label>
-            <Input name="currentPassword" type="password" required className="rounded-xl" />
+            <PasswordInput name="currentPassword" required className={passwordFieldClass} />
           </div>
         )}
         <div className="flex flex-col gap-2">
           <label className="text-sm font-bold text-text-dark">New Password</label>
-          <Input name="newPassword" type="password" required className="rounded-xl" />
+          <PasswordInput name="newPassword" required className={passwordFieldClass} />
         </div>
         <div className="flex flex-col gap-2">
           <label className="text-sm font-bold text-text-dark">Confirm New Password</label>
-          <Input name="confirmPassword" type="password" required className="rounded-xl" />
+          <PasswordInput name="confirmPassword" required className={passwordFieldClass} />
         </div>
         
         <div className="flex flex-col sm:flex-row sm:items-center gap-4">

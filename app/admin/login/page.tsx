@@ -4,8 +4,9 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { buttonVariants } from "@/components/ui/button";
-import { Lock, Mail, ShieldAlert } from "lucide-react";
+import { Mail, ShieldAlert } from "lucide-react";
 import Link from "next/link";
+import PasswordInput from "@/components/ui/PasswordInput";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
@@ -81,19 +82,15 @@ export default function AdminLoginPage() {
               <label className="block text-sm font-medium text-slate-300 mb-1">
                 Security Password
               </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-slate-500" />
-                </div>
-                <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none block w-full pl-10 px-3 py-2.5 border border-slate-600 rounded-xl bg-slate-900/50 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm transition-all"
-                  placeholder="••••••••"
-                />
-              </div>
+              <PasswordInput
+                withLockIcon
+                iconClassName="text-slate-500"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="appearance-none block w-full pl-10 px-3 py-2.5 border border-slate-600 rounded-xl bg-slate-900/50 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm transition-all"
+                placeholder="••••••••"
+              />
             </div>
 
             <div>

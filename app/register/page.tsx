@@ -4,10 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
-import { Lock, Mail, User } from "lucide-react";
+import { Mail, User } from "lucide-react";
 import { registerPatient } from "@/app/actions/auth";
 import { signIn } from "next-auth/react";
 import CustomDropdown from "@/components/ui/CustomDropdown";
+import PasswordInput from "@/components/ui/PasswordInput";
 
 export default function RegisterPage() {
   const [error, setError] = useState("");
@@ -132,18 +133,13 @@ export default function RegisterPage() {
               <label className="block text-sm font-medium text-text-dark mb-1">
                 Password
               </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type="password"
-                  name="password"
-                  required
-                  className="appearance-none block w-full pl-10 px-3 py-2 border border-gray-border rounded-xl placeholder-gray-400 focus:outline-none focus:ring-blue-primary focus:border-blue-primary sm:text-sm"
-                  placeholder="••••••••"
-                />
-              </div>
+              <PasswordInput
+                withLockIcon
+                name="password"
+                required
+                className="appearance-none block w-full pl-10 px-3 py-2 border border-gray-border rounded-xl placeholder-gray-400 focus:outline-none focus:ring-blue-primary focus:border-blue-primary sm:text-sm"
+                placeholder="••••••••"
+              />
             </div>
 
             <div>
