@@ -159,6 +159,7 @@ export default async function Home() {
     currency: "AED",
     photoUrl: d.photoUrl || `https://ui-avatars.com/api/?format=png&name=${encodeURIComponent(d.name)}&background=2200CC&color=fff`,
     isVerified: true,
+    isFeatured: d.isFeatured,
     clinics: d.clinics,
     availableDays: d.availableDays || undefined,
     availableTime: d.availableTime || undefined,

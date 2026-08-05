@@ -18,6 +18,8 @@ interface DoctorCardProps {
   languages: string[];
   photoUrl: string;
   isVerified: boolean;
+  /** Admin-picked for the homepage — drives the "Featured" badge on the grid variant. */
+  isFeatured?: boolean;
   fee?: number;
   variant?: "grid" | "row";
   availableDays?: string;
@@ -35,6 +37,7 @@ export default function DoctorCard({
   languages,
   photoUrl,
   isVerified,
+  isFeatured = false,
   fee = 250,
   variant = "row",
   availableDays = "Sat - Thu",
@@ -68,11 +71,13 @@ export default function DoctorCard({
         {/* Large Image Container */}
         <div className="relative w-full h-64 bg-gray-bg border-b border-gray-border">
           <Image src={firstPhoto} alt={name} fill sizes="(max-width: 768px) 100vw, 25vw" className="object-cover group-hover:scale-[1.02] transition-transform duration-500" />
-          <div className="absolute top-4 left-4">
-            <span className="bg-blue-primary text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm">
-              Featured
-            </span>
-          </div>
+          {isFeatured && (
+            <div className="absolute top-4 left-4">
+              <span className="bg-blue-primary text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm">
+                Featured
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Card Content */}
