@@ -85,7 +85,11 @@ export default function AppointmentsClient({ appointments }: { appointments: any
       "Patient Phone": apt.patientPhone,
       "Patient Email": apt.patientEmail,
       "Doctor Name": apt.doctor?.name || "Unknown",
-      "Clinic": apt.doctor?.clinic?.name || "Unknown",
+      "Specialty": apt.doctor?.specialty || "Unknown",
+      // The booked clinic lives on the appointment, not the doctor — a doctor
+      // has many clinics, so there is no single one to read from them.
+      "Hospital / Group": apt.clinic?.hospitalGroup?.name || "Unknown",
+      "Clinic": apt.clinic?.name || "Unknown",
       "Date": apt.date,
       "Time": apt.timeSlot && apt.timeSlot !== "Pending Phone Call" ? apt.timeSlot : "",
       "Status": apt.status,
