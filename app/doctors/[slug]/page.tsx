@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { BadgeCheck, Star, MapPin, Globe, GraduationCap, ShieldCheck } from "lucide-react";
+import { BadgeCheck, Star, MapPin, Globe, GraduationCap, ShieldCheck, CalendarDays } from "lucide-react";
 import BookingWidget from "@/components/BookingWidget";
 import DoctorGallery from "@/components/DoctorGallery";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +12,14 @@ import DoctorReviews from "@/components/DoctorReviews";
 // Cached for 5 minutes. Admin actions call revalidatePath(), so edits made
 // through the dashboard still appear immediately.
 export const revalidate = 300;
+
+// Admins can type either a bare number ("15") or their own wording ("15+ Years").
+// Bare numbers get the suffix appended; anything else is shown exactly as entered.
+function formatExperience(raw: string | null): string | null {
+  const value = raw?.trim();
+  if (!value) return null;
+  return /^\d+\+?$/.test(value) ? `${value} Years Experience` : value;
+}
 
 export default async function DoctorProfilePage({ params }: { params: { slug: string } }) {
   const dbDoctor = await prisma.doctor.findUnique({
@@ -45,7 +53,7 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
     currency: "AED",
     photoUrls: dbDoctor.photoUrl ? dbDoctor.photoUrl.split(",") : [],
     isVerified: true,
-    experience: "15+ Years Experience",
+    experience: formatExperience(dbDoctor.experience),
     bio: dbDoctor.bio,
     areaOfExpertise: dbDoctor.areaOfExpertise,
     qualifications: dbDoctor.qualifications
@@ -129,9 +137,11 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
                       {Array.from(new Set(doctor.clinics.map(c => c.city))).join(", ")}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 font-medium bg-blue-light text-blue-primary px-3 py-1 rounded-full">
-                    {doctor.experience}
-                  </div>
+                  {doctor.experience && (
+                    <div className="flex items-center gap-2 font-medium bg-blue-light text-blue-primary px-3 py-1 rounded-full">
+                      {doctor.experience}
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-2 flex-wrap">
@@ -141,6 +151,16 @@ export default async function DoctorProfilePage({ params }: { params: { slug: st
                     </Badge>
                   ))}
                 </div>
+
+                {/* Mobile/tablet CTA — the sticky BookingWidget only sits beside the
+                    content from lg upwards, below which it lands after the whole page. */}
+                <Link
+                  href={`/book/${params.slug}`}
+                  className="lg:hidden mt-6 w-full h-12 flex items-center justify-center gap-2 bg-blue-primary hover:bg-blue-hover text-white rounded-xl font-bold text-base shadow-md shadow-blue-primary/20 transition-colors"
+                >
+                  <CalendarDays className="w-5 h-5" />
+                  Book Appointment
+                </Link>
               </div>
             </div>
 

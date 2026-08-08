@@ -827,12 +827,26 @@ export default function DoctorsClient({
                     <input type="hidden" name="clinicIds" value={JSON.stringify(clinicIds)} />
                   </div>
                   <div className="flex flex-col gap-2">
+                    <label className="text-sm font-semibold text-text-dark">Experience</label>
+                    <input
+                      name="experience"
+                      defaultValue={editingDoctor?.experience || ""}
+                      type="text"
+                      placeholder="e.g. 15 or 15+ Years"
+                      className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary"
+                    />
+                    <span className="text-xs text-text-light">
+                      Shown on the doctor&apos;s public profile. Leave empty to hide the experience badge.
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col gap-2">
                     <label className="text-sm font-semibold text-text-dark">Area of Expertise</label>
-                    <textarea 
-                      name="areaOfExpertise" 
-                      defaultValue={editingDoctor?.areaOfExpertise || ""} 
-                      placeholder="Specialized focus areas..." 
-                      className="bg-gray-bg border border-gray-border rounded-xl h-48 p-4 text-sm font-medium focus:outline-none focus:border-blue-primary resize-none" 
+                    <textarea
+                      name="areaOfExpertise"
+                      defaultValue={editingDoctor?.areaOfExpertise || ""}
+                      placeholder="Specialized focus areas..."
+                      className="bg-gray-bg border border-gray-border rounded-xl h-48 p-4 text-sm font-medium focus:outline-none focus:border-blue-primary resize-none"
                     />
                   </div>
                 </div>

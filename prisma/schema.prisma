@@ -91,6 +91,7 @@ model Doctor {
   specialty       String // Fallback/Display compatibility
   type            String        @default("Specialist")
   areaOfExpertise String?       @db.Text
+  experience      String?       @db.VarChar(100) // Free text, e.g. "15" or "15+ Years"
   photoUrl        String?       @db.VarChar(500)
   rating          Float         @default(5.0)
   reviews         Int           @default(0)

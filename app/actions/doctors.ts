@@ -27,6 +27,7 @@ export async function createDoctor(formData: FormData) {
     const type = formData.get("type") as string;
     const bio = formData.get("bio") as string;
     const areaOfExpertise = formData.get("areaOfExpertise") as string;
+    const experience = formData.get("experience") as string;
     const qualifications = formData.get("qualifications") as string;
     const feeStr = formData.get("fee") as string;
     const fee = feeStr ? parseInt(feeStr, 10) : 250;
@@ -34,7 +35,7 @@ export async function createDoctor(formData: FormData) {
     const availableTime = formData.get("availableTime") as string;
     const newSpecialtyName = formData.get("newSpecialtyName") as string;
     const newSpecialtyIcon = formData.get("newSpecialtyIcon") as string || "Activity";
-    
+
     // Resolve specialty details
     let specRecord = null;
     
@@ -80,6 +81,7 @@ export async function createDoctor(formData: FormData) {
         languages: languages || "English",
         bio: bio || "A dedicated healthcare professional.",
         areaOfExpertise: areaOfExpertise || null,
+        experience: experience?.trim() || null,
         qualifications: qualifications || "MD, Board Certified Specialist",
         photoUrl,
         status: "Active",
@@ -109,6 +111,7 @@ export async function updateDoctor(id: string, formData: FormData) {
     const type = formData.get("type") as string;
     const bio = formData.get("bio") as string;
     const areaOfExpertise = formData.get("areaOfExpertise") as string;
+    const experience = formData.get("experience") as string;
     const qualifications = formData.get("qualifications") as string;
     const status = formData.get("status") as string;
     const feeStr = formData.get("fee") as string;
@@ -166,6 +169,7 @@ export async function updateDoctor(id: string, formData: FormData) {
         languages: languages || "English",
         bio: bio || "A dedicated healthcare professional.",
         areaOfExpertise: areaOfExpertise || null,
+        experience: experience?.trim() || null,
         qualifications: qualifications || "MD, Board Certified Specialist",
         status: status || "Active",
         availableDays: availableDays || "Mon - Fri",
