@@ -15,6 +15,7 @@ export default function AppointmentsClient({ appointments }: { appointments: any
   const [toDate, setToDate] = useState("");
   const [hospitalFilter, setHospitalFilter] = useState("ALL");
   const [clinicFilter, setClinicFilter] = useState("ALL");
+  const [specialtyFilter, setSpecialtyFilter] = useState("ALL");
   const [sortOrder, setSortOrder] = useState("NEWEST"); // NEWEST or OLDEST
   const [preset, setPreset] = useState("");
 
@@ -41,6 +42,15 @@ export default function AppointmentsClient({ appointments }: { appointments: any
     return Array.from(clinics).sort();
   }, [appointments, hospitalFilter]);
 
+  const uniqueSpecialties = useMemo(() => {
+    const specialties = new Set<string>();
+    appointments.forEach(apt => {
+      const specialty = apt.doctor?.specialty;
+      if (specialty) specialties.add(specialty);
+    });
+    return Array.from(specialties).sort();
+  }, [appointments]);
+
   const filteredAndSorted = useMemo(() => {
     const result = appointments.filter(apt => {
       const bookingId = apt.id.substring(0, 8).toLowerCase();
@@ -54,8 +64,9 @@ export default function AppointmentsClient({ appointments }: { appointments: any
       const matchDate = (!fromDate || apt.date >= fromDate) && (!toDate || apt.date <= toDate);
       const matchHospital = hospitalFilter === "ALL" || apt.clinic?.hospitalGroup?.name === hospitalFilter;
       const matchClinic = clinicFilter === "ALL" || apt.clinic?.name === clinicFilter;
-      
-      return matchSearch && matchStatus && matchDate && matchHospital && matchClinic;
+      const matchSpecialty = specialtyFilter === "ALL" || apt.doctor?.specialty === specialtyFilter;
+
+      return matchSearch && matchStatus && matchDate && matchHospital && matchClinic && matchSpecialty;
     });
 
     result.sort((a, b) => {
@@ -65,7 +76,7 @@ export default function AppointmentsClient({ appointments }: { appointments: any
     });
 
     return result;
-  }, [appointments, searchTerm, statusFilter, fromDate, toDate, hospitalFilter, clinicFilter, sortOrder]);
+  }, [appointments, searchTerm, statusFilter, fromDate, toDate, hospitalFilter, clinicFilter, specialtyFilter, sortOrder]);
 
   const handleExport = () => {
     const dataToExport = filteredAndSorted.map(apt => ({
@@ -234,6 +245,18 @@ export default function AppointmentsClient({ appointments }: { appointments: any
                 placeholder="All Clinics"
               />
             </div>
+
+            <div className="flex-1 md:w-[200px]">
+              <CustomDropdown
+                value={specialtyFilter}
+                onChange={setSpecialtyFilter}
+                options={[
+                  { value: "ALL", label: "All Specialties" },
+                  ...uniqueSpecialties.map(s => ({ value: s, label: s }))
+                ]}
+                placeholder="All Specialties"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -273,7 +296,12 @@ export default function AppointmentsClient({ appointments }: { appointments: any
                     )}
                   </td>
                   <td className="px-6 py-4 font-medium text-text-mid">{apt.patientPhone}</td>
-                  <td className="px-6 py-4 font-bold text-text-dark">{apt.doctor?.name || "Unknown"}</td>
+                  <td className="px-6 py-4">
+                    <div className="font-bold text-text-dark">{apt.doctor?.name || "Unknown"}</div>
+                    {apt.doctor?.specialty && (
+                      <div className="text-xs text-text-light font-medium mt-0.5">{apt.doctor.specialty}</div>
+                    )}
+                  </td>
                   <td className="px-6 py-4 text-text-mid font-medium">{apt.clinic?.name || "Unknown"}</td>
                   <td className="px-6 py-4 text-text-mid font-medium">
                     {apt.date}
