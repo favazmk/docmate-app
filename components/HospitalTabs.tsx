@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import ClinicBranchList from "./ClinicBranchList";
 import DoctorCard from "./DoctorCard";
 import { Users, Building2, Search, MapPin } from "lucide-react";
@@ -44,11 +44,23 @@ export default function HospitalTabs({ clinics, allDoctors, hospitalName }: Hosp
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 15;
   const [selectedBranch, setSelectedBranch] = useState("");
+  const doctorsTopRef = useRef<HTMLDivElement>(null);
 
   // Reset pagination when filters change
   useEffect(() => {
     setCurrentPage(1);
   }, [activeTab, selectedBranch, searchQuery]);
+
+  // Paging swaps the list in place, so scroll back to its heading — otherwise the
+  // viewport stays parked on the pagination row and the new page looks like nothing loaded.
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
+    const top = doctorsTopRef.current;
+    if (!top) return;
+    // 56px sticky navbar + a little breathing room
+    const y = top.getBoundingClientRect().top + window.scrollY - 80;
+    window.scrollTo({ top: y, behavior: "smooth" });
+  };
 
   const filteredDoctors = useMemo(() => {
     return allDoctors.filter(doc => {
@@ -102,7 +114,7 @@ export default function HospitalTabs({ clinics, allDoctors, hospitalName }: Hosp
       <div className="mt-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
         {activeTab === "doctors" ? (
           <div>
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-border pb-3 mb-6 gap-4">
+            <div ref={doctorsTopRef} className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-border pb-3 mb-6 gap-4">
               <h2 className="text-2xl font-bold text-text-dark">
                 All Doctors at {hospitalName}
               </h2>
@@ -145,7 +157,7 @@ export default function HospitalTabs({ clinics, allDoctors, hospitalName }: Hosp
                   <div className="flex items-center justify-center gap-2 mt-8">
                     <button
                       disabled={currentPage <= 1}
-                      onClick={() => setCurrentPage(p => p - 1)}
+                      onClick={() => goToPage(currentPage - 1)}
                       className="flex items-center gap-1 border border-gray-border text-text-dark px-3 py-1.5 rounded-md text-sm font-medium disabled:opacity-50 hover:bg-gray-50"
                     >
                       Previous
@@ -155,7 +167,7 @@ export default function HospitalTabs({ clinics, allDoctors, hospitalName }: Hosp
                     </span>
                     <button
                       disabled={currentPage >= Math.ceil(filteredDoctors.length / PAGE_SIZE)}
-                      onClick={() => setCurrentPage(p => p + 1)}
+                      onClick={() => goToPage(currentPage + 1)}
                       className="flex items-center gap-1 border border-gray-border text-text-dark px-3 py-1.5 rounded-md text-sm font-medium disabled:opacity-50 hover:bg-gray-50"
                     >
                       Next
