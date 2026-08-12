@@ -54,28 +54,39 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
     "Ajman"
   ];
 
+  const specialtyOptions = useMemo(() => {
+    const availableDoctors = selectedCity
+      ? doctors.filter(d => d.city.toLowerCase() === selectedCity.toLowerCase())
+      : doctors;
+    const uniqueSpecialties = Array.from(new Set(availableDoctors.map(d => d.specialty).filter(Boolean)));
+    return uniqueSpecialties.map(specialty => ({
+      type: 'specialty',
+      id: specialty,
+      name: specialty,
+      specialty: 'Specialty',
+      city: '',
+      url: `/search?specialty=${encodeURIComponent(specialty)}${selectedCity ? `&city=${encodeURIComponent(selectedCity)}` : ''}`,
+      icon: Stethoscope
+    }));
+  }, [doctors, selectedCity]);
+
   const filteredSuggestions = useMemo(() => {
     if (!query.trim()) {
-      let availableDoctors = doctors;
-      if (selectedCity) {
-        availableDoctors = doctors.filter(d => d.city.toLowerCase() === selectedCity.toLowerCase());
-      }
-      const uniqueSpecialties = Array.from(new Set(availableDoctors.map(d => d.specialty).filter(Boolean)));
-      return uniqueSpecialties.map(specialty => ({
-        type: 'specialty',
-        id: specialty,
-        name: specialty,
-        specialty: 'Specialty',
-        city: '',
-        url: `/search?specialty=${encodeURIComponent(specialty)}${selectedCity ? `&city=${encodeURIComponent(selectedCity)}` : ''}`,
-        icon: Stethoscope
-      })).slice(0, 10);
+      return specialtyOptions.slice(0, 10);
     }
     const lowerQuery = normalizeSearchText(query);
-    
+
     const suggestions: any[] = [];
     const addedIds = new Set();
-    
+
+    // Matching specialties first — searching "cardiology" should offer the whole
+    // specialty before it starts listing individual cardiologists.
+    for (const s of specialtyOptions) {
+      if (normalizeSearchText(s.name).includes(lowerQuery)) {
+        suggestions.push(s);
+      }
+    }
+
     // Add matching doctors
     for (const d of doctors) {
       if (selectedCity && d.city.toLowerCase() !== selectedCity.toLowerCase()) continue;
@@ -142,7 +153,10 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
     }
     
     return suggestions;
-  }, [query, selectedCity, doctors, hospitalGroups]);
+  }, [query, selectedCity, doctors, hospitalGroups, specialtyOptions]);
+
+  const specialtyResults = filteredSuggestions.filter(s => s.type === 'specialty');
+  const otherResults = filteredSuggestions.filter(s => s.type !== 'specialty');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -165,12 +179,8 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
 
   const handleSuggestionClick = (suggestion: any) => {
     setQuery(suggestion.name);
-    if (suggestion.type !== 'specialty') {
-      setShowSuggestions(false);
-      router.push(suggestion.url);
-    } else {
-      setShowSuggestions(true);
-    }
+    setShowSuggestions(false);
+    router.push(suggestion.url);
   };
 
   return (
@@ -195,36 +205,48 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
           {showSuggestions && filteredSuggestions.length > 0 && (
             <div className="absolute top-[calc(100%+8px)] left-0 w-full bg-white border border-gray-100 shadow-xl rounded-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
               <div className="py-2 max-h-[60vh] overflow-y-auto">
-                <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                  {query.trim() ? "Suggestions" : "Popular Specialties"}
-                </div>
-                {filteredSuggestions.map((suggestion, idx) => (
-                  <button
-                    key={`${suggestion.type}-${suggestion.id}-${idx}`}
-                    type="button"
-                    onClick={() => handleSuggestionClick(suggestion)}
-                    className="w-full px-4 py-3 text-left hover:bg-blue-50/50 flex items-center gap-3 transition-colors group"
-                  >
-                    <div className="w-8 h-8 flex-shrink-0 rounded-full bg-blue-100/50 flex items-center justify-center text-blue-primary group-hover:bg-blue-primary group-hover:text-white transition-colors">
-                      <suggestion.icon className="w-4 h-4" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-gray-900 truncate text-sm">{suggestion.name}</div>
-                      <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
-                        <span className="flex items-center gap-1">
-                          {suggestion.type === 'doctor' && <Stethoscope className="w-3 h-3" />}
-                          {suggestion.specialty}
-                        </span>
-                        {suggestion.city && (
-                          <>
-                            <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                            <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {suggestion.city}</span>
-                          </>
-                        )}
+                {[
+                  {
+                    label: query.trim() ? "Specialties" : "Popular Specialties",
+                    items: specialtyResults
+                  },
+                  { label: "Doctors, Hospitals & Clinics", items: otherResults }
+                ]
+                  .filter(group => group.items.length > 0)
+                  .map(group => (
+                    <div key={group.label}>
+                      <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                        {group.label}
                       </div>
+                      {group.items.map((suggestion, idx) => (
+                        <button
+                          key={`${suggestion.type}-${suggestion.id}-${idx}`}
+                          type="button"
+                          onClick={() => handleSuggestionClick(suggestion)}
+                          className="w-full px-4 py-3 text-left hover:bg-blue-50/50 flex items-center gap-3 transition-colors group"
+                        >
+                          <div className="w-8 h-8 flex-shrink-0 rounded-full bg-blue-100/50 flex items-center justify-center text-blue-primary group-hover:bg-blue-primary group-hover:text-white transition-colors">
+                            <suggestion.icon className="w-4 h-4" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="font-semibold text-gray-900 truncate text-sm">{suggestion.name}</div>
+                            <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
+                              <span className="flex items-center gap-1">
+                                {suggestion.type === 'doctor' && <Stethoscope className="w-3 h-3" />}
+                                {suggestion.specialty}
+                              </span>
+                              {suggestion.city && (
+                                <>
+                                  <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                                  <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {suggestion.city}</span>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        </button>
+                      ))}
                     </div>
-                  </button>
-                ))}
+                  ))}
               </div>
             </div>
           )}
