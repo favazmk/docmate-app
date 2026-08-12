@@ -179,6 +179,13 @@ export default function SearchBar({ doctors = [], hospitalGroups = [] }: SearchB
 
   const handleSuggestionClick = (suggestion: any) => {
     setQuery(suggestion.name);
+    // With an empty box the specialty list is only a browse aid, so clicking one
+    // fills the input and lets the search be refined. Once something has been
+    // typed, a specialty hit is a real result and goes straight to its listing.
+    if (suggestion.type === 'specialty' && !query.trim()) {
+      setShowSuggestions(true);
+      return;
+    }
     setShowSuggestions(false);
     router.push(suggestion.url);
   };
