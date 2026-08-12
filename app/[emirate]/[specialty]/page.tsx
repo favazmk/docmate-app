@@ -1,11 +1,11 @@
 import Link from "next/link";
 import FilterSidebar from "@/components/FilterSidebar";
 import DoctorCard from "@/components/DoctorCard";
-import { SlidersHorizontal, SearchX } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { SearchX } from "lucide-react";
 import { Metadata } from "next";
 import prisma from "@/lib/prisma";
 import Pagination from "@/components/Pagination";
+import MobileFilterSheet from "@/components/MobileFilterSheet";
 
 export const dynamic = "force-dynamic";
 
@@ -111,22 +111,16 @@ export default async function SpecialtyCityPage({
         <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
           <h2 className="text-xl font-bold text-text-dark">{totalCount} doctors available</h2>
           
-          <Sheet>
-            <SheetTrigger className="md:hidden w-full bg-white border border-gray-border rounded-xl h-11 flex items-center justify-center gap-2 text-sm font-medium text-text-dark shadow-sm">
-              <SlidersHorizontal className="w-4 h-4" /> Filters
-            </SheetTrigger>
-            <SheetContent side="bottom" className="h-[85vh] p-0 rounded-t-2xl">
-              <div className="h-full overflow-y-auto p-4 pb-20">
-                <FilterSidebar />
-              </div>
-            </SheetContent>
-          </Sheet>
+          <MobileFilterSheet
+            resultCount={totalCount}
+            triggerClassName="md:hidden w-full bg-white border border-gray-border rounded-xl h-11 flex items-center justify-center gap-2 text-sm font-medium text-text-dark shadow-sm"
+          />
         </div>
 
         <div className="flex gap-8">
           <div className="hidden md:block w-72 shrink-0">
-            <div className="sticky top-8">
-              <FilterSidebar />
+            <div className="sticky top-[72px]">
+              <FilterSidebar className="max-h-[calc(100vh-88px)]" />
             </div>
           </div>
 

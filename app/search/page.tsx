@@ -1,12 +1,11 @@
 import FilterSidebar from "@/components/FilterSidebar";
 import DoctorCard from "@/components/DoctorCard";
 import SortDropdown from "@/components/SortDropdown";
-import { SlidersHorizontal, SearchX } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { SearchX } from "lucide-react";
 import prisma from "@/lib/prisma";
 import SearchInput from "@/components/SearchInput";
 import Pagination from "@/components/Pagination";
+import MobileFilterSheet from "@/components/MobileFilterSheet";
 
 export default async function SearchResultsPage({
   searchParams,
@@ -189,26 +188,24 @@ export default async function SearchResultsPage({
               <SortDropdown />
 
               {/* Mobile Filter Button */}
-              <Sheet>
-                <SheetTrigger className="md:hidden flex-1 bg-white border border-gray-border rounded-xl h-11 flex items-center justify-center gap-2 text-sm font-medium text-text-dark shadow-sm">
-                  <SlidersHorizontal className="w-4 h-4" />
-                  Filters
-                </SheetTrigger>
-              <SheetContent side="bottom" className="h-[85vh] p-0 rounded-t-2xl">
-                <div className="h-full overflow-y-auto p-4 pb-20">
-                  <FilterSidebar hospitalGroups={allHospitalGroups} clinics={allClinics} />
-                </div>
-              </SheetContent>
-            </Sheet>
+              <MobileFilterSheet
+                hospitalGroups={allHospitalGroups}
+                clinics={allClinics}
+                resultCount={totalCount}
+              />
+            </div>
           </div>
         </div>
-      </div>
 
         <div className="flex gap-8">
           {/* Desktop Sidebar */}
           <div className="hidden md:block w-72 shrink-0">
-            <div className="sticky top-8">
-              <FilterSidebar hospitalGroups={allHospitalGroups} clinics={allClinics} />
+            <div className="sticky top-[72px]">
+              <FilterSidebar
+                hospitalGroups={allHospitalGroups}
+                clinics={allClinics}
+                className="max-h-[calc(100vh-88px)]"
+              />
             </div>
           </div>
 

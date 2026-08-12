@@ -4,6 +4,7 @@ import { Check } from "lucide-react";
 import { Button } from "./ui/button";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import CustomDropdown from "./ui/CustomDropdown";
+import { cn } from "@/lib/utils";
 
 interface HospitalGroupOption {
   id: string;
@@ -20,9 +21,21 @@ interface ClinicOption {
 interface FilterSidebarProps {
   hospitalGroups?: HospitalGroupOption[];
   clinics?: ClinicOption[];
+  /** Extra classes on the card wrapper — used to cap its height so the body scrolls. */
+  className?: string;
+  /** Hide the built-in "Filters / Reset" bar when the parent already renders one. */
+  showHeader?: boolean;
+  /** Set false when an ancestor already scrolls — a nested scroll box clips the dropdown menus. */
+  bodyScroll?: boolean;
 }
 
-export default function FilterSidebar({ hospitalGroups = [], clinics = [] }: FilterSidebarProps) {
+export default function FilterSidebar({
+  hospitalGroups = [],
+  clinics = [],
+  className,
+  showHeader = true,
+  bodyScroll = true,
+}: FilterSidebarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -102,12 +115,20 @@ export default function FilterSidebar({ hospitalGroups = [], clinics = [] }: Fil
   const filteredClinics = clinics.filter(c => !currentHospitalGroupId || c.hospitalGroupId === currentHospitalGroupId);
 
   return (
-    <div className="w-full bg-white border border-gray-border rounded-xl p-5 flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h3 className="font-bold text-text-dark text-lg">Filters</h3>
-        <button onClick={handleReset} className="text-sm font-medium text-blue-primary hover:underline">Reset</button>
-      </div>
+    <div className={cn("w-full bg-white border border-gray-border rounded-xl flex flex-col overflow-hidden", className)}>
+      {showHeader && (
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-border shrink-0">
+          <h3 className="font-bold text-text-dark text-lg">Filters</h3>
+          <button onClick={handleReset} className="text-sm font-medium text-blue-primary hover:underline">Reset</button>
+        </div>
+      )}
 
+      <div
+        className={cn(
+          "flex-1 min-h-0 p-5 flex flex-col gap-6",
+          bodyScroll && "overflow-y-auto overscroll-contain"
+        )}
+      >
       <div className="flex flex-col gap-3">
         <h4 className="font-semibold text-text-dark text-sm uppercase tracking-wider">Specialty</h4>
         <CustomDropdown
@@ -184,6 +205,7 @@ export default function FilterSidebar({ hospitalGroups = [], clinics = [] }: Fil
             );
           })}
         </div>
+      </div>
       </div>
     </div>
   );
