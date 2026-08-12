@@ -45,6 +45,7 @@ export default function HospitalTabs({ clinics, allDoctors, hospitalName }: Hosp
   const PAGE_SIZE = 15;
   const [selectedBranch, setSelectedBranch] = useState("");
   const doctorsTopRef = useRef<HTMLDivElement>(null);
+  const pendingScrollRef = useRef(false);
 
   // Reset pagination when filters change
   useEffect(() => {
@@ -54,13 +55,28 @@ export default function HospitalTabs({ clinics, allDoctors, hospitalName }: Hosp
   // Paging swaps the list in place, so scroll back to its heading — otherwise the
   // viewport stays parked on the pagination row and the new page looks like nothing loaded.
   const goToPage = (page: number) => {
+    pendingScrollRef.current = true;
     setCurrentPage(page);
-    const top = doctorsTopRef.current;
-    if (!top) return;
-    // 56px sticky navbar + a little breathing room
-    const y = top.getBoundingClientRect().top + window.scrollY - 80;
-    window.scrollTo({ top: y, behavior: "smooth" });
   };
+
+  // Measure and scroll only after the new page has been committed to the DOM.
+  // Doing it inside the click handler measured the outgoing layout, and a smooth
+  // scroll started there gets cancelled the moment the swapped-in cards settle —
+  // which is why stepping back to a page whose images were already cached failed
+  // while stepping forward to an uncached one appeared to work.
+  useEffect(() => {
+    if (!pendingScrollRef.current) return;
+    pendingScrollRef.current = false;
+
+    const frame = requestAnimationFrame(() => {
+      const top = doctorsTopRef.current;
+      if (!top) return;
+      // 56px sticky navbar + a little breathing room
+      const y = top.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top: Math.max(y, 0), behavior: "smooth" });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [currentPage]);
 
   const filteredDoctors = useMemo(() => {
     return allDoctors.filter(doc => {
@@ -148,7 +164,7 @@ export default function HospitalTabs({ clinics, allDoctors, hospitalName }: Hosp
                 <p className="text-text-mid font-medium">No doctors found matching your criteria.</p>
               </div>
             ) : (
-              <div className="flex flex-col gap-5">
+              <div className="flex flex-col gap-5 [overflow-anchor:none]">
                 {filteredDoctors.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE).map((doc, idx) => (
                   <DoctorCard key={`${doc.slug}-${idx}`} {...doc} variant="row" />
                 ))}
