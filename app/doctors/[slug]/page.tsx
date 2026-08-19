@@ -8,18 +8,11 @@ import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import DoctorAboutSection from "@/components/DoctorAboutSection";
 import DoctorReviews from "@/components/DoctorReviews";
+import { formatExperience } from "@/lib/utils";
 
 // Cached for 5 minutes. Admin actions call revalidatePath(), so edits made
 // through the dashboard still appear immediately.
 export const revalidate = 300;
-
-// Admins can type either a bare number ("15") or their own wording ("15+ Years").
-// Bare numbers get the suffix appended; anything else is shown exactly as entered.
-function formatExperience(raw: string | null): string | null {
-  const value = raw?.trim();
-  if (!value) return null;
-  return /^\d+\+?$/.test(value) ? `${value} Years Experience` : value;
-}
 
 export default async function DoctorProfilePage({ params }: { params: { slug: string } }) {
   const dbDoctor = await prisma.doctor.findUnique({

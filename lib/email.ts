@@ -17,6 +17,8 @@ export async function sendAppointmentEmails({
   patientReason,
   doctorEmail,
   doctorName,
+  doctorSpecialty,
+  doctorType,
   clinicName,
   appointmentDate,
   appointmentTime,
@@ -27,12 +29,23 @@ export async function sendAppointmentEmails({
   patientReason: string;
   doctorEmail: string;
   doctorName: string;
+  doctorSpecialty?: string | null;
+  doctorType?: string | null;
   clinicName: string;
   appointmentDate: string;
   appointmentTime: string;
 }) {
   // Use the admin email if provided in env, else fallback to a placeholder
   const adminEmail = process.env.ADMIN_EMAIL || "admin@docmate.com";
+
+  // A branch runs many doctors, so the name alone is ambiguous to the clinic
+  // coordinator reading this — every mention carries the specialty, plus the
+  // grade ("Consultant", "Specialist") when the admin has set one.
+  const specialty = doctorSpecialty?.trim() || "";
+  const type = doctorType?.trim() || "";
+  const specialtyLine = [specialty, type].filter(Boolean).join(" \u2022 ");
+  // e.g. "Dr Aisha Khan (Cardiology \u2022 Consultant)" — used in subject lines.
+  const doctorLabel = specialtyLine ? `${doctorName} (${specialtyLine})` : doctorName;
 
   if (!process.env.SMTP_USER) {
     console.warn("SMTP credentials not set. Email notifications will not be sent.");
@@ -52,9 +65,10 @@ export async function sendAppointmentEmails({
           <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px;">
             <h2 style="color: #2200CC; margin-top: 0;">Request Received!</h2>
             <p>Hello <strong>${patientName}</strong>,</p>
-            <p>Your appointment request has been received for <strong>${doctorName}</strong>.</p>
+            <p>Your appointment request has been received for <strong>${doctorName}</strong>${specialtyLine ? `, <strong>${specialtyLine}</strong>` : ""}.</p>
             
             <div style="background-color: #f8fafc; padding: 16px; border-radius: 8px; margin: 20px 0;">
+              ${specialty ? `<p style="margin: 4px 0;"><strong>Specialty:</strong> ${specialty}</p>` : ""}
               <p style="margin: 4px 0;"><strong>Preferred Date:</strong> ${appointmentDate}</p>
               <p style="margin: 4px 0;"><strong>Time Slot:</strong> Pending call confirmation</p>
             </div>
@@ -72,13 +86,21 @@ export async function sendAppointmentEmails({
         transporter.sendMail({
           from: `"Docmate Alerts" <${process.env.SMTP_USER}>`,
           to: doctorEmail,
-          subject: `New Appointment Request: ${doctorName} - Docmate`,
+          subject: `New Appointment Request: ${doctorLabel} - Docmate`,
           html: `
             <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px;">
               <h2 style="color: #2200CC; margin-top: 0;">New Booking Request Received</h2>
               <p>Hello Clinic Coordinator,</p>
               <p>A patient has requested an appointment with <strong>${doctorName}</strong> at <strong>${clinicName}</strong> via Docmate.</p>
               
+              <div style="background-color: #f8fafc; padding: 18px; border-radius: 8px; margin: 20px 0; border: 1px solid #cbd5e1;">
+                <h3 style="margin-top: 0; color: #0f172a; border-bottom: 1px solid #cbd5e1; padding-bottom: 8px;">Doctor Details</h3>
+                <p style="margin: 6px 0;"><strong>Doctor:</strong> ${doctorName}</p>
+                ${specialty ? `<p style="margin: 6px 0;"><strong>Specialty:</strong> ${specialty}</p>` : ""}
+                ${type ? `<p style="margin: 6px 0;"><strong>Designation:</strong> ${type}</p>` : ""}
+                <p style="margin: 6px 0;"><strong>Branch:</strong> ${clinicName}</p>
+              </div>
+
               <div style="background-color: #f8fafc; padding: 18px; border-radius: 8px; margin: 20px 0; border: 1px solid #cbd5e1;">
                 <h3 style="margin-top: 0; color: #0f172a; border-bottom: 1px solid #cbd5e1; padding-bottom: 8px;">Patient Details</h3>
                 <p style="margin: 6px 0;"><strong>Name:</strong> ${patientName}</p>
@@ -104,14 +126,15 @@ export async function sendAppointmentEmails({
       transporter.sendMail({
         from: `"Docmate System" <${process.env.SMTP_USER}>`,
         to: adminEmail,
-        subject: `New Booking Alert: ${doctorName}`,
+        subject: `New Booking Alert: ${doctorLabel}`,
         html: `
           <div style="font-family: sans-serif;">
             <h3>New Platform Booking</h3>
             <p>A new appointment was just booked on Docmate.</p>
             <ul>
               <li><strong>Patient:</strong> ${patientName} (${patientEmail}, Phone: ${patientPhone})</li>
-              <li><strong>Doctor:</strong> ${doctorName}</li>
+              <li><strong>Doctor:</strong> ${doctorName}${specialtyLine ? ` &mdash; ${specialtyLine}` : ""}</li>
+              <li><strong>Clinic / Branch:</strong> ${clinicName}</li>
               <li><strong>Date & Time:</strong> ${appointmentDate} at ${appointmentTime}</li>
               <li><strong>Reason:</strong> ${patientReason}</li>
             </ul>

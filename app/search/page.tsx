@@ -97,15 +97,21 @@ export default async function SearchResultsPage({
 
   const whereClause = { AND: andClauses };
 
-  // Sort logic
-  let orderByClause: any = {};
-  if (sort === "highest-rated") {
-    orderByClause = { rating: "desc" };
-  } else if (sort === "most-reviewed") {
-    orderByClause = { reviews: "desc" };
-  } else {
-    orderByClause = { createdAt: "desc" }; // Recommended fallback
-  }
+  // Sort logic. Values come from SORT_OPTIONS in components/SortDropdown.tsx —
+  // keep the two in step. Each clause ends with a unique tie-breaker (name, then
+  // id) so equal ratings/fees keep a stable order across pages instead of
+  // shuffling rows between page 1 and page 2.
+  const SORT_CLAUSES: Record<string, any[]> = {
+    "highest-rated": [{ rating: "desc" }, { reviews: "desc" }, { name: "asc" }],
+    "most-reviewed": [{ reviews: "desc" }, { rating: "desc" }, { name: "asc" }],
+    "name-asc": [{ name: "asc" }],
+    "name-desc": [{ name: "desc" }],
+    "fee-low": [{ fee: "asc" }, { name: "asc" }],
+    "fee-high": [{ fee: "desc" }, { name: "asc" }],
+    recommended: [{ createdAt: "desc" }, { name: "asc" }],
+  };
+
+  const orderByClause = [...(SORT_CLAUSES[sort] || SORT_CLAUSES.recommended), { id: "asc" }];
 
   const totalCount = await prisma.doctor.count({ where: whereClause });
 
@@ -159,6 +165,7 @@ export default async function SearchResultsPage({
     photoUrl: d.photoUrl || `https://ui-avatars.com/api/?format=png&name=${encodeURIComponent(d.name)}&background=2200CC&color=fff`,
     clinics: d.clinics,
     fee: d.fee,
+    experience: d.experience,
     availableDays: d.availableDays || undefined,
     availableTime: d.availableTime || undefined
   }));

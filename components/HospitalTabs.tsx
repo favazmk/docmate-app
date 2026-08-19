@@ -5,6 +5,7 @@ import ClinicBranchList from "./ClinicBranchList";
 import DoctorCard from "./DoctorCard";
 import { Users, Building2, Search, MapPin } from "lucide-react";
 import CustomDropdown from "./ui/CustomDropdown";
+import Pagination from "./Pagination";
 import { normalizeSearchText } from "@/lib/utils";
 
 interface DoctorData {
@@ -17,6 +18,7 @@ interface DoctorData {
   photoUrl: string;
   isVerified: boolean;
   fee: number;
+  experience?: string | null;
   clinics?: { name: string; city: string; hospitalGroup?: { name: string } }[];
 }
 
@@ -90,13 +92,15 @@ export default function HospitalTabs({ clinics, allDoctors, hospitalName }: Hosp
       return matchesSearch && matchesBranch;
     });
   }, [allDoctors, searchQuery, selectedBranch, hospitalName]);
+  // Branch names run long ("Medcare Medical Centre - Tilal Al Ghaf"), so the
+  // label is allowed to wrap onto a second line rather than being ellipsed.
   const branchOptions = clinics.map(clinic => ({
     value: `${hospitalName} - ${clinic.name}`,
     label: (
-      <div className="flex flex-col">
-        <span className="font-semibold">{clinic.name}</span>
+      <div className="flex flex-col min-w-0">
+        <span className="opt-title font-semibold" title={clinic.name}>{clinic.name}</span>
         <span className="text-xs text-text-light flex items-center gap-1 mt-0.5">
-          <MapPin className="w-3 h-3" /> {clinic.city}
+          <MapPin className="w-3 h-3 shrink-0" /> {clinic.city}
         </span>
       </div>
     )
@@ -143,6 +147,7 @@ export default function HospitalTabs({ clinics, allDoctors, hospitalName }: Hosp
                     options={branchOptions}
                     placeholder="All Branches"
                     icon={<Building2 className="w-4 h-4" />}
+                    wrapLabel
                   />
                 </div>
                 <div className="relative w-full sm:w-64">
@@ -169,27 +174,11 @@ export default function HospitalTabs({ clinics, allDoctors, hospitalName }: Hosp
                   <DoctorCard key={`${doc.slug}-${idx}`} {...doc} variant="row" />
                 ))}
 
-                {filteredDoctors.length > PAGE_SIZE && (
-                  <div className="flex items-center justify-center gap-2 mt-8">
-                    <button
-                      disabled={currentPage <= 1}
-                      onClick={() => goToPage(currentPage - 1)}
-                      className="flex items-center gap-1 border border-gray-border text-text-dark px-3 py-1.5 rounded-md text-sm font-medium disabled:opacity-50 hover:bg-gray-50"
-                    >
-                      Previous
-                    </button>
-                    <span className="text-sm font-medium text-text-mid px-4">
-                      Page {currentPage} of {Math.ceil(filteredDoctors.length / PAGE_SIZE)}
-                    </span>
-                    <button
-                      disabled={currentPage >= Math.ceil(filteredDoctors.length / PAGE_SIZE)}
-                      onClick={() => goToPage(currentPage + 1)}
-                      className="flex items-center gap-1 border border-gray-border text-text-dark px-3 py-1.5 rounded-md text-sm font-medium disabled:opacity-50 hover:bg-gray-50"
-                    >
-                      Next
-                    </button>
-                  </div>
-                )}
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={Math.ceil(filteredDoctors.length / PAGE_SIZE)}
+                  onPageChange={goToPage}
+                />
               </div>
             )}
           </div>

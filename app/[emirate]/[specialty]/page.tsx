@@ -80,6 +80,7 @@ export default async function SpecialtyCityPage({
     isVerified: true,
     clinics: d.clinics,
     fee: d.fee,
+    experience: d.experience,
     availableDays: d.availableDays || undefined,
     availableTime: d.availableTime || undefined
   }));

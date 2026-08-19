@@ -76,6 +76,8 @@ export async function createAppointment(data: {
       patientReason: data.reason || "None specified",
       doctorEmail: clinicEmail,
       doctorName: doctor.name,
+      doctorSpecialty: doctor.specialty,
+      doctorType: doctor.type,
       clinicName: clinicName,
       appointmentDate: data.date,
       appointmentTime: data.timeSlot,

@@ -161,6 +161,7 @@ export default async function Home() {
     isVerified: true,
     isFeatured: d.isFeatured,
     clinics: d.clinics,
+    experience: d.experience,
     availableDays: d.availableDays || undefined,
     availableTime: d.availableTime || undefined,
   }));

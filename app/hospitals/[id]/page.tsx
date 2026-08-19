@@ -57,6 +57,7 @@ export default async function HospitalProfilePage({ params }: { params: { id: st
         photoUrl: doc.photoUrl || `https://ui-avatars.com/api/?format=png&name=${encodeURIComponent(doc.name)}&background=2200CC&color=fff`,
         isVerified: true,
         fee: doc.fee,
+        experience: doc.experience,
         clinics: [{ name: clinic.name, city: clinic.city, hospitalGroup: { name: hospital.name } }],
       })),
     };

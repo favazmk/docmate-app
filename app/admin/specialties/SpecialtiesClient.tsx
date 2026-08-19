@@ -9,6 +9,7 @@ import AdminHeader from "@/components/AdminHeader";
 import { createSpecialty, updateSpecialty, deleteSpecialty } from "@/app/actions/admin";
 import * as Icons from "lucide-react";
 import CustomDropdown from "@/components/ui/CustomDropdown";
+import { SPECIALTY_ICONS } from "@/lib/constants";
 
 interface SpecialtyData {
   id: string;
@@ -20,7 +21,7 @@ interface SpecialtiesClientProps {
   specialties: SpecialtyData[];
 }
 
-const AVAILABLE_ICONS = ["Activity", "Heart", "Eye", "Bone", "Baby", "Brain", "Stethoscope", "Sparkles", "User", "Smile"];
+
 
 export default function SpecialtiesClient({ specialties }: SpecialtiesClientProps) {
   const router = useRouter();
@@ -198,14 +199,17 @@ export default function SpecialtiesClient({ specialties }: SpecialtiesClientProp
                   value={iconName}
                   onChange={setIconName}
                   placeholder="Select Icon"
-                  options={AVAILABLE_ICONS.map(ico => {
-                    const IconCmp = (Icons as any)[ico] || Icons.Activity;
+                  options={SPECIALTY_ICONS.map(({ value, label, group }) => {
+                    const IconCmp = (Icons as any)[value] || Icons.Activity;
                     return {
-                      value: ico,
+                      value,
                       label: (
-                        <div className="flex items-center gap-2">
-                          <IconCmp className="w-4 h-4 text-blue-primary" />
-                          <span>{ico}</span>
+                        <div className="flex items-center gap-2.5 w-full">
+                          <IconCmp className="w-4 h-4 text-blue-primary shrink-0" />
+                          <span className="truncate">{label}</span>
+                          <span className="ml-auto text-[10px] uppercase tracking-wider text-text-light shrink-0">
+                            {group}
+                          </span>
                         </div>
                       )
                     };

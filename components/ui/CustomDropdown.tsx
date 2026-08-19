@@ -16,6 +16,12 @@ interface CustomDropdownProps {
   disabled?: boolean;
   icon?: React.ReactNode;
   labelPrefix?: string;
+  /**
+   * Let long labels wrap onto a second line instead of being cut off with an
+   * ellipsis. Used where the option text is a full branch/clinic name that the
+   * user needs to read in full (e.g. the hospital page branch picker).
+   */
+  wrapLabel?: boolean;
 }
 
 export default function CustomDropdown({
@@ -25,7 +31,8 @@ export default function CustomDropdown({
   placeholder,
   disabled = false,
   icon,
-  labelPrefix
+  labelPrefix,
+  wrapLabel = false
 }: CustomDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -71,13 +78,13 @@ export default function CustomDropdown({
           disabled ? "opacity-50 cursor-not-allowed" : "hover:border-blue-primary/50 cursor-pointer"
         }`}
       >
-        <div className="flex items-center gap-2.5 truncate">
+        <div className={`flex items-center gap-2.5 min-w-0 ${wrapLabel ? "" : "truncate"}`}>
           {icon && (
             <div className={`shrink-0 transition-colors ${disabled ? "text-text-light/40" : "text-blue-primary"}`}>
               {icon}
             </div>
           )}
-          <div className="flex flex-col truncate">
+          <div className={`flex flex-col min-w-0 ${wrapLabel ? "" : "truncate"}`}>
             {labelPrefix && (
               <span className={`text-[10px] font-bold uppercase tracking-wider mb-0.5 transition-colors ${
                 disabled ? "text-text-light/40" : "text-blue-primary"
@@ -85,7 +92,11 @@ export default function CustomDropdown({
                 {labelPrefix}
               </span>
             )}
-            <span className={`text-sm font-semibold truncate transition-colors ${
+            <span className={`text-sm font-semibold transition-colors ${
+              wrapLabel
+                ? "block text-left leading-snug [&_.opt-title]:line-clamp-2 [&_.opt-title]:leading-snug"
+                : "truncate"
+            } ${
               disabled ? "text-text-light/40" : value ? "text-text-dark" : "text-text-mid font-medium"
             }`}>
               {displayLabel}
@@ -101,7 +112,7 @@ export default function CustomDropdown({
 
       {/* Floating Menu List */}
       {isOpen && !disabled && (
-        <div className="absolute left-0 right-0 mt-2 bg-white border border-gray-border rounded-xl shadow-[0_12px_32px_rgba(0,0,0,0.12)] z-[9999] max-h-60 overflow-y-auto py-1.5 animate-in fade-in-50 slide-in-from-top-1 duration-150">
+        <div className={`absolute left-0 right-0 mt-2 bg-white border border-gray-border rounded-xl shadow-[0_12px_32px_rgba(0,0,0,0.12)] z-[9999] ${wrapLabel ? "max-h-80" : "max-h-60"} overflow-y-auto py-1.5 animate-in fade-in-50 slide-in-from-top-1 duration-150`}>
           {/* Default Option if not value */}
           {!normalizedOptions.some(opt => String(opt.label) === placeholder || opt.value === "" || String(opt.value).toLowerCase() === "all") && (
             <>
@@ -124,7 +135,9 @@ export default function CustomDropdown({
               <div
                 key={opt.value}
                 onClick={() => handleSelect(opt.value)}
-                className={`px-4 py-2.5 text-sm cursor-pointer transition-colors truncate ${
+                className={`px-4 py-2.5 text-sm cursor-pointer transition-colors ${
+                  wrapLabel ? "[&_.opt-title]:line-clamp-2 [&_.opt-title]:leading-snug" : "truncate"
+                } ${
                   value === opt.value
                     ? "bg-blue-light text-blue-primary font-bold"
                     : "text-text-dark hover:bg-gray-bg"

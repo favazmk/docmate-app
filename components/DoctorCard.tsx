@@ -3,9 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { BadgeCheck, Star, MapPin, Stethoscope, Building2 } from "lucide-react";
+import { BadgeCheck, Star, MapPin, Stethoscope, Building2, Briefcase } from "lucide-react";
 import { buttonVariants } from "./ui/button";
 import { Badge } from "./ui/badge";
+import { formatExperience } from "@/lib/utils";
 
 interface DoctorCardProps {
   slug: string;
@@ -24,6 +25,8 @@ interface DoctorCardProps {
   variant?: "grid" | "row";
   availableDays?: string;
   availableTime?: string;
+  /** Raw value from the DB ("15", "15+ Years"); normalised for display by formatExperience. */
+  experience?: string | null;
 }
 
 export default function DoctorCard({
@@ -41,7 +44,8 @@ export default function DoctorCard({
   fee = 250,
   variant = "row",
   availableDays = "Sat - Thu",
-  availableTime = "09:00 AM - 05:00 PM"
+  availableTime = "09:00 AM - 05:00 PM",
+  experience
 }: DoctorCardProps) {
   const router = useRouter();
   
@@ -58,6 +62,24 @@ export default function DoctorCard({
   const displayDays = formatDays(availableDays);
   const displayTime = availableTime && availableTime !== "Not set" ? availableTime : "09:00 AM - 05:00 PM";
   
+  const displayExperience = formatExperience(experience);
+
+  // Cards show the parent hospital group, not the individual branch. A doctor
+  // listed at several branches of the same group would otherwise repeat the
+  // group name once per branch, so collapse them into one entry and gather the
+  // cities they cover. Clinics with no group fall back to their own name.
+  const affiliations = (clinics ?? []).reduce<{ name: string; cities: string[] }[]>(
+    (acc, clinic) => {
+      const groupName = clinic.hospitalGroup?.name?.trim() || clinic.name;
+      const existing = acc.find(a => a.name === groupName);
+      const target = existing ?? { name: groupName, cities: [] };
+      if (!existing) acc.push(target);
+      if (clinic.city && !target.cities.includes(clinic.city)) target.cities.push(clinic.city);
+      return acc;
+    },
+    []
+  );
+
   const cleanName = name.replace(/^(Dr\.|Dr|Prof\.|Professor)\s+/i, '');
   const defaultPlaceholder = `https://ui-avatars.com/api/?format=png&name=${encodeURIComponent(cleanName)}&background=2200CC&color=fff`;
   const firstPhoto = photoUrl ? photoUrl.split(',')[0] : defaultPlaceholder;
@@ -94,28 +116,39 @@ export default function DoctorCard({
             {isVerified && <BadgeCheck className="w-5 h-5 text-green-badge shrink-0" />}
           </h3>
 
-          {/* Clinic & City details */}
-          {clinics && clinics.length > 0 && (
+          {/* Hospital group & city details */}
+          {affiliations.length > 0 && (
             <div className="mb-4">
-              {clinics.map((clinic, idx) => (
+              {affiliations.map((affiliation, idx) => (
                 <div key={idx} className="mb-1 last:mb-0">
-                  <p className="text-xs font-bold text-text-mid line-clamp-1 flex items-center gap-1">
-                    <Building2 className="w-3.5 h-3.5 shrink-0" /> {clinic.hospitalGroup?.name} - {clinic.name}
+                  <p className="text-xs font-bold text-text-mid line-clamp-2 flex items-start gap-1" title={affiliation.name}>
+                    <Building2 className="w-3.5 h-3.5 shrink-0 mt-px" /> {affiliation.name}
                   </p>
-                  <div className="flex items-center gap-1.5 text-xs text-text-light font-medium ml-4 mt-0.5">
-                    <MapPin className="w-3.5 h-3.5 text-blue-primary" />
-                    <span>{clinic.city}</span>
-                  </div>
+                  {affiliation.cities.length > 0 && (
+                    <div className="flex items-center gap-1.5 text-xs text-text-light font-medium ml-4 mt-0.5">
+                      <MapPin className="w-3.5 h-3.5 text-blue-primary shrink-0" />
+                      <span className="line-clamp-1">{affiliation.cities.join(", ")}</span>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
           )}
 
-          <div className="flex items-center gap-1.5 mb-4" title="Ratings are read-only placeholder">
+          <div className="flex items-center gap-1.5 mb-3" title="Ratings are read-only placeholder">
             <Star className="w-4 h-4 text-star-color fill-star-color" />
             <span className="text-sm font-bold text-text-dark">{rating.toFixed(1)}</span>
             <span className="text-xs text-text-light">({reviews} reviews)</span>
           </div>
+
+          {displayExperience && (
+            <div className="mb-3">
+              <span className="inline-flex items-center gap-1.5 bg-blue-light text-blue-primary text-[11px] font-bold px-2.5 py-1 rounded-full">
+                <Briefcase className="w-3.5 h-3.5 shrink-0" />
+                {displayExperience}
+              </span>
+            </div>
+          )}
 
           {/* Languages */}
           <div className="flex items-center gap-1.5 flex-wrap mb-6">
@@ -173,21 +206,33 @@ export default function DoctorCard({
           </Link>
         </div>
 
-        {/* Clinic & City details */}
-        {clinics && clinics.length > 0 && (
+        {/* Hospital group & city details */}
+        {affiliations.length > 0 && (
           <div className="flex flex-col gap-2 mt-1">
-            {clinics.map((clinic, idx) => (
+            {affiliations.map((affiliation, idx) => (
               <div key={idx} className="flex flex-col gap-0.5">
-                <div className="text-sm font-semibold text-text-dark flex items-center gap-1.5">
-                  <Building2 className="w-4 h-4 text-blue-primary shrink-0" />
-                  <span>{clinic.hospitalGroup?.name} - {clinic.name}</span>
+                <div className="text-sm font-semibold text-text-dark flex items-start gap-1.5">
+                  <Building2 className="w-4 h-4 text-blue-primary shrink-0 mt-0.5" />
+                  <span>{affiliation.name}</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-xs text-text-light font-medium ml-5">
-                  <MapPin className="w-3.5 h-3.5 text-blue-primary shrink-0" />
-                  <span>{clinic.city}</span>
-                </div>
+                {affiliation.cities.length > 0 && (
+                  <div className="flex items-center gap-1.5 text-xs text-text-light font-medium ml-5">
+                    <MapPin className="w-3.5 h-3.5 text-blue-primary shrink-0" />
+                    <span>{affiliation.cities.join(", ")}</span>
+                  </div>
+                )}
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Years of practice */}
+        {displayExperience && (
+          <div className="mt-1">
+            <span className="inline-flex items-center gap-1.5 bg-blue-light text-blue-primary text-xs font-bold px-3 py-1.5 rounded-full">
+              <Briefcase className="w-3.5 h-3.5 shrink-0" />
+              {displayExperience}
+            </span>
           </div>
         )}
 
