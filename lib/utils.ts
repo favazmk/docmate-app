@@ -16,20 +16,28 @@ export function normalizeSearchText(text: string | null | undefined): string {
 }
 
 // Admins type experience free-form: a bare number ("15"), a number with a plus
-// ("15+"), or their own wording ("15 years", "Over a decade"). Normalise every
-// shape to read as "… Experience" so the cards and the profile page agree.
+// ("15+"), a number with a unit ("12 years", "6 yrs"), or their own wording
+// ("Over a decade"). Normalise the numeric shapes to one house style —
+// "12 Years Experience" — so a grid of cards does not mix "12 years Experience"
+// with "15 Years Experience" depending on what each admin happened to type.
 export function formatExperience(raw: string | null | undefined): string | null {
   const value = raw?.trim();
   if (!value) return null;
 
-  // "15" / "15+" -> "15+ Years Experience"
-  if (/^\d+\+?$/.test(value)) return `${value} Years Experience`;
+  // "15", "15+", "12 years", "6 yrs", "1 year" -> "<n><+> Year(s) Experience"
+  const numeric = value.match(/^(\d+)(\+?)\s*(?:years?|yrs?)?\.?$/i);
+  if (numeric) {
+    const [, count, plus] = numeric;
+    // "1 year", but "1+ years" — a plus means "more than", so it stays plural.
+    const unit = count === "1" && !plus ? "Year" : "Years";
+    return `${count}${plus} ${unit} Experience`;
+  }
 
-  // Already says "experience" somewhere ("15 Years Experience", "Experienced since 2005")
+  // Already says "experience" ("20 Years Experience", "Experienced since 2005")
   if (/experience/i.test(value)) return value;
 
-  // "15 years" / "15+ yrs" -> "15 years Experience". Prose the admin wrote
-  // themselves ("Over a decade") is left alone rather than made to read
+  // Anything else with a number in it gets the suffix; prose the admin wrote
+  // themselves ("Over a decade") is left alone rather than being made to read
   // "Over a decade Experience".
   return /\d/.test(value) ? `${value} Experience` : value;
 }

@@ -14,8 +14,11 @@ export default async function AdminDoctorsPage() {
     redirect("/admin/login");
   }
 
+  // Mirrors the public "Recommended" order (app/search/page.tsx) so the admin
+  // list reads in the same sequence patients see, which is what makes the
+  // Position column meaningful to edit against.
   const doctors = await prisma.doctor.findMany({
-    orderBy: { createdAt: "desc" },
+    orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
     include: {
       specialtyRef: true,
       clinics: {

@@ -9,6 +9,22 @@ import { uploadImages } from "@/lib/upload";
 import { MAX_FEATURED_DOCTORS } from "@/lib/constants";
 
 
+/**
+ * The admin types a 1-based position, or leaves the box empty. UNPOSITIONED
+ * (9999) sorts every unpinned doctor after the pinned ones. Junk input and
+ * numbers below 1 are treated as "not positioned" rather than rejected, so a
+ * stray keystroke can never block saving an otherwise valid doctor.
+ */
+const UNPOSITIONED = 9999;
+
+function parseDisplayOrder(raw: FormDataEntryValue | null): number {
+  const value = typeof raw === "string" ? raw.trim() : "";
+  if (!value) return UNPOSITIONED;
+  const parsed = parseInt(value, 10);
+  if (!Number.isFinite(parsed) || parsed < 1) return UNPOSITIONED;
+  return Math.min(parsed, UNPOSITIONED);
+}
+
 async function requireAdmin() {
   const session = await getServerSession(authOptions);
   if (!session || (session.user as any)?.role !== "ADMIN") {
@@ -31,6 +47,7 @@ export async function createDoctor(formData: FormData) {
     const qualifications = formData.get("qualifications") as string;
     const feeStr = formData.get("fee") as string;
     const fee = feeStr ? parseInt(feeStr, 10) : 250;
+    const displayOrder = parseDisplayOrder(formData.get("displayOrder"));
     const availableDays = formData.get("availableDays") as string;
     const availableTime = formData.get("availableTime") as string;
     const newSpecialtyName = formData.get("newSpecialtyName") as string;
@@ -85,6 +102,7 @@ export async function createDoctor(formData: FormData) {
         qualifications: qualifications || "MD, Board Certified Specialist",
         photoUrl,
         status: "Active",
+        displayOrder,
         availableDays: availableDays || "Mon - Fri",
         availableTime: availableTime || "09:00 AM - 05:00 PM",
       }
@@ -116,6 +134,7 @@ export async function updateDoctor(id: string, formData: FormData) {
     const status = formData.get("status") as string;
     const feeStr = formData.get("fee") as string;
     const fee = feeStr ? parseInt(feeStr, 10) : 250;
+    const displayOrder = parseDisplayOrder(formData.get("displayOrder"));
     const availableDays = formData.get("availableDays") as string;
     const availableTime = formData.get("availableTime") as string;
     const newSpecialtyName = formData.get("newSpecialtyName") as string;
@@ -172,6 +191,7 @@ export async function updateDoctor(id: string, formData: FormData) {
         experience: experience?.trim() || null,
         qualifications: qualifications || "MD, Board Certified Specialist",
         status: status || "Active",
+        displayOrder,
         availableDays: availableDays || "Mon - Fri",
         availableTime: availableTime || "09:00 AM - 05:00 PM",
         photoUrl

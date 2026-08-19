@@ -566,6 +566,7 @@ export default function DoctorsClient({
               <table className="w-full text-sm text-left whitespace-nowrap">
                 <thead className="bg-gray-50 text-text-light uppercase tracking-wider font-semibold text-xs border-b border-gray-border">
                   <tr>
+                    <th className="px-6 py-4" title="Position on the public Find a doctor page">Pos.</th>
                     <th className="px-6 py-4">Name</th>
                     <th className="px-6 py-4">Specialty</th>
                     <th className="px-6 py-4">Clinics</th>
@@ -576,10 +577,19 @@ export default function DoctorsClient({
                 <tbody className="divide-y divide-gray-border">
                   {filteredDoctors.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="px-6 py-8 text-center text-text-mid font-medium">No doctors found matching filters.</td>
+                      <td colSpan={6} className="px-6 py-8 text-center text-text-mid font-medium">No doctors found matching filters.</td>
                     </tr>
                   ) : filteredDoctors.map((doc) => (
                     <tr key={doc.id} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="px-6 py-4">
+                        {doc.displayOrder && doc.displayOrder !== 9999 ? (
+                          <span className="inline-flex items-center justify-center min-w-7 h-7 px-2 rounded-lg bg-blue-light text-blue-primary text-xs font-bold">
+                            {doc.displayOrder}
+                          </span>
+                        ) : (
+                          <span className="text-text-light text-xs" title="Not positioned — appears after all pinned doctors">&mdash;</span>
+                        )}
+                      </td>
                       <td className="px-6 py-4 font-bold text-text-dark">{doc.name}</td>
                       <td className="px-6 py-4">
                         <div className="text-text-dark font-medium">{doc.specialty}</div>
@@ -826,6 +836,30 @@ export default function DoctorsClient({
                     </div>
                     <input type="hidden" name="clinicIds" value={JSON.stringify(clinicIds)} />
                   </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-semibold text-text-dark">Display Position</label>
+                    <input
+                      name="displayOrder"
+                      defaultValue={
+                        editingDoctor?.displayOrder && editingDoctor.displayOrder !== 9999
+                          ? editingDoctor.displayOrder
+                          : ""
+                      }
+                      type="number"
+                      min={1}
+                      step={1}
+                      placeholder="e.g. 1 for the top of the list"
+                      className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary"
+                    />
+                    <span className="text-xs text-text-light">
+                      Controls where this doctor appears on the public &quot;Find a doctor&quot; page
+                      under the default Recommended order. <strong>1</strong> puts them first,
+                      <strong> 2</strong> second, and so on. Leave empty and they appear after all
+                      positioned doctors, newest first. Ties are broken by newest first, so avoid
+                      giving two doctors the same number.
+                    </span>
+                  </div>
+
                   <div className="flex flex-col gap-2">
                     <label className="text-sm font-semibold text-text-dark">Experience</label>
                     <input

@@ -99,16 +99,20 @@ export default async function SearchResultsPage({
 
   // Sort logic. Values come from SORT_OPTIONS in components/SortDropdown.tsx —
   // keep the two in step. Each clause ends with a unique tie-breaker (name, then
-  // id) so equal ratings/fees keep a stable order across pages instead of
-  // shuffling rows between page 1 and page 2.
+  // id) so equal ratings keep a stable order across pages instead of shuffling
+  // rows between page 1 and page 2.
+  //
+  // "recommended" is the default the vast majority of visitors see, and it leads
+  // with the admin's own running order (Doctor.displayOrder — 1 pins a doctor to
+  // the top). Unpositioned doctors carry 9999 and fall in behind, newest first.
+  // The explicit sorts deliberately ignore displayOrder: someone who asked for
+  // A-to-Z wants A-to-Z, not the admin's pins jumping the queue.
   const SORT_CLAUSES: Record<string, any[]> = {
     "highest-rated": [{ rating: "desc" }, { reviews: "desc" }, { name: "asc" }],
     "most-reviewed": [{ reviews: "desc" }, { rating: "desc" }, { name: "asc" }],
     "name-asc": [{ name: "asc" }],
     "name-desc": [{ name: "desc" }],
-    "fee-low": [{ fee: "asc" }, { name: "asc" }],
-    "fee-high": [{ fee: "desc" }, { name: "asc" }],
-    recommended: [{ createdAt: "desc" }, { name: "asc" }],
+    recommended: [{ displayOrder: "asc" }, { createdAt: "desc" }, { name: "asc" }],
   };
 
   const orderByClause = [...(SORT_CLAUSES[sort] || SORT_CLAUSES.recommended), { id: "asc" }];

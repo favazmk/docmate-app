@@ -104,6 +104,11 @@ model Doctor {
   qualifications  String?       @db.Text
   status          String        @default("Active") // Active, Pending
   isFeatured      Boolean       @default(false) // Shown in "Featured doctors" on homepage (max 4, enforced in app/actions/doctors.ts)
+  // Admin-controlled position in the public "Find a doctor" results under the
+  // default "Recommended" sort. Lower shows first: 1 pins a doctor to the top.
+  // The 9999 default parks every unpositioned doctor after the pinned ones,
+  // where they fall back to newest-first.
+  displayOrder    Int           @default(9999)
   availableDays   String        @default("Mon - Fri")
   availableTime   String        @default("09:00 AM - 05:00 PM")
   createdAt       DateTime      @default(now())
@@ -115,6 +120,7 @@ model Doctor {
   @@index([specialty])
   @@index([type])
   @@index([isFeatured])
+  @@index([displayOrder])
 }
 
 model Appointment {

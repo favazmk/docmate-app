@@ -15,8 +15,6 @@ export const SORT_OPTIONS = [
   { value: "most-reviewed", label: "Most Reviewed" },
   { value: "name-asc", label: "Name: A to Z" },
   { value: "name-desc", label: "Name: Z to A" },
-  { value: "fee-low", label: "Fee: Low to High" },
-  { value: "fee-high", label: "Fee: High to Low" },
 ];
 
 export const DEFAULT_SORT = "recommended";

@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import ScrollRevealInit from "@/components/ScrollRevealInit";
 
 import { Providers } from "@/components/Providers";
+import Analytics from "@/components/Analytics";
 
 const publicSans = Public_Sans({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -23,6 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn("font-sans", publicSans.variable)}>
       <body className="antialiased min-h-screen flex flex-col">
+        <Analytics />
         <Providers>
           <ScrollRevealInit />
           <Navbar />
