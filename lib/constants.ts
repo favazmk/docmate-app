@@ -88,3 +88,56 @@ export const SPECIALTY_ICONS: { value: string; label: string; group: string }[] 
 
 /** Flat list of just the icon names — handy for validation. */
 export const SPECIALTY_ICON_NAMES = SPECIALTY_ICONS.map((i) => i.value);
+
+/**
+ * Canonical public origin. Used for canonical URLs, robots.txt and sitemap.xml,
+ * which all need absolute URLs. Overridable so staging generates its own.
+ */
+export const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://docmate.ae"
+).replace(/\/$/, "");
+
+/**
+ * Emirates that have a /[emirate] landing page, slug -> display name.
+ *
+ * This list is a whitelist, not decoration. /[emirate] sits at the site root and
+ * matches any single segment, so before it was checked against this list every
+ * URL on the domain rendered a landing page — /robots.txt and /sitemap.xml
+ * included, which is why neither file existed and Google had no crawl guidance.
+ * Anything not listed here now 404s.
+ *
+ * Keep in step with the cities offered in ClinicsClient, SearchBar and
+ * FilterSidebar — a landing page for a city with no clinics is an empty page.
+ */
+export const EMIRATES: Record<string, string> = {
+  dubai: "Dubai",
+  sharjah: "Sharjah",
+  ajman: "Ajman",
+};
+
+export function isEmirateSlug(slug: string): boolean {
+  return Object.prototype.hasOwnProperty.call(EMIRATES, slug.toLowerCase());
+}
+
+/** Specialties promoted on the emirate landing pages and listed in the sitemap. */
+export const LANDING_SPECIALTIES = [
+  "Cardiology",
+  "Dermatology",
+  "Pediatrics",
+  "Gynecology",
+  "Neurology",
+  "Orthopedics",
+] as const;
+
+/**
+ * URL form of a specialty name: "Internal Medicine" -> "internal-medicine".
+ * Doctor.specialty is free text, so this has to tolerate spacing and casing
+ * that no dropdown enforced.
+ */
+export function slugifySpecialty(name: string): string {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
