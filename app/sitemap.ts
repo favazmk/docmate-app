@@ -23,6 +23,7 @@ const STATIC_PATHS: { path: string; priority: number; changeFrequency: Entry["ch
   { path: "/list-your-clinic", priority: 0.5, changeFrequency: "monthly" },
   { path: "/track", priority: 0.3, changeFrequency: "monthly" },
   { path: "/privacy-policy", priority: 0.2, changeFrequency: "yearly" },
+  { path: "/data-protection-policy", priority: 0.2, changeFrequency: "yearly" },
   { path: "/terms", priority: 0.2, changeFrequency: "yearly" },
 ];
 

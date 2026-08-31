@@ -51,6 +51,7 @@ export default function Footer() {
             <Link href="/list-your-clinic" className="text-white/50 hover:text-white transition-colors text-sm">List your clinic</Link>
             <Link href="/contact" className="text-white/50 hover:text-white transition-colors text-sm">Contact</Link>
             <Link href="/privacy-policy" className="text-white/50 hover:text-white transition-colors text-sm">Privacy policy</Link>
+            <Link href="/data-protection-policy" className="text-white/50 hover:text-white transition-colors text-sm">Data protection</Link>
             <Link href="/terms" className="text-white/50 hover:text-white transition-colors text-sm">Terms</Link>
           </div>
 

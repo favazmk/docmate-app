@@ -403,16 +403,25 @@ export default function BookingWizard({ doctor, user }: BookingWizardProps) {
                     className="text-blue-primary hover:underline font-semibold"
                   >
                     Terms &amp; Conditions
-                  </Link>{" "}
-                  and{" "}
-                  <Link 
-                    href="/privacy-policy" 
-                    target="_blank" 
+                  </Link>,{" "}
+                  <Link
+                    href="/privacy-policy"
+                    target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
                     className="text-blue-primary hover:underline font-semibold"
                   >
                     Privacy Policy
+                  </Link>
+                  , and{" "}
+                  <Link
+                    href="/data-protection-policy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-blue-primary hover:underline font-semibold"
+                  >
+                    Data Protection Policy
                   </Link>.
                 </p>
 
