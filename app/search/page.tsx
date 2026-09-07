@@ -6,6 +6,7 @@ import prisma from "@/lib/prisma";
 import SearchInput from "@/components/SearchInput";
 import Pagination from "@/components/Pagination";
 import MobileFilterSheet from "@/components/MobileFilterSheet";
+import SpecialtyBanner from "@/components/SpecialtyBanner";
 
 export default async function SearchResultsPage({
   searchParams,
@@ -177,6 +178,9 @@ export default async function SearchResultsPage({
   return (
     <div className="min-h-screen py-8 px-4">
       <div className="max-w-7xl mx-auto">
+        {/* Renders only for specialty landing URLs listed in SpecialtyBanner. */}
+        <SpecialtyBanner specialty={specialty} />
+
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
           <div>
             <h1 className="text-2xl font-bold text-text-dark mb-1">{totalCount} doctors found</h1>

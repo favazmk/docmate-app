@@ -2,15 +2,34 @@
 
 import { CheckCircle2, TrendingUp, Users, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import { useState } from "react";
 import { submitClinicRequest } from "@/app/actions/contact";
 import CustomDropdown from "@/components/ui/CustomDropdown";
 
+// Sample day behind the hero illustration. Initials only — it is a mock-up of
+// the product, and a fake schedule should never look like real patient records.
+const DAY_SHEET: { time: string; patient?: string; note?: string; state: "confirmed" | "open" | "new" }[] = [
+  { time: "09:00", patient: "A. K.", note: "Follow-up", state: "confirmed" },
+  { time: "09:30", patient: "M. R.", note: "New patient", state: "confirmed" },
+  { time: "10:00", state: "open" },
+  { time: "10:30", patient: "S. A.", note: "Booked on Docmate", state: "new" },
+  { time: "11:00", patient: "H. B.", note: "Reminder sent", state: "confirmed" },
+];
+
+const CITY_SUGGESTIONS = [
+  "Dubai",
+  "Abu Dhabi",
+  "Sharjah",
+  "Ajman",
+  "Ras Al Khaimah",
+  "Fujairah",
+  "Umm Al Quwain",
+  "Al Ain",
+];
+
 export default function ListYourClinicPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [city, setCity] = useState("Dubai");
   const [role, setRole] = useState("Doctor");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -29,56 +48,125 @@ export default function ListYourClinicPage() {
     <div className="bg-white min-h-screen">
       
       {/* Hero */}
-      <section className="bg-gradient-to-b from-blue-hover to-blue-primary pt-20 pb-32 px-4 relative overflow-hidden">
-        {/* Background elements */}
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-        
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12 relative z-10">
-          <div className="w-full lg:w-1/2 text-center lg:text-left">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+      {/* The right-hand column used to be a grey skeleton dashboard, which read
+          as a page that had failed to load. It is now a clinic day sheet — the
+          artifact this product actually replaces — so the hero shows the pitch
+          made below it (new patients, fewer no-shows, a fuller schedule)
+          instead of only stating it. */}
+      <section className="relative overflow-hidden bg-blue-primary px-4 pt-16 pb-32 md:pt-20">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-[radial-gradient(circle_at_78%_16%,rgba(235,235,224,0.13),transparent_46%),radial-gradient(circle_at_4%_0%,rgba(235,235,224,0.07),transparent_38%)]"
+        />
+
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-14 lg:gap-16 relative z-10">
+          <div className="w-full lg:w-[54%] text-center lg:text-left">
+            <span className="hero-badge inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-caption font-medium uppercase tracking-[0.14em] text-white/85 backdrop-blur-md">
+              <span className="h-1.5 w-1.5 rounded-full bg-star-color" />
+              For clinics &amp; hospitals
+            </span>
+
+            <h1 className="hero-title mt-6 mb-6 text-display font-bold text-white">
               Grow your practice with Docmate
             </h1>
-            <p className="text-white/80 text-lg md:text-xl leading-relaxed mb-8 max-w-lg mx-auto lg:mx-0">
+
+            <p className="hero-subtitle text-white/70 text-lg md:text-xl leading-relaxed mb-9 max-w-xl mx-auto lg:mx-0">
               Join thousands of healthcare providers in Dubai who are reaching more patients, reducing no-shows, and streamlining their bookings.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Button onClick={() => document.getElementById('clinic-form')?.scrollIntoView({ behavior: 'smooth' })} className="bg-white hover:bg-gray-bg text-blue-primary h-14 px-8 rounded-xl font-bold text-base">
+
+            <div
+              className="hero-subtitle flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+              style={{ animationDelay: "0.85s" }}
+            >
+              <Button
+                onClick={() => document.getElementById("clinic-form")?.scrollIntoView({ behavior: "smooth" })}
+                className="bg-white hover:bg-gray-bg text-blue-primary h-14 px-8 rounded-xl font-bold text-base shadow-lg shadow-black/20"
+              >
                 Register Your Clinic
               </Button>
-              <Button onClick={() => document.getElementById('clinic-form')?.scrollIntoView({ behavior: 'smooth' })} variant="outline" className="bg-transparent border-white/30 text-white hover:bg-white/10 hover:text-white h-14 px-8 rounded-xl font-bold text-base">
+              <Button
+                onClick={() => document.getElementById("clinic-form")?.scrollIntoView({ behavior: "smooth" })}
+                variant="outline"
+                className="bg-transparent border-white/30 text-white hover:bg-white/10 hover:text-white h-14 px-8 rounded-xl font-bold text-base"
+              >
                 Talk to Sales
               </Button>
             </div>
           </div>
-          
-          <div className="w-full lg:w-1/2 hidden md:block">
-            <div className="relative w-full aspect-video bg-white/10 rounded-2xl border border-white/20 backdrop-blur-sm p-4 shadow-2xl">
-              {/* Dashboard mockup representation */}
-              <div className="w-full h-full bg-white rounded-xl shadow-lg flex overflow-hidden">
-                <div className="w-1/4 bg-gray-50 border-r border-gray-border p-4 flex flex-col gap-3">
-                  <div className="w-full h-6 bg-gray-200 rounded animate-pulse"></div>
-                  <div className="w-3/4 h-4 bg-gray-200 rounded animate-pulse mt-4"></div>
-                  <div className="w-5/6 h-4 bg-gray-200 rounded animate-pulse"></div>
-                  <div className="w-full h-4 bg-gray-200 rounded animate-pulse"></div>
-                </div>
-                <div className="w-3/4 p-6 flex flex-col gap-6">
-                  <div className="flex gap-4">
-                    <div className="w-1/3 h-24 bg-blue-50 rounded-xl border border-blue-100 flex flex-col justify-center p-4">
-                      <div className="w-1/2 h-3 bg-blue-200 rounded mb-2"></div>
-                      <div className="w-3/4 h-6 bg-blue-primary/40 rounded"></div>
-                    </div>
-                    <div className="w-1/3 h-24 bg-green-50 rounded-xl border border-green-100 flex flex-col justify-center p-4">
-                      <div className="w-1/2 h-3 bg-green-200 rounded mb-2"></div>
-                      <div className="w-3/4 h-6 bg-green-600/40 rounded"></div>
-                    </div>
+
+          {/* Illustrative only — hidden from assistive tech so a sample schedule
+              is never announced as real appointments. */}
+          <div aria-hidden="true" className="w-full lg:w-[46%] hidden md:block">
+            <div
+              className="anim-hidden anim-fade-scale rounded-[20px] border border-white/15 bg-white/[0.07] p-2 shadow-2xl shadow-black/30 backdrop-blur-sm"
+              style={{ animationDelay: "0.5s" }}
+            >
+              <div className="rounded-2xl bg-white px-6 py-5">
+
+                <div className="flex items-baseline justify-between border-b border-gray-border pb-4">
+                  <div>
+                    <p className="text-caption font-semibold uppercase tracking-[0.12em] text-text-light">Today</p>
+                    <p className="text-subheading font-bold text-text-dark">Your clinic schedule</p>
                   </div>
-                  <div className="w-full flex-1 bg-gray-50 rounded-xl border border-gray-border p-4">
-                    <div className="w-1/4 h-4 bg-gray-300 rounded mb-4"></div>
-                    <div className="w-full h-10 bg-white border border-gray-200 rounded-lg mb-2"></div>
-                    <div className="w-full h-10 bg-white border border-gray-200 rounded-lg mb-2"></div>
-                    <div className="w-full h-10 bg-white border border-gray-200 rounded-lg"></div>
-                  </div>
+                  <span className="rounded-full bg-blue-primary/[0.07] px-3 py-1 text-caption font-semibold text-blue-primary">
+                    Thu 12
+                  </span>
                 </div>
+
+                <ul className="flex flex-col divide-y divide-gray-border/70">
+                  {DAY_SHEET.map((slot, i) => (
+                    <li
+                      key={slot.time}
+                      className={`${slot.state === "new" ? "day-slot-new" : "day-slot"} flex items-center gap-4 py-3.5`}
+                      style={{ animationDelay: `${0.75 + i * 0.13}s` }}
+                    >
+                      <span className="w-12 shrink-0 text-secondary font-semibold tabular-nums text-text-light">
+                        {slot.time}
+                      </span>
+
+                      <span
+                        className={`h-9 w-[3px] shrink-0 rounded-full ${
+                          slot.state === "open"
+                            ? "bg-gray-border"
+                            : slot.state === "new"
+                              ? "bg-star-color"
+                              : "bg-green-badge/70"
+                        }`}
+                      />
+
+                      {slot.state === "open" ? (
+                        <span className="text-secondary font-medium text-text-light">Open slot</span>
+                      ) : (
+                        <span className="flex min-w-0 flex-1 items-center justify-between gap-3">
+                          <span className="min-w-0">
+                            <span className="block text-secondary font-semibold text-text-dark">{slot.patient}</span>
+                            <span className="block text-caption text-text-mid">{slot.note}</span>
+                          </span>
+                          {slot.state === "new" ? (
+                            <span className="day-ping shrink-0 rounded-full bg-star-color/15 px-2.5 py-1 text-caption font-bold text-[#B45309]">
+                              New
+                            </span>
+                          ) : (
+                            <span className="shrink-0 rounded-full bg-green-badge-bg px-2.5 py-1 text-caption font-semibold text-green-badge">
+                              Confirmed
+                            </span>
+                          )}
+                        </span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="day-now mt-1 flex items-center gap-2" style={{ animationDelay: "1.5s" }}>
+                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-blue-primary" />
+                  <span className="h-px flex-1 bg-blue-primary/25" />
+                  <span className="text-caption font-semibold uppercase tracking-[0.1em] text-blue-primary/60">Now</span>
+                </div>
+
+                <p className="mt-4 border-t border-gray-border pt-4 text-caption font-medium text-text-mid">
+                  4 booked · 1 slot left · reminders sent automatically
+                </p>
+
               </div>
             </div>
           </div>
@@ -145,14 +233,25 @@ export default function ListYourClinicPage() {
                   <input required name="clinicName" type="text" placeholder="e.g. Mediclinic" className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors" />
                 </div>
                 <div className="flex flex-col gap-2 flex-1">
-                  <label className="text-sm font-semibold text-text-dark">City <span className="text-red-500">*</span></label>
-                  <CustomDropdown
-                    value={city}
-                    onChange={setCity}
-                    options={["Dubai", "Ajman", "Riyadh", "Jeddah", "Kuwait City", "Doha", "Manama", "Muscat"]}
-                    placeholder="Select City"
+                  <label htmlFor="clinic-city" className="text-sm font-semibold text-text-dark">City <span className="text-red-500">*</span></label>
+                  {/* Free text, not a fixed list: clinics outside the eight cities we
+                      used to hardcode were dropping out of the form here. The datalist
+                      keeps the common ones one keystroke away without limiting anyone. */}
+                  <input
+                    required
+                    id="clinic-city"
+                    name="city"
+                    type="text"
+                    list="clinic-city-options"
+                    autoComplete="address-level2"
+                    placeholder="e.g. Dubai"
+                    className="bg-gray-bg border border-gray-border rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:border-blue-primary transition-colors"
                   />
-                  <input type="hidden" name="city" value={city} />
+                  <datalist id="clinic-city-options">
+                    {CITY_SUGGESTIONS.map((c) => (
+                      <option key={c} value={c} />
+                    ))}
+                  </datalist>
                 </div>
               </div>
 
