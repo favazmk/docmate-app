@@ -124,7 +124,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 w-full h-full flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center">
-          <Image src="/logo.png" alt="Doc Mate Logo" width={110} height={32} className="object-contain" priority />
+          <Image src="/logo.png" alt="Docmate Logo" width={110} height={32} className="object-contain" priority />
         </Link>
 
         {/* Desktop Nav */}

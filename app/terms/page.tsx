@@ -4,7 +4,7 @@ import Link from "next/link";
 export const dynamic = "force-static";
 
 export const metadata: Metadata = {
-  title: "User Terms and Conditions | Doc Mate",
+  title: "User Terms and Conditions | Docmate",
   description:
     "The General Terms and Conditions for Users of docmate.ae, issued by Mediserve Healthcare Consultancy LLC and governed by the laws of the United Arab Emirates.",
   alternates: { canonical: "/terms" },

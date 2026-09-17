@@ -15,7 +15,7 @@ import BookingConfirmation from "@/components/BookingConfirmation";
  * conversions.
  */
 export const metadata: Metadata = {
-  title: "Appointment Request Received | Doc Mate",
+  title: "Appointment Request Received | Docmate",
   description: "Your appointment request has been submitted. The clinic will contact you shortly.",
   robots: { index: false, follow: false },
 };

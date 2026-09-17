@@ -19,8 +19,20 @@ const publicSans = Public_Sans({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Doc Mate | Doctor appointments made easy",
+  title: "Docmate | Doctor appointments made easy",
   description: "Find and book trusted doctors in Dubai - instantly. Verified specialists in Dubai Healthcare City, Jumeirah, Al Barsha, and more.",
+  applicationName: "Docmate",
+  openGraph: { siteName: "Docmate" },
+};
+
+// Tells Google the brand is "Docmate" (one word), so the site name shown
+// above search results doesn't get guessed from the domain or old titles.
+const WEBSITE_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Docmate",
+  alternateName: "docmate.ae",
+  url: SITE_URL,
 };
 
 export default function RootLayout({
@@ -31,6 +43,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn("font-sans", publicSans.variable)}>
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSON_LD) }}
+        />
         {/*
           Server-rendered on purpose — see lib/analytics.ts. The tag has to be in
           the HTML itself, not injected after hydration, or GA4's Tag coverage

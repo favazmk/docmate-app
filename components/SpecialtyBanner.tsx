@@ -39,7 +39,7 @@ const BANNERS: Record<string, BannerConfig> = {
       "/banners/family-medicine-mobile-480.webp",
       "/banners/family-medicine-mobile-960.webp",
     ],
-    alt: "Back to school: get the flu vaccine before school starts. Book a family medicine doctor in Dubai with DocMate",
+    alt: "Back to school: get the flu vaccine before school starts. Book a family medicine doctor in Dubai with Docmate",
     aspectClass: "aspect-[960/644] md:aspect-[2560/1086]",
     // href: "/search?specialty=Family+Medicine&city=Dubai",
   },

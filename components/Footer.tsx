@@ -17,7 +17,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1 flex flex-col gap-4">
             <Link href="/" className="flex items-center gap-2">
-              <Image src="/logo.jpeg" alt="Doc Mate Logo" width={32} height={32} className="rounded-full" />
+              <Image src="/logo.jpeg" alt="Docmate Logo" width={32} height={32} className="rounded-full" />
               <span className="font-bold text-lg tracking-tight">Docmate.</span>
             </Link>
             <p className="text-white/50 text-sm max-w-xs leading-relaxed">

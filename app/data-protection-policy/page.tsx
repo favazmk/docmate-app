@@ -4,7 +4,7 @@ import Link from "next/link";
 export const dynamic = "force-static";
 
 export const metadata: Metadata = {
-  title: "Data Protection Policy | Doc Mate",
+  title: "Data Protection Policy | Docmate",
   description:
     "The Data Protection Policy of Mediserve Healthcare Consultancy LLC, controller of docmate.ae — what data is processed, on what legal ground, for how long, and the rights of data subjects under UAE law.",
   alternates: { canonical: "/data-protection-policy" },

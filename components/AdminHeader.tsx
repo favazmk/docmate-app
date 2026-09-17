@@ -39,7 +39,7 @@ export default function AdminHeader({ title, badgeText }: AdminHeaderProps) {
             <SheetContent side="left" className="w-[280px] p-0 flex flex-col">
               <div className="h-16 flex items-center px-6 border-b border-gray-border">
                 <Link href="/" className="flex items-center" onClick={() => setIsOpen(false)}>
-                  <Image src="/logo.png" alt="Doc Mate Logo" width={110} height={32} className="object-contain" priority />
+                  <Image src="/logo.png" alt="Docmate Logo" width={110} height={32} className="object-contain" priority />
                 </Link>
               </div>
               <nav className="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1.5">
